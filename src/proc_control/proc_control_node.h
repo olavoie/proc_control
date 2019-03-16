@@ -89,8 +89,9 @@ namespace proc_control{
         std::shared_ptr<ControlModeIF> positionModePID_;
         std::shared_ptr<ControlModeIF> positionModePPI_;
         std::shared_ptr<ControlModeIF> velocityMode_;
+        std::shared_ptr<ControlModeIF> visionMode_;
 
-        enum controlMode{PositionMode_ = 0, PPIMode_, VelocityModeB_};
+        enum controlMode{PositionMode_ = 0, PPIMode_, VelocityModeB_, VisionMode_};
     };
 
 

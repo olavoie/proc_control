@@ -25,6 +25,7 @@
 
 #include "proc_control_node.h"
 #include "proc_control/Mode/VelocityMode.h"
+#include "proc_control/Mode/VisionMode.h"
 #include "proc_control/Controller/PIDController.h"
 #include "proc_control/Controller/PPIController.h"
 #include "proc_control/Controller/BController.h"
@@ -38,7 +39,8 @@ namespace proc_control{
         controlMode_(nullptr),
         positionModePID_(nullptr),
         positionModePPI_(nullptr),
-        velocityMode_(nullptr)
+        velocityMode_(nullptr),
+        visionMode_(nullptr)
     {
 
         setControlModeServer_ = nh->advertiseService("/proc_control/set_control_mode",
@@ -59,10 +61,12 @@ namespace proc_control{
         std::unique_ptr<ControllerIF> pidControlAUV         = std::make_unique<PIDController>("position");
         std::unique_ptr<ControllerIF> ppiControlAUV         = std::make_unique<PPIController>();
         std::unique_ptr<ControllerIF> pidVelocityControlAUV = std::make_unique<PIDController>("velocity");
+        std::unique_ptr<ControllerIF> pidVisionControlAUV   = std::make_unique<PIDController>("vision");
 
         positionModePID_ = std::make_shared<proc_control::PositionMode>(robotState_, pidControlAUV);
         positionModePPI_ = std::make_shared<proc_control::PositionMode>(robotState_, ppiControlAUV);
         velocityMode_    = std::make_shared<proc_control::VelocityMode>(robotState_, pidVelocityControlAUV);
+        visionMode_      = std::make_shared<proc_control::VisionMode>(robotState_, pidVisionControlAUV);
 
         controlMode_   = positionModePID_;
     }
@@ -103,6 +107,10 @@ namespace proc_control{
             case VelocityModeB_:
                 controlMode_ = nullptr;
                 controlMode_ = velocityMode_;
+                break;
+            case VisionMode_:
+                controlMode_ = nullptr;
+                controlMode_ = visionMode_;
                 break;
             default :
                 controlMode_ = nullptr;
