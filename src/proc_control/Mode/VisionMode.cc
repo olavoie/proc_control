@@ -8,11 +8,12 @@ namespace proc_control
         controlAUV_{std::move(controlAUV)},
         actualTwist_{Eigen::VectorXd::Zero(control::CARTESIAN_SPACE)},
         actualPose_{Eigen::VectorXd::Zero(control::CARTESIAN_SPACE)},
-        desiredTwist_{Eigen::VectorXd::Zero(control::CARTESIAN_SPACE)}
+        desiredTwist_{Eigen::VectorXd::Zero(control::CARTESIAN_SPACE)},
+        desiredPose_{Eigen::VectorXd::Zero(control::CARTESIAN_SPACE)}
     {
         controllerCommand_.errorPose     = Eigen::VectorXd::Zero(control::CARTESIAN_SPACE);
         controllerCommand_.errorVelocity = Eigen::VectorXd::Zero(control::CARTESIAN_SPACE);
-        controllerCommand_.velocity      = Eigen::VectorXd::Zero(control::CARTESIAN_SPACE);
+        //controllerCommand_.velocity      = Eigen::VectorXd::Zero(control::CARTESIAN_SPACE);
         controllerCommand_.acceleration  = Eigen::VectorXd::Zero(control::CARTESIAN_SPACE);
         controllerCommand_.orientation   = Eigen::Vector3d::Zero();
     }
@@ -22,13 +23,14 @@ namespace proc_control
         actualPose_   = robotState_->GetActualPose();
         actualTwist_  = robotState_->GetActualTwist();
 
+        desiredPose_ = robotState_->GetDesiredPose();
         desiredTwist_ = robotState_->GetDesiredTwist();
 
         GetLocalError(desiredTwist_, controllerCommand_.errorPose);
-        controllerCommand_.errorVelocity = controllerCommand_.errorPose;
+        //controllerCommand_.errorVelocity = controllerCommand_.errorPose;
         robotState_->PosePublisher(desiredTwist_, robotState_->GetDebugTargetPublisher());
 
-        robotState_->TwistPublisher(controllerCommand_.errorVelocity, robotState_->GetControllerTwistErrorPublisher());
+        robotState_->TwistPublisher(controllerCommand_.errorPose, robotState_->GetControllerTwistErrorPublisher());
 
         Eigen::VectorXd actuation = Eigen::VectorXd::Zero(control::CARTESIAN_SPACE);
         actuation = controlAUV_->ComputedWrenchFromError(controllerCommand_);
