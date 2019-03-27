@@ -29,6 +29,7 @@
 #include <ros/ros.h>
 #include <eigen3/Eigen/Eigen>
 #include <nav_msgs/Odometry.h>
+#include <geometry_msgs/Pose.h>
 
 #include "proc_control/EnableControl.h"
 #include "provider_kill_mission/KillSwitchMsg.h"
@@ -53,10 +54,13 @@ namespace proc_control {
         // P U B L I C   M E T H O D S
 
         void OdometryCallback(const nav_msgs::Odometry::ConstPtr &odomIn);
+        void VisionCallback(const geometry_msgs::Pose &visionIn);
 
         Eigen::Vector3d GetPosePosition()    const { return controlInput_.pose.position; };
+        Eigen::Vector3d GetVisionPosePosition()    const { return controlInput_.vision.position; };
         Eigen::Vector3d GetTwistLinear()     const { return controlInput_.twist.linear; };
         Eigen::Vector3d GetPoseOrientation() const { return controlInput_.pose.orientation; };
+        Eigen::Vector3d GetVisionPoseOrientation() const { return controlInput_.vision.orientation; };
         Eigen::Vector3d GetTwistAngular()    const { return controlInput_.twist.angular; };
 
 
@@ -69,6 +73,7 @@ namespace proc_control {
 
         // Subscriber
         ros::Subscriber navigationOdomSubscriber_;
+        ros::Subscriber navigationVisionSubscriber_;
 
         struct tPose
         {
@@ -85,6 +90,7 @@ namespace proc_control {
         struct tControlInput
         {
             tPose  pose;
+            tPose  vision;
             tTwist twist;
         };
 

@@ -77,17 +77,20 @@ namespace proc_control
         ros::Publisher &GetTargetErrorPublisher_()         { return targetErrorPublisher_;}
         ros::Publisher &GetCommandDebugPublisher()         { return commandDebugPublisher_;}
 
-        Eigen::VectorXd GetDesiredPose()          { return desiredPose_;}
-        Eigen::VectorXd GetDesiredTwist()         { return desiredTwist_;}
-        Eigen::VectorXd GetDesiredAccel()         { return desiredAcceleration_;}
+        Eigen::VectorXd &GetDesiredPose()          { return desiredPose_;}
+        Eigen::VectorXd &GetDesiredVisionOffset()  { return desiredVisionOffset_;}
+        Eigen::VectorXd &GetDesiredTwist()         { return desiredTwist_;}
+        Eigen::VectorXd &GetDesiredAccel()         { return desiredAcceleration_;}
 
-        void SetDesiredPose(const Eigen::VectorXd &desiredPose)            {desiredPose_         = desiredPose;}
-        void SetDesiredTwist(const Eigen::VectorXd &desiredTwist)          {desiredTwist_        = desiredTwist;}
-        void SetDesiredAccel(const Eigen::VectorXd &desiredAcceleration)   {desiredAcceleration_ = desiredAcceleration;}
+        void SetDesiredPose(const Eigen::VectorXd &desiredPose)                     {desiredPose_         = desiredPose;}
+        void SetDesiredVisionOffset(const Eigen::VectorXd &desiredVisionOffset)     {desiredVisionOffset_ = desiredVisionOffset;}
+        void SetDesiredTwist(const Eigen::VectorXd &desiredTwist)                   {desiredTwist_        = desiredTwist;}
+        void SetDesiredAccel(const Eigen::VectorXd &desiredAcceleration)            {desiredAcceleration_ = desiredAcceleration;}
 
-        Eigen::VectorXd GetActualPose()  { return actualPose_;}
-        Eigen::VectorXd GetActualTwist() { return actualTwist_;}
-        Eigen::VectorXd GetActualAccel() { return actualAcceleration_;}
+        Eigen::VectorXd &GetActualPose()         { return actualPose_;}
+        Eigen::VectorXd &GetActualVisionPose()   { return actualVisionPose_;}
+        Eigen::VectorXd &GetActualTwist()        { return actualTwist_;}
+        Eigen::VectorXd &GetActualAccel()        { return actualAcceleration_;}
 
         void ControlModeChange();
 
@@ -138,10 +141,12 @@ namespace proc_control
         ros::ServiceServer setBoundingBoxServer_;
 
         Eigen::VectorXd desiredPose_;
+        Eigen::VectorXd desiredVisionOffset_;
         Eigen::VectorXd desiredTwist_;
         Eigen::VectorXd desiredAcceleration_;
 
         Eigen::VectorXd actualPose_;
+        Eigen::VectorXd actualVisionPose_;
         Eigen::VectorXd actualTwist_;
         Eigen::VectorXd actualAcceleration_;
 

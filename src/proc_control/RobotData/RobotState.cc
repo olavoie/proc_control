@@ -63,10 +63,12 @@ namespace proc_control
          enableAxisController_ = {{false, false, false, false, false, false}};
 
          desiredPose_          = Eigen::VectorXd::Zero(control::CARTESIAN_SPACE);
+         desiredVisionOffset_  = Eigen::VectorXd::Zero(control::CARTESIAN_SPACE);
          desiredTwist_         = Eigen::VectorXd::Zero(control::CARTESIAN_SPACE);
          desiredAcceleration_  = Eigen::VectorXd::Zero(control::CARTESIAN_SPACE);
 
          actualPose_           = Eigen::VectorXd::Zero(control::CARTESIAN_SPACE);
+         actualVisionPose_     = Eigen::VectorXd::Zero(control::CARTESIAN_SPACE);
          actualTwist_          = Eigen::VectorXd::Zero(control::CARTESIAN_SPACE);
          actualAcceleration_   = Eigen::VectorXd::Zero(control::CARTESIAN_SPACE);
 
@@ -87,6 +89,7 @@ namespace proc_control
      void RobotState::UpdateInput()
      {
          actualPose_  << inputData_.GetPosePosition(), inputData_.GetPoseOrientation();
+         actualVisionPose_  << inputData_.GetVisionPosePosition(), inputData_.GetVisionPoseOrientation();
          actualTwist_ << inputData_.GetTwistLinear(), inputData_.GetTwistAngular();
      }
 

@@ -27,21 +27,21 @@
 
 namespace proc_control{
 
-    ControlInput::ControlInput(const ros::NodeHandlePtr &nh): nh_(nh) {
-
+    ControlInput::ControlInput(const ros::NodeHandlePtr &nh): nh_(nh)
+    {
         navigationOdomSubscriber_ = nh_->subscribe("/proc_navigation/odom", 100, &ControlInput::OdometryCallback, this);
-
+        navigationVisionSubscriber_ = nh_->subscribe("/proc_navigation/vision", 100, &ControlInput::VisionCallback, this); // En attente de Francois
     }
 
-    ControlInput::~ControlInput(){
-
+    ControlInput::~ControlInput()
+    {
         navigationOdomSubscriber_.shutdown();
-
+        navigationVisionSubscriber_.shutdown();
     }
 
 
-    void ControlInput::OdometryCallback(const nav_msgs::Odometry::ConstPtr &odomIn) {
-
+    void ControlInput::OdometryCallback(const nav_msgs::Odometry::ConstPtr &odomIn)
+    {
        controlInput_.pose.position[0]    = odomIn->pose.pose.position.x;
        controlInput_.pose.position[1]    = odomIn->pose.pose.position.y;
        controlInput_.pose.position[2]    = odomIn->pose.pose.position.z;
@@ -57,5 +57,16 @@ namespace proc_control{
        controlInput_.twist.angular[2] = odomIn->twist.twist.angular.z;
     }
 
+
+    void ControlInput::VisionCallback(const geometry_msgs::Pose &visionIn)
+    {
+        controlInput_.vision.position[0]    = visionIn.position.x;
+        controlInput_.vision.position[1]    = visionIn.position.y;
+        controlInput_.vision.position[2]    = visionIn.position.z;
+        controlInput_.vision.orientation[0] = 0.0;
+        controlInput_.vision.orientation[1] = 0.0;
+        controlInput_.vision.orientation[2] = visionIn.orientation.z * DEGREE_TO_RAD;
+
+    }
 
 }
