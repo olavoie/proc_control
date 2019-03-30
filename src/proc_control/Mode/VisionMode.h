@@ -29,8 +29,8 @@ namespace proc_control
         std::shared_ptr<RobotState>   robotState_;
         std::shared_ptr<ControllerIF> controlAUV_;
 
-        Eigen::VectorXd desiredOffset_;
         Eigen::VectorXd actualVisionPose_;
+        Eigen::VectorXd desiredOffset_;
 
         Eigen::Affine3d actualPoseH_;
         Eigen::Affine3d targetPoseH_;
