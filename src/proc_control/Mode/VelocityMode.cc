@@ -44,6 +44,13 @@ namespace proc_control
 
     void VelocityMode::SetDecoupledTarget(bool isGlobal, const std::vector<bool> &keepTarget, Eigen::VectorXd &targetPose)
     {
+        for (size_t i = 0; i < control::CARTESIAN_SPACE; i++)
+        {
+            if (keepTarget[i])
+                targetPose[i] = actualPose_[i];
+        }
+        robotState_->SetDesiredTwist(targetPose);
+        robotState_->TwistPublisher(targetPose, robotState_->GetVelocityTargetPublisher());
     }
 
     void VelocityMode::GetLocalError(Eigen::VectorXd &targetPose, Eigen::VectorXd &localError)
