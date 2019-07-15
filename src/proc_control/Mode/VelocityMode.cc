@@ -44,6 +44,12 @@ namespace proc_control
 
     void VelocityMode::SetDecoupledTarget(bool isGlobal, const std::vector<bool> &keepTarget, Eigen::VectorXd &targetPose)
     {
+        if (isGlobal)
+        {
+
+        }
+
+
         for (size_t i = 0; i < control::CARTESIAN_SPACE; i++)
         {
             if (keepTarget[i])
