@@ -45,8 +45,8 @@ namespace proc_control{
        controlInput_.pose.position[0]    = odomIn->pose.pose.position.x;
        controlInput_.pose.position[1]    = odomIn->pose.pose.position.y;
        controlInput_.pose.position[2]    = odomIn->pose.pose.position.z;
-       controlInput_.pose.orientation[0] = 0.0;
-       controlInput_.pose.orientation[1] = 0.0;
+       controlInput_.pose.orientation[0] = odomIn->pose.pose.orientation.x * DEGREE_TO_RAD;
+       controlInput_.pose.orientation[1] = odomIn->pose.pose.orientation.y * DEGREE_TO_RAD;
        controlInput_.pose.orientation[2] = odomIn->pose.pose.orientation.z * DEGREE_TO_RAD;
 
        controlInput_.twist.linear[0] = odomIn->twist.twist.linear.x;
