@@ -24,7 +24,7 @@ namespace proc_control
         std::list<std::unique_ptr<control::ContinuousTimePid>> pidController_;
         std::vector<std::unique_ptr<PIDParameters>>            pidParameters_;
 
-        std::list<std::string> CommandedAxis{"x", "y", "z", "roll", "pitch","yaw"};
+        std::list<std::string> CommandedAxis{"x", "y", "z", "roll", "pitch", "yaw"};
 
     };
 }
