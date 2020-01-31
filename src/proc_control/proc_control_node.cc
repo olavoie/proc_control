@@ -118,7 +118,7 @@ namespace proc_control{
 
         Eigen::VectorXd targetPose = Eigen::VectorXd::Zero(control::CARTESIAN_SPACE);
 
-        targetPose    << request.X, request.Y, request.Z, 0.0, 0.0, request.YAW * DEGREE_TO_RAD;
+        targetPose    << request.X, request.Y, request.Z, request.ROLL * DEGREE_TO_RAD, request.PITCH * DEGREE_TO_RAD, request.YAW * DEGREE_TO_RAD;
 
         controlMode_->SetTarget(GlobalTarget, targetPose);
 
@@ -130,7 +130,7 @@ namespace proc_control{
 
         Eigen::VectorXd targetPose = Eigen::VectorXd::Zero(control::CARTESIAN_SPACE);
 
-        targetPose    << request.X, request.Y, request.Z,  0.0, 0.0, request.YAW * DEGREE_TO_RAD;
+        targetPose    << request.X, request.Y, request.Z, request.ROLL * DEGREE_TO_RAD, request.PITCH * DEGREE_TO_RAD, request.YAW * DEGREE_TO_RAD;
 
         controlMode_->SetTarget(LocalTarget, targetPose);
 
@@ -146,7 +146,7 @@ namespace proc_control{
         std::vector<bool> keepTarget = {(bool)request.keepX, (bool)request.keepY, (bool)request.keepZ, (bool)request.keepROLL,
                                         (bool)request.keepPITCH, (bool)request.keepYAW};
 
-        targetPose    << request.X, request.Y, request.Z,  0.0, 0.0, request.YAW * DEGREE_TO_RAD;
+        targetPose    << request.X, request.Y, request.Z, request.ROLL * DEGREE_TO_RAD, request.PITCH * DEGREE_TO_RAD, request.YAW * DEGREE_TO_RAD;
 
         controlMode_->SetDecoupledTarget(GlobalTarget, keepTarget, targetPose);
 
@@ -161,7 +161,7 @@ namespace proc_control{
         std::vector<bool> keepTarget = {(bool)request.keepX, (bool)request.keepY, (bool)request.keepZ, (bool)request.keepROLL,
                                         (bool)request.keepPITCH, (bool)request.keepYAW};
 
-        targetPose    << request.X, request.Y, request.Z, 0.0, 0.0, request.YAW * DEGREE_TO_RAD;
+        targetPose    << request.X, request.Y, request.Z, request.ROLL * DEGREE_TO_RAD, request.PITCH * DEGREE_TO_RAD, request.YAW * DEGREE_TO_RAD;
 
         controlMode_->SetDecoupledTarget(LocalTarget, keepTarget, targetPose);
 
