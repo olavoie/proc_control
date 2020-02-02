@@ -27,6 +27,7 @@
 #define PROC_CONTROL_CONTROL_NODE_H
 
 #include <ros/ros.h>
+#include <std_msgs/UInt8.h>
 #include <memory>
 
 #include "proc_control/RobotData/RobotState.h"
@@ -84,11 +85,15 @@ namespace proc_control{
         ros::ServiceServer setGlobalDecoupledTargetServer_;
         ros::ServiceServer setLocalDecoupledTargetServer_;
 
+        ros::Publisher controlModePublisher_;
+
         std::shared_ptr<RobotState>    robotState_;
         std::shared_ptr<ControlModeIF> controlMode_;
         std::shared_ptr<ControlModeIF> positionModePID_;
         std::shared_ptr<ControlModeIF> positionModePPI_;
         std::shared_ptr<ControlModeIF> velocityMode_;
+
+        int8_t controlModeId_;
 
         enum controlMode{PositionMode_ = 0, PPIMode_, VelocityModeB_};
     };

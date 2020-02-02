@@ -55,6 +55,8 @@ namespace proc_control{
         setLocalDecoupledTargetServer_ = nh_->advertiseService("/proc_control/set_local_decoupled_target",
                                                                 &ProcControlNode::SetLocalDecoupledTargetPositionCallback, this);
 
+        controlModePublisher_ = nh->advertise<std_msgs::UInt8>("/proc_control/control_mode", 100);
+
         robotState_    = std::make_shared<proc_control::RobotState>(nh_);
         std::unique_ptr<ControllerIF> pidControlAUV         = std::make_unique<PIDController>("position");
         std::unique_ptr<ControllerIF> ppiControlAUV         = std::make_unique<PPIController>();
@@ -65,6 +67,7 @@ namespace proc_control{
         velocityMode_    = std::make_shared<proc_control::VelocityMode>(robotState_, pidVelocityControlAUV);
 
         controlMode_   = positionModePID_;
+        controlModeId_ = 0;
     }
 
     ProcControlNode::~ProcControlNode()
@@ -82,6 +85,10 @@ namespace proc_control{
     {
         robotState_->UpdateInput();
         controlMode_->Process();
+
+        std_msgs::UInt8 value;
+        value.data = controlModeId_;
+        controlModePublisher_.publish(value);
     }
 
     bool ProcControlNode::SetControlModeCallback(proc_control::SetControlModeRequest &request,
@@ -108,6 +115,8 @@ namespace proc_control{
                 controlMode_ = nullptr;
                 controlMode_ = positionModePID_;
         }
+
+        controlModeId_ = request.mode;
 
         return true;
 

@@ -199,7 +199,7 @@ namespace proc_control {
             stabilityCount_ = 0;
         }
 
-        if (stabilityCount_ > 14 || deltaTime_s > 30.0){
+        if (stabilityCount_ > 14 || deltaTime_s > 15.0){
             targetIsReached = true;
         }
 
