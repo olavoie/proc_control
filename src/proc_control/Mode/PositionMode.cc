@@ -65,14 +65,14 @@ namespace proc_control {
 
         deltaTimeS_ = double(std::chrono::duration_cast<std::chrono::nanoseconds>(timeNow_ - lastTime_).count()) / (double(1E9));
 
-        if (deltaTimeS_ > (0.01f))
+        if (deltaTimeS_ > (0.0001f))
         {
-            if (trajectoryManager_->IsTrajectoryComputed())
+            /*if (trajectoryManager_->IsTrajectoryComputed())
             {
                 trajectory_ = trajectoryManager_->GetSpeedTrajectory(); //change value
                 targetPose_ = trajectory_.pose;
                 targetTwist_ = trajectory_.twist;
-            }
+            }*/
 
             GetLocalError(targetPose_, controllerCommand_.errorPose);
             GetLocalErrorSpeed(targetTwist_, controllerCommand_.errorVelocity);
