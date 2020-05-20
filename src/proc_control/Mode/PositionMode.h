@@ -63,6 +63,8 @@ namespace proc_control
 
         void GetLocalError(Eigen::VectorXd & targetPose, Eigen::VectorXd & localError);
 
+        void GetLocalErrorSpeed(Eigen::VectorXd &targetPose, Eigen::VectorXd & localError);
+
         std::shared_ptr<RobotState>   robotState_;
         std::unique_ptr<ControllerIF> controlAuv_;
 
@@ -71,10 +73,12 @@ namespace proc_control
         Eigen::VectorXd localError_;
         Eigen::VectorXd localDesiredError_;
         Eigen::VectorXd targetPose_;
+        Eigen::VectorXd targetTwist_;
 
         Eigen::VectorXd actualPose_;
         Eigen::VectorXd actualTwist_;
         Eigen::VectorXd desiredPose_;
+        Eigen::VectorXd desiredTwist_;
 
         std::chrono::steady_clock::time_point lastTime_;
         std::chrono::steady_clock::time_point targetReachedTime_;

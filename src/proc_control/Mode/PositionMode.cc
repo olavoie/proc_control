@@ -59,25 +59,33 @@ namespace proc_control {
         actualTwist_ = robotState_->GetActualTwist();
 
         targetPose_ = robotState_->GetDesiredPose();
+        targetTwist_ = robotState_->GetDesiredTwist();
 
         timeNow_ = std::chrono::steady_clock::now();
 
         deltaTimeS_ = double(std::chrono::duration_cast<std::chrono::nanoseconds>(timeNow_ - lastTime_).count()) / (double(1E9));
 
-        if (deltaTimeS_ > (0.0001f))
+        if (deltaTimeS_ > (0.01f))
         {
             if (trajectoryManager_->IsTrajectoryComputed())
             {
-                trajectory_ = trajectoryManager_->GetTrajectory();
+                trajectory_ = trajectoryManager_->GetSpeedTrajectory(); //change value
                 targetPose_ = trajectory_.pose;
+                targetTwist_ = trajectory_.twist;
             }
 
-            robotState_->PosePublisher(targetPose_, robotState_->GetDebugTargetPublisher());
+            GetLocalError(targetPose_, controllerCommand_.errorPose);
+            GetLocalErrorSpeed(targetTwist_, controllerCommand_.errorVelocity);
+            
+            //robotState_->PosePublisher(controllerCommand_.errorPose * DEGREE_TO_RAD, robotState_->GetControllerPoseErrorPublisher());
+            robotState_->TwistPublisher(controllerCommand_.errorVelocity, robotState_->GetControllerTwistErrorPublisher());
+
+            /*robotState_->PosePublisher(targetPose_, robotState_->GetDebugTargetPublisher());
 
             GetLocalError(targetPose_, controllerCommand_.errorPose);
             robotState_->PosePublisher(controllerCommand_.errorPose * DEGREE_TO_RAD, robotState_->GetControllerPoseErrorPublisher());
             GetLocalError(desiredPose_, localDesiredError_);
-            robotState_->TargetReachedPublisher(EvaluateTargetReached(localDesiredError_));
+            robotState_->TargetReachedPublisher(EvaluateTargetReached(localDesiredError_));*/
 
             controllerCommand_.velocity = actualTwist_;
             // Calculate required actuation
@@ -170,7 +178,7 @@ namespace proc_control {
     void PositionMode::CreateTrajectory(Eigen::VectorXd &actualPose, Eigen::VectorXd &desiredPose)
     {
         control::TrajectoryGeneratorType trajectoryParams = robotState_->CreateTrajectoryParameters(1, actualPose, desiredPose);
-        trajectoryManager_->GenerateTrajectory(trajectoryParams);
+        trajectoryManager_->SpeedGenerateTrajectory(trajectoryParams); // changed value
     }
 
     void PositionMode::GetLocalError(Eigen::VectorXd & targetPose, Eigen::VectorXd & localError)
@@ -180,6 +188,19 @@ namespace proc_control {
         localErrorH_  = actualPoseH_.inverse() * targetPoseH_;
 
         localError << localErrorH_.translation(), localErrorH_.linear().eulerAngles(0, 1, 2) * RAD_TO_DEGREE;
+    }
+
+    void PositionMode::GetLocalErrorSpeed(Eigen::VectorXd &targetPose, Eigen::VectorXd &localError)
+    {
+        actualPoseH_ = control::HomogeneousMatrix(actualPose_);
+        targetPoseH_ = control::HomogeneousMatrix(targetPose);
+        localErrorH_ = actualPoseH_.inverse() * targetPoseH_;
+
+        localError[0]    = targetPose[0] - actualTwist_[0];
+        localError[1]    = targetPose[1] - actualTwist_[1];
+        localError[2]    = targetPose[2] - actualPose_[2];
+
+        localError << localError[0], localError[1], localError[2], localErrorH_.linear().eulerAngles(0, 1, 2) * RAD_TO_DEGREE;
     }
 
     bool PositionMode::EvaluateTargetReached(Eigen::VectorXd &error)
