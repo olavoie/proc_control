@@ -118,12 +118,11 @@ end
         if OLA(1)>0
          %Calculer le vecteur résultant réduit.
          LAC= this.L*diag(this.D)*rot.'; 
-         SV=this.GetAxisSaturation(LAC,OLA);
         end
         toc;
        
         for i=1:this.C.nbt
-            this.T(i).force=rot(i);
+            this.T(i).force=OT(i);
         end
         
   
@@ -253,12 +252,9 @@ end
         end
         
         function SV= GetAxisSaturation(this,LAC,OLA)
-        % Calcule le vecteur saturation pour limiter un ou plusieurs axe.
-         % Arguments : LAC.
-            SV=zeros(1,6);
+            sv=
             for i=1:6
                 if ismember(i,OLA)
-                    SV(i)=LAC(i);
                 end
             end
         end
