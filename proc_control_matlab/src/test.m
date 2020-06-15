@@ -3,42 +3,14 @@ clear;
 
 addpath("Thrusters");
 
-config = Config('config_AUV8.json');
+config = Config('config_AUV7.json');
 M= ThrusterAllocator(config);
 
 
-disp("----------------------------------");
-disp("Test TrusterModel class...");
-
-disp("----------------------------------");
-
-
-disp("----------------------------------");
-disp("limitation de la  force des moteurs (%)");
-disp("----------------------------------");
-%disp(M.fl());
-
-disp("----------------------------------");
-disp("Matrice des coefficients des thruster");
-disp("----------------------------------");
-%disp(M.L);
-
-disp("----------------------------------");
-disp("Matrice de défault thruster");
-disp("----------------------------------");
-%disp(M.D);
-
-disp("----------------------------------");
-disp("Force maximum théorique des 6 DLL");
-disp("----------------------------------");
-%disp(M.MLDT);
-
-disp("----------------------------------");
-disp("Force maximum réel des 6 DLL");
-disp("----------------------------------");
 
 %disp(M.MLDR);
-M.UpdateDampingMatrix([-1,-1,-1,-1,-1,-1,-1,-1]);
+M.UpdateDampingMatrix([0,-1,-1,-1,-1,-1,-1,-1]);
+M.Debug();
 %disp(M.D);
 command=[50,0,50,3,5,0];
 

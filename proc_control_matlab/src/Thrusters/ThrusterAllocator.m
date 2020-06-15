@@ -109,7 +109,7 @@ end
         
         tic;
         LD=this.L*diag(this.D);
-        %Optimise la force de chaque
+        %Optimise la force de chaque thruster
         OT=this.OPT.NLoptimiseThrusterOutput(LD,command);
         % vérifie la fesabilitée et reduit la commande au besoin
         [rot, OLA]=this.APX.ApproxThrusterOutput(OT,command,this.D);
@@ -125,10 +125,43 @@ end
         for i=1:this.C.nbt
             this.T(i).force=rot(i);
         end
-        
+              
   
-    end
+        end
+        function Debug(this)
+         % affiche les info de la classe.
+         % Arguments : NA.
+            disp("----------------------------------");
+            disp("Test TrusterModel class...");
+            disp("----------------------------------");
 
+
+            disp("----------------------------------");
+            disp("limitation de la  force des moteurs (%)");
+            disp("----------------------------------");
+            disp(this.fl());
+
+            disp("----------------------------------");
+            disp("Matrice des coefficients des thruster");
+            disp("----------------------------------");
+            disp(this.L);
+
+            disp("----------------------------------");
+            disp("Matrice de défault thruster");
+            disp("----------------------------------");
+            disp(this.D);
+
+            disp("----------------------------------");
+            disp("Force maximum théorique des 6 DLL");
+            disp("----------------------------------");
+            disp(this.MLDT);
+
+            disp("----------------------------------");
+            disp("Force maximum réel des 6 DDL");
+            disp("----------------------------------");
+            disp(this.MLDR);
+        end
+        
     end
 %==========================================================================
 %Methodes privées
@@ -159,30 +192,48 @@ end
              end
              % concactener les variables pour avour une matrice lisible.
              a14 =this.C.a14;
-             d14 =this.C.d14;
-             d58=this.C.d58;
+             d14 =this.C.d14; %dist centre geo - centre masse
+             d58=this.C.d58;  %dist centre geo - centre masse
+             M=this.C.CM;
+             
              z=this.C.z;
              dz =this.C.dz;
              % Thruster effort Mapping Matrix (L)
-            %       x         y      z rx ry           rz
-            l1 = [ sin(a14),-cos(a14), 0, (d14(3)+z(1)*dz)*cos(a14),...
-                 (d14(3)+z(1)*dz)*sin(a14),-hypot( d14(1), d14(2))];
+            %       x         y      z      
+           l1 = [ sin(a14),-cos(a14), 0,... fxyz
+                (d14(3)-M(3)+z(1)*dz)*cos(a14),... rx
+                (d14(3)-M(3)+z(1)*dz)*sin(a14),... ry
+                -hypot( d14(1)-M(1), d14(2)-M(2))]; %rx
              
-            l2 = [ sin(a14), cos(a14), 0,-(d14(3)+z(2)*dz)*cos(a14),...
-                 (d14(3)+z(2)*dz)*sin(a14),-hypot(-d14(1), d14(2))];
+           l2 = [ sin(a14), cos(a14), 0,...fxyz
+                 -(d14(3)-M(3)+z(2)*dz)*cos(a14),...rx
+                 (d14(3)-M(3)+z(2)*dz)*sin(a14),...ry
+                 -hypot( d14(1)+M(1), d14(2)-M(2))];%rx
              
-            l3 = [ sin(a14),-cos(a14), 0, (d14(3)+z(3)*dz)*cos(a14),...
-                 (d14(3)+z(3)*dz)*sin(a14), hypot(-d14(1),-d14(2))];
+           l3 = [ sin(a14),-cos(a14), 0,...fxyz
+                (d14(3)-M(3)+z(3)*dz)*cos(a14),...rx
+                 (d14(3)-M(3)+z(3)*dz)*sin(a14),...ry
+                 hypot(d14(1)+M(1), d14(2)+M(2))];
              
-            l4 = [ sin(a14), cos(a14), 0,-(d14(3)+z(4)*dz)*cos(a14),...
-                 (d14(3)+z(4)*dz)*sin(a14), hypot( d14(1),-d14(2))];
+           l4 = [ sin(a14), cos(a14), 0,...fxyz
+                -(d14(3)-M(3)+z(4)*dz)*cos(a14),...rx
+                 (d14(3)-M(3)+z(4)*dz)*sin(a14),...ry
+                 hypot(d14(1)-M(1), d14(2)+M(2))];%rx
              
-            l5 = [0, 0, 1, d58(2),-d58(1), 0];
-            l6 = [0, 0,-1,-d58(2),-d58(1), 0];
-            l7 = [0, 0, 1,-d58(2), d58(1), 0];
-            l8 = [0, 0,-1, d58(2), d58(1), 0];
+            l5 = [0, 0, 1, (d58(2)-M(2)+z(1)*dz),...
+                 -(d58(1)-M(1)+z(1)*dz), 0];
+             
+            l6 = [0, 0,-1,-(d58(2)-M(2)+z(2)*dz),...
+                  -(d58(1)+M(1)+z(2)*dz), 0];
+              
+            l7 = [0, 0, 1,-(d58(2)+M(2)+z(3)*dz),...
+                (d58(1)+M(1)+z(3)*dz), 0];
+            
+            l8 = [0, 0,-1, (d58(2)+M(2)+z(4)*dz),...
+                 (d58(1)-M(1)+z(2)*dz), 0];
 
             this.L= [l1.', l2.', l3.', l4.', l5.' l6.', l7.', l8.'];
+            disp(this.L);
         end
         
         function lax= GetMaxLoadAllAxis(this,L)
