@@ -1,6 +1,8 @@
 classdef Thruster < matlab.mixin.Heterogeneous
     % THRUSTER class.
-    
+%==========================================================================
+%Proprietes
+%==========================================================================    
     properties
         id;
         force;
@@ -10,13 +12,18 @@ classdef Thruster < matlab.mixin.Heterogeneous
         pwm;
         efficiency;
     end
-    
+%==========================================================================
+%Methodes
+%==========================================================================
     methods
         % Construstor
         function obj = Thruster()
            
         end
         
+        % Setter pour ajuster la force ainsi que les informations du
+        % thruster.
+        % Argument: f - Force
         function this = set.force(this, f)
            this.force = f; 
            this.pwm = this.forceToPwm(this.force);
@@ -26,16 +33,14 @@ classdef Thruster < matlab.mixin.Heterogeneous
            this.power = this.forceToPower(this.force);
         end
     end
-        
+%==========================================================================
+%Methodes abstraites publiques
+%==========================================================================        
     methods(Abstract, Access=public)
-        forceToPwm(this, force);
-               
+        forceToPwm(this, force);     
         forceToCurrent(this, force);
-        
-        forceToEfficiency(this, force);
-        
-        forceToRPM(this, force);
-        
+        forceToEfficiency(this, force);   
+        forceToRPM(this, force);       
         forceToPower(this, force);
     end
 end

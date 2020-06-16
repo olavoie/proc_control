@@ -1,11 +1,14 @@
 classdef ProcControlNode
-    %PROCCONTROLNODE Summary of this class goes here
-    %   Detailed explanation goes here
-    
+    %ProcControlNode class
+%==========================================================================
+%Proprietes
+%==========================================================================    
     properties
-        node;
+        
     end
-    
+%==========================================================================
+%Methodes
+%==========================================================================    
     methods
         function this = ProcControlNode()
             

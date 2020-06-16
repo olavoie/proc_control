@@ -1,6 +1,9 @@
 classdef Config
     %CONFIG class.
     
+%==========================================================================
+%Proprietes
+%==========================================================================
     properties
         z        %Position des truster sur le frame.
                  %(0 = milieu, 1= position bas, -1= postion haut)(t15,t26,t37,t48)
@@ -11,10 +14,14 @@ classdef Config
         psl      % Power supply limitation
         nbt      % nombre de thrusters
     end
-    
+%==========================================================================
+%Methodes
+%==========================================================================
+    % Constructor
+    % Argument: filename: nom du fichier de configuration
     methods
         function this = Config(filename)
-            % Constructor
+            % Lecture des informations du fichier.
             folder = pwd;
             absoluteFileName = fullfile(folder, '../config/', filename);
             cf = jsondecode(fileread(absoluteFileName));
