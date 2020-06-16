@@ -1,7 +1,9 @@
 classdef ThrusterOptimisation < handle
     %TRUSTEROPTIMISATION Summary of this class goes here
     %   Detailed explanation goes here
-    
+%==========================================================================
+%Propriétés.
+%==========================================================================   
     properties
       
         f;  % Objective function
@@ -9,14 +11,14 @@ classdef ThrusterOptimisation < handle
         W;  % Watt array
         SN; % simplify Newton array
         SW; % simplify Watt array
-        nbt;
+        nbt;% Nombre de thrusters.
         ef; % extrapole du tableau N/W
         FT; % Force min max truster
     end
 %==========================================================================
-%Methodes
+%Methodes publique
 %==========================================================================   
-    methods
+    methods (Access= public)
 
         function this = ThrusterOptimisation(N,W,nbt,ef,FT)
         % Constructeur
@@ -29,17 +31,15 @@ classdef ThrusterOptimisation < handle
             this.f = @(x) this.OptNonLinearObjFunc(x);
             
         end
-%==========================================================================
 
-    function ReduceArray(this)
+        function ReduceArray(this)
     % réduit les tableau N et W pour réduire le temps de l'optimisation. 
         this.SN=this.N(2:2:end,:);
         this.SW=this.W(2:2:end,:);
 
-    end
-%==========================================================================
+        end
 
-    function OT = NLoptimiseThrusterOutput(this,LD,command)
+        function OT = NLoptimiseThrusterOutput(this,LD,command)
    % optimise la sortie des thrusters pour limiter la cosomation élé
     % Arguments : input,vecteur résultant
     %           : LD, M=matrice L X matrice D
@@ -62,8 +62,8 @@ classdef ThrusterOptimisation < handle
    
     OT= SOL;
     end
-%==========================================================================
-    function f= OptNonLinearObjFunc(this,x)
+
+        function f= OptNonLinearObjFunc(this,x)
     % fonction objective optimisé pour la minimisation non linéaire. 
     % retourne la Consomation élé total selon la force des 8 thrusters
     % Arguments : x, vecteur force des 8 thrusters
@@ -78,19 +78,19 @@ classdef ThrusterOptimisation < handle
         end
         f=n;
     end
-%==========================================================================
-    function f= RealNonLinearObjFunc(this,x)
-    % fonction objective réel pour la minimisation non linéaire. 
-    % retourne la Consomation élé total selon la force des 8 thrusters
-    % Arguments : x, vecteur force des 8 thrusters
+
+        function f= RealNonLinearObjFunc(this,x)
+        % fonction objective réel pour la minimisation non linéaire. 
+        % retourne la Consomation élé total selon la force des 8 thrusters
+        % Arguments : x, vecteur force des 8 thrusters
         n=0;
         for i=1:this.nbt
         n=n+interp1(this.N, this.W, x(i), "spline");
         end
         f=n;
     end
-%==========================================================================
-    function s=ComputeFeasibleSolution(this,LD,command)
+
+        function s=ComputeFeasibleSolution(this,LD,command)
     % Calcule un solution fesable non optimal pour donnée les point de 
     % départ au solveur. ceci réduit le temps d'optimisation
     % Arguments: command, le vecteur résultant.
@@ -99,13 +99,8 @@ classdef ThrusterOptimisation < handle
         RM= [LD;c1;c2];
         FC= [command,0,0].';
         s=RM\FC;     
-    end
+        end
     
-    function he= GetHeadingError(this,command,approx)
-        c=command(:,1:3);
-        a=approx(:,1:3);
-        he = rad2deg(atan2(norm(cross(a,c)),dot(a,c)));
-    end
     end
 end
 

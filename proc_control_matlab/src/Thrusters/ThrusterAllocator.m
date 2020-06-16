@@ -4,7 +4,7 @@ classdef ThrusterAllocator < handle
 %==========================================================================
 %Propriétés.
 %==========================================================================
- properties (Access= public)
+ properties (Access= private)
      
         L; %Mapping Matrix
         D; %Fault Matrix
@@ -17,7 +17,7 @@ classdef ThrusterAllocator < handle
         fl; %Limitation mecanique du truster en %.
         CT; % Commande Truster
         OPT; % instance TrusterOptimisation
-      
+        APX; % Instance ThrusterApprox
  end
 %==========================================================================
 %Accesseur/mutateur
@@ -76,7 +76,7 @@ end
            this.D= ones(1,this.C.nbt);
            this.FT = this.GetMinMax(this.TSPEC{:,6});
            
-           % Trover la limation mécanique selon la limitation élé.
+           % Trouver la limation mecanique selon la limitation élé.
            this.EleMecRatio();
            
            %Calculer les forces max reel et theorique de chaque axes
@@ -89,6 +89,10 @@ end
            % Instancie la classe ThrusterOPtimisation
            this.OPT= ThrusterOptimisation...
                (this.TSPEC{:,6},this.TSPEC{:,7},this.C.nbt,ep,this.FT);
+           
+           % Instancie la classe ThrusterApprox
+           this.APX= ThrusterApprox(this.C.nbt,this.FT*this.fl,this.MLDR);
+           
         end
 
         function UpdateDampingMatrix(this, input)
@@ -96,31 +100,68 @@ end
              % Arguments : changerment matrice defaut
             this.D = input;
             this.MLDR = this.GetMaxLoadAllAxis(this.L*diag(this.D));
+            this.APX.MLDR=this.MLDR;
         end
         
- 
         function OT = GetNlThrusterOutput(this,command)
         % Détermine la force de chaque thruster selon le vecteur résultant.
         % Arguments : input,vecteur résultant   
         
         tic;
         LD=this.L*diag(this.D);
-        %Optimise la force de chaque
+        %Optimise la force de chaque thruster
         OT=this.OPT.NLoptimiseThrusterOutput(LD,command);
-        [b, ER] = this.CheckFesability(OT);
+        % vérifie la fesabilitée et reduit la commande au besoin
+        [rot, OLA]=this.APX.ApproxThrusterOutput(OT,command,this.D);
         
-         if b
-         disp("rip");
-             
-         end
-       toc;
-        for i=1:this.C.nbt
-            this.T(i).force=OT(i);
+        %Si un axe est surcharger
+        if OLA(1)>0
+         %Calculer le vecteur résultant réduit.
+         LAC= this.L*diag(this.D)*rot.'; 
+         SV=this.GetAxisSaturation(LAC,OLA);
         end
         toc;
+       
+        for i=1:this.C.nbt
+            this.T(i).force=rot(i);
+        end
+              
   
-    end
+        end
+        function Debug(this)
+         % affiche les info de la classe.
+         % Arguments : NA.
+            disp("----------------------------------");
+            disp("Test TrusterModel class...");
+            disp("----------------------------------");
 
+
+            disp("----------------------------------");
+            disp("limitation de la  force des moteurs (%)");
+            disp("----------------------------------");
+            disp(this.fl());
+
+            disp("----------------------------------");
+            disp("Matrice des coefficients des thruster");
+            disp("----------------------------------");
+            disp(this.L);
+
+            disp("----------------------------------");
+            disp("Matrice de défault thruster");
+            disp("----------------------------------");
+            disp(this.D);
+
+            disp("----------------------------------");
+            disp("Force maximum théorique des 6 DLL");
+            disp("----------------------------------");
+            disp(this.MLDT);
+
+            disp("----------------------------------");
+            disp("Force maximum réel des 6 DDL");
+            disp("----------------------------------");
+            disp(this.MLDR);
+        end
+        
     end
 %==========================================================================
 %Methodes privées
@@ -151,30 +192,48 @@ end
              end
              % concactener les variables pour avour une matrice lisible.
              a14 =this.C.a14;
-             d14 =this.C.d14;
-             d58=this.C.d58;
+             d14 =this.C.d14; %dist centre geo - centre masse
+             d58=this.C.d58;  %dist centre geo - centre masse
+             M=this.C.CM;
+             
              z=this.C.z;
              dz =this.C.dz;
              % Thruster effort Mapping Matrix (L)
-            %       x         y      z rx ry           rz
-            l1 = [ sin(a14),-cos(a14), 0, (d14(3)+z(1)*dz)*cos(a14),...
-                 (d14(3)+z(1)*dz)*sin(a14),-hypot( d14(1), d14(2))];
+            %       x         y      z      
+           l1 = [ sin(a14),-cos(a14), 0,... fxyz
+                (d14(3)-M(3)+z(1)*dz)*cos(a14),... rx
+                (d14(3)-M(3)+z(1)*dz)*sin(a14),... ry
+                -hypot( d14(1)-M(1), d14(2)-M(2))]; %rx
              
-            l2 = [ sin(a14), cos(a14), 0,-(d14(3)+z(2)*dz)*cos(a14),...
-                 (d14(3)+z(2)*dz)*sin(a14),-hypot(-d14(1), d14(2))];
+           l2 = [ sin(a14), cos(a14), 0,...fxyz
+                 -(d14(3)-M(3)+z(2)*dz)*cos(a14),...rx
+                 (d14(3)-M(3)+z(2)*dz)*sin(a14),...ry
+                 -hypot( d14(1)+M(1), d14(2)-M(2))];%rx
              
-            l3 = [ sin(a14),-cos(a14), 0, (d14(3)+z(3)*dz)*cos(a14),...
-                 (d14(3)+z(3)*dz)*sin(a14), hypot(-d14(1),-d14(2))];
+           l3 = [ sin(a14),-cos(a14), 0,...fxyz
+                (d14(3)-M(3)+z(3)*dz)*cos(a14),...rx
+                 (d14(3)-M(3)+z(3)*dz)*sin(a14),...ry
+                 hypot(d14(1)+M(1), d14(2)+M(2))];
              
-            l4 = [ sin(a14), cos(a14), 0,-(d14(3)+z(4)*dz)*cos(a14),...
-                 (d14(3)+z(4)*dz)*sin(a14), hypot( d14(1),-d14(2))];
+           l4 = [ sin(a14), cos(a14), 0,...fxyz
+                -(d14(3)-M(3)+z(4)*dz)*cos(a14),...rx
+                 (d14(3)-M(3)+z(4)*dz)*sin(a14),...ry
+                 hypot(d14(1)-M(1), d14(2)+M(2))];%rx
              
-            l5 = [0, 0, 1, d58(2),-d58(1), 0];
-            l6 = [0, 0,-1,-d58(2),-d58(1), 0];
-            l7 = [0, 0, 1,-d58(2), d58(1), 0];
-            l8 = [0, 0,-1, d58(2), d58(1), 0];
+            l5 = [0, 0, 1, (d58(2)-M(2)+z(1)*dz),...
+                 -(d58(1)-M(1)+z(1)*dz), 0];
+             
+            l6 = [0, 0,-1,-(d58(2)-M(2)+z(2)*dz),...
+                  -(d58(1)+M(1)+z(2)*dz), 0];
+              
+            l7 = [0, 0, 1,-(d58(2)+M(2)+z(3)*dz),...
+                (d58(1)+M(1)+z(3)*dz), 0];
+            
+            l8 = [0, 0,-1, (d58(2)+M(2)+z(4)*dz),...
+                 (d58(1)-M(1)+z(2)*dz), 0];
 
             this.L= [l1.', l2.', l3.', l4.', l5.' l6.', l7.', l8.'];
+            disp(this.L);
         end
         
         function lax= GetMaxLoadAllAxis(this,L)
@@ -199,22 +258,10 @@ end
         pf = 0; % Force dans le sens positf de l'axe
         nf = 0; % Force dans le sens négatif de l'axe
          for i = 1:numel(V)
-            pf=pf+this.GetThrusterMaxLoad(V(i),1);
-            nf=nf+this.GetThrusterMaxLoad(V(i),-1);  
+            pf=pf+ThrusterUtilities.GetThrusterMaxLoad(V(i),1,this.FT);
+            nf=nf+ThrusterUtilities.GetThrusterMaxLoad(V(i),-1,this.FT);  
          end
          lxx=[pf,-nf];
-        end
-        
-        function mt = GetThrusterMaxLoad(this,c,sens)
-        % Retourne la force de la composante selon le sens du thruster
-        % Arguments : c, la composante du thruster, 
-        %             tf, matrice de force thruster horraire, antihorraire.
-        %             sens, le sens de laxe exemple x+ ou x-
-            if (c>0 && sens>=0) || (c<0 && sens<0)
-               mt = abs(c*this.FT(1));
-            else
-               mt = abs(c*this.FT(2));
-            end
         end
             
         function mm= GetMinMax(this,A)
@@ -256,30 +303,17 @@ end
         f=fit(x,y,'poly5',opt);
         end
         
-        function [b, ER] = CheckFesability(this,output)
-        % Vérifie si les thruster ne dépasse pas leurs limite maximum
-        % Arguments : output, la matrice des forces de chaques thrusters  
-            EffRatio=zeros(1,this.C.nbt);
-            f=false;
-    
-            for i=1:this.C.nbt
-                % Empêche la divison par 0 si le Thruster est desactivé
-                if this.D(i)== 0 
-                    EffRatio(i)=0;
-                else
-                    % Calcule en % la force du thruster
-                    EffRatio(i)= abs(output(i))/this.GetThrusterMaxLoad...
-                                    (this.D(i)*this.fl,output(i));
-                    % Si le thruster dépasse sa capacité maximum           
-                    if EffRatio(i)>1
-                        f=true;
-                    end                 
+        function SV= GetAxisSaturation(this,LAC,OLA)
+        % Calcule le vecteur saturation pour limiter un ou plusieurs axe.
+         % Arguments : LAC.
+            SV=zeros(1,6);
+            for i=1:6
+                if ismember(i,OLA)
+                    SV(i)=LAC(i);
                 end
-            end    
-            b=f;
-            ER=EffRatio;
+            end
         end
-
  end
+
 end
 

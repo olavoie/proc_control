@@ -13,6 +13,7 @@ classdef Config
         d58      % Distance x y z des trusters 5 - 8.
         psl      % Power supply limitation
         nbt      % nombre de thrusters
+        CM       % Centre de masse
     end
 %==========================================================================
 %Methodes
@@ -40,6 +41,9 @@ classdef Config
                         cf.dist_t5_t8.z];
             this.psl = cf.ps_limitation;
             this.nbt= cf.nb_thrusters;
+            this.CM =[cf.centre_masse.x,...
+                      cf.centre_masse.y,...
+                      cf.centre_masse.z];
         end
     end
 end
