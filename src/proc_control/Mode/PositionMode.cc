@@ -67,17 +67,17 @@ namespace proc_control {
 
         if (deltaTimeS_ > (0.0001f))
         {
-            /*if (trajectoryManager_->IsTrajectoryComputed())
+            if (trajectoryManager_->IsTrajectoryComputed())
             {
                 trajectory_ = trajectoryManager_->GetSpeedTrajectory(); //change value
                 targetPose_ = trajectory_.pose;
                 targetTwist_ = trajectory_.twist;
-            }*/
+            }
 
             GetLocalError(targetPose_, controllerCommand_.errorPose);
             GetLocalErrorSpeed(targetTwist_, controllerCommand_.errorVelocity);
             
-            //robotState_->PosePublisher(controllerCommand_.errorPose * DEGREE_TO_RAD, robotState_->GetControllerPoseErrorPublisher());
+            robotState_->PosePublisher(targetTwist_, robotState_->GetControllerPoseErrorPublisher());
             robotState_->TwistPublisher(controllerCommand_.errorVelocity, robotState_->GetControllerTwistErrorPublisher());
 
             /*robotState_->PosePublisher(targetPose_, robotState_->GetDebugTargetPublisher());
