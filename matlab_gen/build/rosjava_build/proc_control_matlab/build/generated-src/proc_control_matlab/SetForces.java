@@ -1,9 +1,9 @@
 package proc_control_matlab;
 
-public interface SetForcesRequest extends org.ros.internal.message.Message {
-  static final java.lang.String _TYPE = "proc_control_matlab/SetForcesRequest";
-  static final java.lang.String _DEFINITION = "float64 x\nfloat64 y\nfloat64 z\nfloat64 roll\nfloat64 pitch\nfloat64 yaw\n";
-  static final boolean _IS_SERVICE = true;
+public interface SetForces extends org.ros.internal.message.Message {
+  static final java.lang.String _TYPE = "proc_control_matlab/SetForces";
+  static final java.lang.String _DEFINITION = "float64 X\nfloat64 Y\nfloat64 Z\nfloat64 Roll\nfloat64 Pitch\nfloat64 Yaw";
+  static final boolean _IS_SERVICE = false;
   static final boolean _IS_ACTION = false;
   double getX();
   void setX(double value);

@@ -10,7 +10,7 @@ classdef PositionMode < ControlMode
            
         end
         
-        function process()
+        function process(this)
            
         end
     end

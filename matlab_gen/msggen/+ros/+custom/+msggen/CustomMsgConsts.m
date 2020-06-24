@@ -37,8 +37,6 @@ classdef CustomMsgConsts
         proc_control_TargetReached = 'proc_control/TargetReached'
         proc_control_ThrustLogging = 'proc_control/ThrustLogging'
         proc_control_matlab_SetForces = 'proc_control_matlab/SetForces'
-        proc_control_matlab_SetForcesRequest = 'proc_control_matlab/SetForcesRequest'
-        proc_control_matlab_SetForcesResponse = 'proc_control_matlab/SetForcesResponse'
     end
     
     methods (Static, Hidden)
@@ -48,7 +46,7 @@ classdef CustomMsgConsts
             
             persistent msgList
             if isempty(msgList)
-                msgList = cell(23, 1);
+                msgList = cell(22, 1);
                 msgList{1} = 'proc_control/ClearWaypointRequest';
                 msgList{2} = 'proc_control/ClearWaypointResponse';
                 msgList{3} = 'proc_control/EnableControlRequest';
@@ -70,8 +68,7 @@ classdef CustomMsgConsts
                 msgList{19} = 'proc_control/SetPositionTargetResponse';
                 msgList{20} = 'proc_control/TargetReached';
                 msgList{21} = 'proc_control/ThrustLogging';
-                msgList{22} = 'proc_control_matlab/SetForcesRequest';
-                msgList{23} = 'proc_control_matlab/SetForcesResponse';
+                msgList{22} = 'proc_control_matlab/SetForces';
             end
             
             messageList = msgList;
@@ -83,7 +80,7 @@ classdef CustomMsgConsts
             
             persistent svcList
             if isempty(svcList)
-                svcList = cell(10, 1);
+                svcList = cell(9, 1);
                 svcList{1} = 'proc_control/ClearWaypoint';
                 svcList{2} = 'proc_control/EnableControl';
                 svcList{3} = 'proc_control/EnableThrusters';
@@ -93,7 +90,6 @@ classdef CustomMsgConsts
                 svcList{7} = 'proc_control/SetControlMode';
                 svcList{8} = 'proc_control/SetDecoupledTarget';
                 svcList{9} = 'proc_control/SetPositionTarget';
-                svcList{10} = 'proc_control_matlab/SetForces';
             end
             
             % The message list was already sorted, so don't need to sort
