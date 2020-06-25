@@ -25,7 +25,7 @@ classdef Config
             % Lecture des informations du fichier.
             folder = pwd;
             absoluteFileName = fullfile(folder, '../config/', filename);
-            cf = jsondecode(fileread(absoluteFileName));
+            cf = json_decode(fileread(absoluteFileName));
             disp(cf);
             this.z = [cf.z_frame_pos.t15, ...
                       cf.z_frame_pos.t26, ...
