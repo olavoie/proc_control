@@ -10,33 +10,51 @@ classdef Config
         d58      % Distance x y z des trusters 5 - 8.
         psl      % Power supply limitation
         nbt      % nombre de thrusters
-        CM       % Centre de masse
+        RG       % Centre de masse
+        RB       % Centre de flotaison
+        I        % Inertie
+        mass
+        volume
     end
     
     methods
         function this = Config(filename)
             % Constructor
-            folder = pwd;
-            absoluteFileName = fullfile(folder, '../config/', filename);
-            cf = jsondecode(fileread(absoluteFileName));
-            disp(cf);
-            this.z = [cf.z_frame_pos.t15, ...
-                      cf.z_frame_pos.t26, ...
-                      cf.z_frame_pos.t37, ...
-                      cf.z_frame_pos.t48];
-            this.dz = cf.dist_btw_frame_positions;
-            this.d14 = [cf.dist_t1_t4.x, ...
-                        cf.dist_t1_t4.y, ...   
-                        cf.dist_t1_t4.z];
-            this.a14 = deg2rad(cf.angle_t1_t4);
-            this.d58 = [cf.dist_t5_t8.x, ...
-                        cf.dist_t5_t8.y, ...   
-                        cf.dist_t5_t8.z];
-            this.psl = cf.ps_limitation;
-            this.nbt= cf.nb_thrusters;
-            this.CM =[cf.centre_masse.x,...
-                      cf.centre_masse.y,...
-                      cf.centre_masse.z];
+            
+           
+            this.z = [0, ...
+                      0, ...
+                      0, ...
+                      0];
+                  
+            this.dz = 0.015;
+            
+            this.d14 = [.0292, ...
+                        0.173, ...   
+                        0.082];
+            this.a14 = deg2rad(45);
+            
+            this.d58 = [0.1815, ...
+                        0.159, ...   
+                        0.082];
+                    
+            this.psl = 0.5;
+            this.nbt= 8;
+            
+            this.RG =[0.01,...x
+                      0.02,...y
+                      0.01];% z
+                  
+            this.RB =[0.01,...x
+                      0.02,...y
+                      0.01];% Z
+                  
+           this.mass =48.1;
+           this.volume =0.055;
+           
+           this.I=[1,1,1;... Ixx Ixy Ixz
+                   1,1,1;... Iyx Iyy Iyz
+                   1,1,1]; % Izx Izy Izz
         end
     end
 end
