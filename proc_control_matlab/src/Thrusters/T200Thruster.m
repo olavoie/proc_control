@@ -4,7 +4,8 @@ classdef T200Thruster < Thruster
 %Proprietes
 %==========================================================================
     properties
-        newtons;
+        % Données provenants du fabriquant.
+        newtons;      
         amps;
         watts;
         pwms;
@@ -30,22 +31,33 @@ classdef T200Thruster < Thruster
 %Methodes publiques
 %==========================================================================
     methods(Access=public)      
+        % Fonction pour obtenir le pwm en fonction de la force.
+        % Argument: force
         function pwm = forceToPwm(this, force)
             pwm = round(interp1(this.newtons, this.pwms, force, "linear"));
         end
-                
+             
+        % Fonction pour obtenir le courant en fonction de la force.
+        % Argument: force
         function current = forceToCurrent(this, force)
             current = interp1(this.newtons, this.amps, force, "nearest");
         end
-                
+        
+        % Fonction pour obtenir l'efficience en fonction de la force.
+        % Argument: force
         function eff = forceToEfficiency(this, force)
             eff = interp1(this.newtons, this.efficiencies, force, "nearest");
         end
         
+        % Fonction pour obtenir le nombre de rotation par minutes en
+        % fonction de la force.
+        % Argument: force
         function rpm = forceToRPM(this, force)
             rpm = interp1(this.newtons, this.rpms, force, "nearest");
         end
-             
+        
+        % Fonction pour obtenir la puissance en fonction de la force.
+        % Argument: force
         function power = forceToPower(this, force)
             power = interp1(this.newtons, this.watts, force, "nearest");
         end

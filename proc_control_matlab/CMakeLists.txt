@@ -6,10 +6,9 @@ project(proc_control_matlab)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   std_msgs
-)
-
-find_package(catkin REQUIRED COMPONENTS
   actionlib_msgs
+  message_generation
+  message_runtime
 )
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -42,18 +41,17 @@ find_package(catkin REQUIRED COMPONENTS
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
-#   Message2.msg
-# )
+add_message_files(
+  FILES
+  SetForces.msg
+
+)
 
 ## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
-# )
+#add_service_files(DIRECTORY srv
+#  FILES
+#  SetForces.srv
+#)
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -63,11 +61,11 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs
-#   actionlib_msgs
-# )
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+  actionlib_msgs
+)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
