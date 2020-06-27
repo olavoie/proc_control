@@ -26,7 +26,7 @@ classdef Modele_dinamique_AUV < matlab.System & handle
         
         function setupImpl(this)
             % Perform one-time calculations, such as computing constants
-            this.C = Config('config_AUV8.json');
+            this.C = ConfigAUV8();
             
             this.W= this.C.mass*this.g; % Calcule la  force de gravité
             this.B= this.p*this.C.volume*this.g; % Calcule la force de flotaison
