@@ -29,36 +29,9 @@ classdef Modele_dinamique_AUV < matlab.System & handle
             % Perform one-time calculations, such as computing constants
             this.C = ConfigAUV8();
             
-            this.W= this.C.mass*this.g; % Calcule la  force de gravite
-            this.B= this.p*this.C.volume*this.g; % Calcule la force de flotaison
-            
-            % Variables utiles pour le calcul de la matrice des masses 
-            % du corp rigide.
-            m = this.C.mass;
-            xg = this.C.RG(1);
-            yg = this.C.RG(2);
-            zg = this.C.RG(3);
-            
-            % Définition des quatres matrices 6x6 pour former la matrice
-            % des masses du corp rigide.
-            Mrb1 = diag(this.C.mass, 3);
-            Mrb2 = [0, m * zg, -m * yg; ...
-                    -m * zg, 0, m * xg; ...
-                    m * yg, -m * xg, 0];
-            Mrb3 = [0, -m * zg, m * yg; ...
-                    m * zg, 0, -m * xg; ...
-                    -m * yg, m * xg, 0];
-            Mrb4 = this.C.I;
-            
-            % Matrice des masses du corps rigide.
-            MRB = [Mrb1, Mrb2; ... 
-                   Mrb3, Mrb4];
-               
-            % Matrice des masses ajoutées.
-            
-            
-            % Calcul de la matrice des masses et inerties.
-            this.M = MRB + MA;
+            this.W = this.C.mass*this.g; % Calcule la  force de gravite
+            this.B = this.p*this.C.volume*this.g; % Calcule la force de flotaison
+            this.M = this.masse();
         end
 
         function Force = stepImpl(this,pos,vitesse)
@@ -96,7 +69,34 @@ classdef Modele_dinamique_AUV < matlab.System & handle
  
             G  = [X;Y;Z;Rx;Ry;Rz];
         end   
-         
-        
+        function M = Masse()
+            % Variables utiles pour le calcul de la matrice des masses 
+            % du corp rigide.
+            m = this.C.mass;
+            xg = this.C.RG(1);
+            yg = this.C.RG(2);
+            zg = this.C.RG(3);
+            
+            % Définition des quatres matrices 6x6 pour former la matrice
+            % des masses du corp rigide.
+            Mrb1 = diag(this.C.mass, 3);
+            Mrb2 = [0, m * zg, -m * yg; ...
+                    -m * zg, 0, m * xg; ...
+                    m * yg, -m * xg, 0];
+            Mrb3 = [0, -m * zg, m * yg; ...
+                    m * zg, 0, -m * xg; ...
+                    -m * yg, m * xg, 0];
+            Mrb4 = this.C.I;
+            
+            % Matrice des masses du corps rigide.
+            MRB = [Mrb1, Mrb2; ... 
+                   Mrb3, Mrb4];
+               
+            % Matrice des masses ajoutées.
+            
+            
+            % Calcul de la matrice des masses et inerties.
+            M = MRB + MA;
+        end
     end   
 end
