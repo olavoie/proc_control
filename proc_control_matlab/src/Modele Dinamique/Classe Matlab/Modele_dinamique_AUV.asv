@@ -13,13 +13,15 @@ classdef Modele_dinamique_AUV < matlab.System & handle
    
     end
 
-    % Pre-computed constants
+    % Pre-computed constantsGravit
     properties(Access = private)
     W; % force de gravitationelle
     B; % force de flotaison
     g=9.81; % constante gravitationelle
     p=998; % densitÃ© du fluide
     C; % config
+    MRB; % Matrice des masses du corps rigide
+    MA; % Masse ajoutée (Hydrodynamique)
     M; % MRB + MA - Matrice de masse et d'inertie.
     end
 
@@ -43,29 +45,22 @@ classdef Modele_dinamique_AUV < matlab.System & handle
             % des masses du corp rigide.
             Mrb1 = diag(this.C.mass, 3);
             Mrb2 = [0, m * zg, -m * yg; ...
-                    -m * zg, 0, m * xg; ...
-                    m * yg, -m * xg, 0];
+                         -m * zg, 0, m * xg; ...
+                         m * yg, -m * xg, 0];
             Mrb3 = [0, -m * zg, m * yg; ...
-                    m * zg, 0, -m * xg; ...
-                    -m * yg, m * xg, 0];
+                         m * zg, 0, -m * xg; ...
+                         -m * yg, m * xg, 0];
             Mrb4 = this.C.I;
-            
-            % Matrice des masses du corps rigide.
-            MRB = [Mrb1, Mrb2; ... 
-                   Mrb3, Mrb4];
-               
-            % Matrice des masses ajoutées.
-            
-            
-            % Calcul de la matrice des masses et inerties.
-            this.M = MRB + MA;
+            this.MRB = [Mrb1, Mrb2; ... 
+                        Mrb3, Mrb4];
+            this.M = this.MRB + 
         end
 
         function Force = stepImpl(this,pos,vitesse)
             % Implement algorithm. Calculate y as a function of input u and
             % discrete states.
             G=this.Gravitee(pos);
-            M = this.M;
+            
             Force=G;
         end
 
