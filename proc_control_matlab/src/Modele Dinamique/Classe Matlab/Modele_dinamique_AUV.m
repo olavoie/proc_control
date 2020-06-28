@@ -18,7 +18,7 @@ classdef Modele_dinamique_AUV < matlab.System & handle
     W; % force de gravitationelle
     B; % force de flotaison
     g=9.81; % constante gravitationelle
-    p=998; % densité du fluide
+    p=998; % densite du fluide
     C; % config
     M; % MRB + MA - Matrice de masse et d'inertie.
     end
