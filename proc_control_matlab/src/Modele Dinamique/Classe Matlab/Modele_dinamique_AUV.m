@@ -21,6 +21,7 @@ classdef Modele_dinamique_AUV < matlab.System & handle
     p=998; % densite du fluide
     C; % config
     M; % MRB + MA - Matrice de masse et d'inertie.
+    T; % matrice thrusters
     end
 
     methods(Access = protected)
@@ -32,6 +33,7 @@ classdef Modele_dinamique_AUV < matlab.System & handle
             this.W = this.C.mass*this.g; % Calcule la  force de gravite
             this.B = this.p*this.C.volume*this.g; % Calcule la force de flotaison
             this.M = this.Masse();
+            this.T = this.ThrustersMapping();
         end
 
         function Force = stepImpl(this,pos,vitesse,acc)
@@ -49,6 +51,7 @@ classdef Modele_dinamique_AUV < matlab.System & handle
     end
     
     methods(Access = private)
+        
        function G=Gravitee(this,pos)
             c=this.C;
             w=this.W;
@@ -71,7 +74,7 @@ classdef Modele_dinamique_AUV < matlab.System & handle
             G  = [X;Y;Z;Rx;Ry;Rz];
         end   
         
-        function M = Masse(this)
+       function M = Masse(this)
             % Variables utiles pour le calcul de la matrice des masses 
             % du corp rigide.
             m = this.C.mass;
@@ -102,9 +105,9 @@ classdef Modele_dinamique_AUV < matlab.System & handle
 
             % Calcul de la matrice des masses et inerties.
             M = MRB + MA;
-        end
+       end
         
-        function C = Coriolis(this, v)
+       function C = Coriolis(this, v)
             % Variables utiles pour la matrice.
             m = this.C.mass;
             i = this.C.I;
@@ -127,6 +130,59 @@ classdef Modele_dinamique_AUV < matlab.System & handle
             
             % Matrice de Coriolis
             C = CRB + CA;
+       end
+        
+       function T = ThrustersMapping(this)
+            % Calcule la matrice de componsates des thruster sur les 6DDL.
+            % Arguments : d14, Matrice Distance x y z  des trusters 1 - 4.
+            %             a14, Angles des trusters 1 - 4.
+            %             d58, Matrice distance x y z des trusters 5 - 8.
+            %             z,   Position des truster sur le frame.
+            %             dz,  Distance entre les postions du frame.
+         
+             % concactener les variables pour avour une matrice lisible.
+             a14 =this.C.a14;
+             d14 =this.C.d14; %dist centre geo - centre masse
+             d58=this.C.d58;  %dist centre geo - centre masse
+             cm=this.C.RG;
+             
+             z=this.C.z;
+             dz =this.C.dz;
+             % Thruster effort Mapping Matrix (L)
+            %       x         y      z      
+           l1 = [ sin(a14),-cos(a14), 0,... fxyz
+                (d14(3)-cm(3)+z(1)*dz)*cos(a14),... rx
+                (d14(3)-cm(3)+z(1)*dz)*sin(a14),... ry
+                -hypot( d14(1)-cm(1), d14(2)-cm(2))]; %rz
+             
+           l2 = [ sin(a14), cos(a14), 0,...fxyz
+                 -(d14(3)-cm(3)+z(2)*dz)*cos(a14),...rx
+                 (d14(3)-cm(3)+z(2)*dz)*sin(a14),...ry
+                 -hypot( d14(1)+cm(1), d14(2)-cm(2))];%rz
+             
+           l3 = [ sin(a14),-cos(a14), 0,...fxyz
+                (d14(3)-cm(3)+z(3)*dz)*cos(a14),...rx
+                 (d14(3)-cm(3)+z(3)*dz)*sin(a14),...ry
+                 hypot(d14(1)+cm(1), d14(2)+cm(2))];%rz
+             
+           l4 = [ sin(a14), cos(a14), 0,...fxyz
+                -(d14(3)-cm(3)+z(4)*dz)*cos(a14),...rx
+                 (d14(3)-cm(3)+z(4)*dz)*sin(a14),...ry
+                 hypot(d14(1)-cm(1), d14(2)+cm(2))];%rz
+             
+            l5 = [0, 0, 1, (d58(2)-cm(2)+z(1)*dz),...
+                 -(d58(1)-cm(1)+z(1)*dz), 0];
+             
+            l6 = [0, 0,-1,-(d58(2)-cm(2)+z(2)*dz),...
+                  -(d58(1)+cm(1)+z(2)*dz), 0];
+              
+            l7 = [0, 0, 1,-(d58(2)+cm(2)+z(3)*dz),...
+                (d58(1)+cm(1)+z(3)*dz), 0];
+            
+            l8 = [0, 0,-1, (d58(2)+cm(2)+z(4)*dz),...
+                 (d58(1)-cm(1)+z(2)*dz), 0];
+
+            T = [l1.', l2.', l3.', l4.', l5.' l6.', l7.', l8.'];
         end
     end   
 end
