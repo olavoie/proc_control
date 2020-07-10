@@ -36,9 +36,7 @@ B = rho*cf.volume*gVal; % Calcule la force de flotaison
 
 
 T = ThrustersMapping(cf); % Avoir la matrice thrusters
-control = [u1, u2, u3, u4, u5, u6, u7, u8]; % vecteur input 
-allocator = sum(T*diag(control),2); % équoition input pour 6doff
-
+ 
 paramValues = [IxxVal IyyVal IzzVal kVal lVal mVal bVal gVal];
 
 % Group symbolic variables
