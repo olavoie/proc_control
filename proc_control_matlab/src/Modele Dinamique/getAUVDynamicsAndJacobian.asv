@@ -16,31 +16,17 @@ syms xdott(t) ydott(t) zdott(t) phidott(t) thetadott(t) psidott(t)
 %syms u1 u2 u3 u4 u5 u6 u7 u8
 syms ('U',[1,8])
 
+
 % position et vitesse 6DOFF
 syms x y z phi theta psi xdot ydot zdot phidot thetadot psidot
 
-% distance truster x y z selon centre geommétrique
+%distance truster x y z selon centre geommétrique
 % D14 distance thruster 1 a 4.
 % D58 distance thruster 5 a 8.
 % a14 angle thruster 1 a 4.
 % dz distance entre les increments sur le frame.
 % PZ position des truster sur le frame.
 syms ('D14',[1 3]); syms('D58',[1 3]) ; syms a14 dz ; syms ('PZ',[1,4])
-
-% masse du prototype
-syms mass
-
-% masse volumique de l'eau
-syms rho
-
-% coefficient de drag
-syms cd
-
-% aire surface du sub
-syms af
-
-% matrice d'inertie
-syms ('I', [3, 3]);
 
 % centre de gravité RG et centre de flotataison RB
 syms ('RG',[1 3]); syms('RB',[1 3])
@@ -69,69 +55,11 @@ J2=simplify(inv(J2i));
 
 J= diag([J1,J2]);
 
-%% Matrice de masse et d'inertie
-% Definition des quatres matrices 3x3 pour former la matrice
-% des masses du corp rigide.
-Mrb1 = diag(repmat(mass,1,3));
-Mrb2 = [0, mass * RG3, -mass * RG2; ...
-        -mass * RG3, 0, mass * RG1; ...
-        mass * RG2, -mass * RG1, 0];
-Mrb3 = [0, -mass * RG3, mass * RG2; ...
-        mass * RG3, 0, -mass * RG1; ...
-        -mass * RG2, mass * RG1, 0];
 
-forme= (diag(repmat(2,1,3))-1); % diag 1 avec -1 partout
-Mrb4 = I.*forme;
-
-% Matrice des masses du corps rigide.
-MRB = [Mrb1, Mrb2; ... 
-       Mrb3, Mrb4];
-
-% Matrice des masses ajoutees.
-MA=zeros(6,6);
-
-% Calcul de la matrice des masses et inerties.
-M = MRB + MA;
-
-%% Matrice des forces de Coriolis
-% Définition des matrices 3x3 pour former la matrice de
-% Coriolis (corps rigide).
-crb1 = zeros(3,3);
-crb23 = [0, mass * zdott, -mass * ydott; ...
-         -mass * zdott, 0, mass * xdott; ...
-         mass * ydott, -mass * xdott, 0];
-crb4 = [0, I3_3 * psidott, -I2_2 * thetadott; ...
-        -I3_3 * psidott, 0, I1_1 * phidott; ...
-        I2_2 * thetadott, -I1_1 * phidott, 0];
-% Matrice de Coriolis(Corps rigide)
-CRB = [crb1, crb23; ...
-       crb23, crb4];
-
-% Matrice de Coriolis (masse ajoutée)
-CA = zeros(6,6);
-
-% Matrice de Coriolis
-C = CRB + CA;
-    
-%% Matrice des forces de drag
-xu = (-(1/2) * rho * cd * af) * xdott;
-yv = (-(1/2) * rho * cd * af) * ydott;
-zw = (-(1/2) * rho * cd * af) * zdott;
-kp = (-(1/2) * rho * cd * af) * phidott;
-mq = (-(1/2) * rho * cd * af) * thetadott;
-nr = (-(1/2) * rho * cd * af) * psidott;
-
-% Matrice quadratic damping.
-Dq = diag([xu yv zw kp mq nr]);
-
-% Matrice linear damping.
-Dl = zeros(6,6);
-
-D = Dq + Dl;
 
 %% Definir la matrice thrusters
 
-% Thruster effort Mapping Matrix (L)
+  % Thruster effort Mapping Matrix (L)
 %       x         y      z      
 l1 = [ sin(a14),-cos(a14), 0,... fxyz
     (D14(3)-RG(3)+PZ(1)*dz)*cos(a14),... rx
@@ -169,6 +97,8 @@ l8 = [0, 0,-1, (D58(2)+RG(2)+PZ(4)*dz),...
 T = [l1.', l2.', l3.', l4.', l5.' l6.', l7.', l8.'];
 % équoition input pour 6doff
 allocator = simplify(sum(T*diag(U),2)); 
+
+
 
 %% test
 cf = ConfigAUV8();

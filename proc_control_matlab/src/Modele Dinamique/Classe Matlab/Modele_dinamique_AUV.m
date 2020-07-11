@@ -19,6 +19,8 @@ classdef Modele_dinamique_AUV < matlab.System & handle
     B; % force de flotaison
     g=9.81; % constante gravitationelle
     p=998; % densite du fluide
+    Cd = 1;
+    Af = 10;
     C; % config
     M; % MRB + MA - Matrice de masse et d'inertie.
     T; % matrice thrusters
@@ -130,6 +132,24 @@ classdef Modele_dinamique_AUV < matlab.System & handle
             
             % Matrice de Coriolis
             C = CRB + CA;
+       end
+       
+       function D = Drag(this, v)
+           % Variables utiles pour le calcul de la matrice de drag.
+           X =  (-(1/2) * this.p * this.Cd * this.Af) * v(1);
+           Y =  (-(1/2) * this.p * this.Cd * this.Af) * v(2);
+           Z =  (-(1/2) * this.p * this.Cd * this.Af) * v(3);
+           Kp = (-(1/2) * this.p * this.Cd * this.Af) * v(4);
+           Kq = (-(1/2) * this.p * this.Cd * this.Af) * v(5);
+           N =  (-(1/2) * this.p * this.Cd * this.Af) * v(6);
+           
+           % Matrice quadratic damping.
+           Dq = diag([X Y Z Kp Kq N]);
+           
+           % Matrice linear damping.
+           Dl = zeros(6,6);
+           
+           D = Dq + Dl;
        end
         
        function T = ThrustersMapping(this)
