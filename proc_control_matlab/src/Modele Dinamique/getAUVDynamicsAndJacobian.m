@@ -27,11 +27,8 @@ syms x y z phi theta psi xdot ydot zdot phidot thetadot psidot
 % PZ position des truster sur le frame.
 syms ('D14',[1 3]); syms('D58',[1 3]) ; syms a14 dz ; syms ('PZ',[1,4])
 
-% masse du prototype
-syms mass
-
-% masse volumique de l'eau
-syms rho
+% masse et volume du prototype
+syms mass volume
 
 % coefficient de drag
 syms cd
@@ -44,6 +41,10 @@ syms ('I', [3, 3]);
 
 % centre de gravité RG et centre de flotataison RB
 syms ('RG',[1 3]); syms('RB',[1 3])
+
+%% Constantes
+rho = 998;
+g = 9.81;
 
 %% Matrice de transformation 
 % Angle Euler X Y Z
@@ -68,6 +69,26 @@ J2i=[[1;0;0],Rx.'*[0;1;0],Rx.'*Ry.'*[0;0;1]];
 J2=simplify(inv(J2i));
 
 J= diag([J1,J2]);
+
+%% Matrice de gravite
+% Definition de la matrice de gravite.
+w = mass * g;
+b = rho * g * volume;
+
+X  =  (w-b)*sin(thetat);...
+Y  =  (w-b)*cos(thetat)*sin(phit);...
+Z  =  (w-b)*cos(thetat)*cos(phit);...
+
+Rx = -(RG2*w-RB2*b)*cos(thetat)*cos(phit)+...
+      (RG3*w-RB3*b)*cos(thetat)*sin(phit);
+
+Ry =  (RG3*w-RB3*b)*sin(thetat)+...
+      (RG1*w-RB1*b)*cos(thetat)*cos(phit);
+
+Rz =  (RG1*w-RB1*b)*cos(thetat)*sin(phit)-...
+      (RG2*w-RB2*b)*sin(thetat);
+
+G  = [X;Y;Z;Rx;Ry;Rz];
 
 %% Matrice de masse et d'inertie
 % Definition des quatres matrices 3x3 pour former la matrice
@@ -96,16 +117,16 @@ M = MRB + MA;
 %% Matrice des forces de Coriolis
 % Définition des matrices 3x3 pour former la matrice de
 % Coriolis (corps rigide).
-crb1 = zeros(3,3);
-crb23 = [0, mass * zdott, -mass * ydott; ...
+Crb1 = zeros(3,3);
+Crb23 = [0, mass * zdott, -mass * ydott; ...
          -mass * zdott, 0, mass * xdott; ...
          mass * ydott, -mass * xdott, 0];
-crb4 = [0, I3_3 * psidott, -I2_2 * thetadott; ...
+Crb4 = [0, I3_3 * psidott, -I2_2 * thetadott; ...
         -I3_3 * psidott, 0, I1_1 * phidott; ...
         I2_2 * thetadott, -I1_1 * phidott, 0];
 % Matrice de Coriolis(Corps rigide)
-CRB = [crb1, crb23; ...
-       crb23, crb4];
+CRB = [Crb1, Crb23; ...
+       Crb23, Crb4];
 
 % Matrice de Coriolis (masse ajoutée)
 CA = zeros(6,6);
