@@ -7,7 +7,7 @@ nu = 8;
 nlobj = nlmpc(nx, ny, nu);
 
 nlobj.Model.StateFcn = "AUVStateFcn";
-nlobj.Jacobian.StateFcn = @QuadrotorStateJacobianFcn;
+nlobj.Jacobian.StateFcn = @AUVStateJacobianFcn;
 rng(0)
 validateFcns(nlobj,rand(nx,1),rand(nu,1));
 
@@ -18,18 +18,19 @@ nlobj.Ts = Ts;
 nlobj.PredictionHorizon = p;
 nlobj.ControlHorizon = m;
 
-nlobj.MV = struct('Min',{-300;-300;-300;-300;-300;-300;-300;-300},...
-                  'Max',{ 500; 500; 500; 500; 500; 500; 500; 500});
-nlobj.Weights.OutputVariables = [.5 .7 2 2 3 2 0 0 0 0 0 0];
+nlobj.MV = struct('Min',{-26;-26;-26;-26;-26;-26;-26;-26},...
+                  'Max',{ 32; 32; 32; 32; 32; 32; 32; 32});
+ 
+nlobj.Weights.OutputVariables = [1 1 1 1 1 1 0 0 0 0 0 0];
 nlobj.Weights.ManipulatedVariables = [0.5 0.5 0.5 0.5 0.3 0.3 0.3 0.3];
-nlobj.Weights.ManipulatedVariablesRate = [0.1 0.1 0.1 0.1 0.3 0.3 0.3 0.3];
+nlobj.Weights.ManipulatedVariablesRate = [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1];
 
 % Specify the initial conditions
-x = [6;0;0;0;0;0;0;0;0;0;0;0];
+x = [0;0;0;0;0;0;0.3;0;0;0;0];
 % Nominal control that keeps the quadrotor floating
  nloptions = nlmpcmoveopt;
- %nloptions.MVTarget = [0 0 0 0 0 0 0 0]; 
- %mv = nloptions.MVTarget;
+ nloptions.MVTarget = [3 3 3 3 0 0 0 0]; 
+ mv = nloptions.MVTarget;
 
 
 Duration = 20;
@@ -49,7 +50,7 @@ for k = 1:(Duration/Ts)
     lastMV = uk;
     toc;
     % Update states.
-    ODEFUN = @(t,xk) QuadrotorStateFcn(xk,uk);
+    ODEFUN = @(t,xk) AUVStateFcn(xk,uk);
     [TOUT,YOUT] = ode45(ODEFUN,[0 Ts], xHistory(k,:)');
     xHistory(k+1,:) = YOUT(end,:);
     waitbar(k*Ts/Duration,hbar);

@@ -1,4 +1,4 @@
-classdef ThrusterUtilities
+classdef ThrusterUtilities<matlab.System
     %THRUSTERUTILITIES Summary of this class goes here
     %   Detailed explanation goes here
     

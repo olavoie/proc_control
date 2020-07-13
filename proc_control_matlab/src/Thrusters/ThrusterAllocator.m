@@ -1,9 +1,14 @@
-classdef ThrusterAllocator < handle
+classdef ThrusterAllocator < matlab.System
     %THRUSTERMODEL Summary of this class goes here
     %  Detailed explanation goes here
 %==========================================================================
 %Propriétés.
 %==========================================================================
+properties
+end
+properties(DiscreteState)
+end
+
  properties (Access= private)
      
         L; %Mapping Matrix
@@ -87,14 +92,14 @@ end
            ep= this.GetRelation(this.TSPEC{:,6},this.TSPEC{:,7});
            
            % Instancie la classe ThrusterOPtimisation
-           this.OPT= ThrusterOptimisation...
-               (this.TSPEC{:,6},this.TSPEC{:,7},this.C.nbt,ep,this.FT);
+             this.OPT= ThrusterOptimisation...
+              (this.TSPEC{:,6},this.TSPEC{:,7},this.C.nbt,ep,this.FT);
            
            % Instancie la classe ThrusterApprox
            this.APX= ThrusterApprox(this.C.nbt,this.FT*this.fl,this.MLDR);
            
         end
-
+       
         function UpdateDampingMatrix(this, input)
              % Update la matrice defaut et recalcule les force max.
              % Arguments : changerment matrice defaut
@@ -103,7 +108,7 @@ end
             this.APX.MLDR=this.MLDR;
         end
         
-        function OT = GetNlThrusterOutput(this,command)
+      function OT = GetNlThrusterOutput(this,command)
         % Détermine la force de chaque thruster selon le vecteur résultant.
         % Arguments : input,vecteur résultant   
         
@@ -127,7 +132,7 @@ end
         end
               
   
-        end
+        end  
         function Debug(this)
          % affiche les info de la classe.
          % Arguments : NA.
@@ -163,6 +168,17 @@ end
         end
         
     end
+   
+     methods(Access = protected)
+          function setupImpl(this)
+            % Perform one-time calculations, such as computing constants
+        end
+        function resetImpl(this)
+            % Initialize / reset discrete-state properties
+        end
+        
+     end
+      
 %==========================================================================
 %Methodes privées
 %==========================================================================

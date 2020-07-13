@@ -12,7 +12,7 @@ rng(0)
 validateFcns(nlobj,rand(nx,1),rand(nu,1));
 
 Ts = 0.1;
-p = 18;
+p = 15;
 m = 2;
 nlobj.Ts = Ts;
 nlobj.PredictionHorizon = p;
@@ -21,16 +21,16 @@ nlobj.ControlHorizon = m;
 nlobj.MV = struct('Min',{-26;-26;-26;-26;-26;-26;-26;-26},...
                   'Max',{ 32; 32; 32; 32; 32; 32; 32; 32});
  
-nlobj.Weights.OutputVariables = [1 1 1 1 1 1 0 0 0 0 0 0];
-nlobj.Weights.ManipulatedVariables = [0.2 0.2 0.2 0.2 0.2 0.2 0.2 0.2];
-nlobj.Weights.ManipulatedVariablesRate = [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1];
+nlobj.Weights.OutputVariables = [ 20 20 5 20 20 20 0 0 0 0 0 0];
+nlobj.Weights.ManipulatedVariables = [0.3 0.3 0.3 0.3 0.1 0.1 0.1 0.1];
+nlobj.Weights.ManipulatedVariablesRate = [0.1 0.1 0.1 0.1 0.3 0.3 0.3 0.3];
 
 % Specify the initial conditions
 x = [0;0;0;0;0;0;0;0;0;0;0;0];
 % Nominal control that keeps the quadrotor floating
  nloptions = nlmpcmoveopt;
- %nloptions.MVTarget = [0 0 0 0 0 0 0 0]; 
- %mv = nloptions.MVTarget;
+ nloptions.MVTarget = [0 0 0 0 0 0 0 0]; 
+ mv = nloptions.MVTarget;
 
 
 Duration = 20;
@@ -42,7 +42,7 @@ for k = 1:(Duration/Ts)
     tic;
     % Set references for previewing
     t = linspace(k*Ts, (k+p-1)*Ts,p);
-    yref = AUVReferenceTrajectory(t);
+    yref = QuadrotorReferenceTrajectory(t);
     % Compute the control moves with reference previewing.
     xk = xHistory(k,:);
     [uk,nloptions,info] = nlmpcmove(nlobj,xk,lastMV,yref',[],nloptions);

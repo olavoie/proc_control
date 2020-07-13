@@ -3,8 +3,8 @@ clear;
 
 addpath("Thrusters");
 
-config = Config('config_AUV7.json');
-M= ThrusterAllocator(config);
+C = Config('config_AUV8.json');
+M= ThrusterAllocator(C);
 
 
 

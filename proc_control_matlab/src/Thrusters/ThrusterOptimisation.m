@@ -1,4 +1,4 @@
-classdef ThrusterOptimisation < handle
+classdef ThrusterOptimisation < matlab.System
     %TRUSTEROPTIMISATION Summary of this class goes here
     %   Detailed explanation goes here
 %==========================================================================
