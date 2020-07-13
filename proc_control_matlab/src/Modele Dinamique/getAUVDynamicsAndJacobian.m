@@ -42,9 +42,8 @@ syms ('I', [3, 3]);
 % centre de gravité RG et centre de flotataison RB
 syms ('RG',[1 3]); syms('RB',[1 3])
 
-%% Constantes
-rho = 998;
-g = 9.81;
+% Constantes physique (densité de leau et accélération gravitationel
+syms rho g
 
 %% Matrice de transformation 
 % Angle Euler X Y Z
@@ -74,6 +73,9 @@ J= diag([J1,J2]);
 % Definition de la matrice de gravite.
 w = mass * g;
 b = rho * g * volume;
+FG = J1.'*[0;0;w];
+FB = J1.'*[0;0;-b];
+gg =simplify([FB+FG;cross(RB.',FB)+cross(RG.',FG)]);
 
 X  =  (w-b)*sin(thetat);...
 Y  =  (w-b)*cos(thetat)*sin(phit);...
@@ -216,8 +218,20 @@ D14val = cf.d14;
 D58val = cf.d58;
 a14val = cf.a14;
 RGval  = cf.RG;
+RBval  = cf.RB;
 dzval  = cf.dz;
 PZval  = cf.z;
+gval=9.81;
+rhoval=998;
+ang=0;
+massval=cf.mass;
+gg =  subs(gg,[RG RB g rho mass],[RGval RBval gval rhoval massval]);
+
+matlabFunction(gg,'File','ggg',...
+    'Vars',[phi, theta]);
+ggg(.7,0)
+G = subs(G,[RG RB g rho mass phit thetat psit],[RGval RBval gval rhoval massval 0 0 0]);
+
 
 y = subs(allocator, [D14 D58 a14 RG dz PZ], [D14val D58val a14val RGval dzval PZval]);
             
