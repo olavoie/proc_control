@@ -14,6 +14,10 @@ classdef ConfigAUV8
         I        % Inertie
         mass
         volume
+        rho
+        g
+        CD       % Coefficient de drag
+        AF       % Aire de la surface
     end
     methods
         function this = ConfigAUV8()
@@ -51,6 +55,10 @@ classdef ConfigAUV8
            this.I=[2,1,1;... Ixx Ixy Ixz
                    1,2,1;... Iyx Iyy Iyz
                    1,1,2]; % Izx Izy Izz
+           this.rho=998;
+           this.g=9.81;
+           this.CD=[1 1 1 1 1 1];
+           this.AF=[1 1 1];
         end
     end
 end
