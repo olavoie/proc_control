@@ -98,8 +98,8 @@ J= diag([J1,J2]);
 % Definition de la matrice de gravite.
 w = mass * g;
 b = rho * g * volume;
-FG = J1.'*[0;0;w];
-FB = J1.'*[0;0;-b];
+FG = inv(J1)*[0;0;w];
+FB = inv(J1)*[0;0;-b];
 gg =simplify([FB+FG;cross(RB.',FB)+cross(RG.',FG)]);
 
 X  =  (w-b)*sin(thetat);
@@ -237,7 +237,7 @@ vdot = [diff(xdott(t), t); ...
         diff(psidott(t), t)];
 
 % Vitesse/Accélération
-fonction(7:12) = (M * vdot + C * v + D * v + G - tau)/mass;
+fonction(7:12) = (tau + (M * vdot + C * v + D * v + gg))/mass;
 
 % Substitution des paramètres et des fontions.
 fonction = subs(fonction, params, paramValues);

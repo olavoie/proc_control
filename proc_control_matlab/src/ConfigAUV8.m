@@ -29,7 +29,7 @@ classdef ConfigAUV8
                   
             this.dz = 0.015;
             
-            this.d14 = [.0292, ...
+            this.d14 = [0.292, ...
                         0.173, ...   
                         0.082];
             this.a14 = deg2rad(45);
@@ -39,26 +39,26 @@ classdef ConfigAUV8
                         0.082];
                     
             this.psl = 0.5;
-            this.nbt= 8;
+            this.nbt = 8;
             
-            this.RG =[0.01,...x
-                      0.02,...y
-                      0.01];% z
+            this.RG =[0.001,... x
+                     -0.003,... y
+                      0.027]; % z
                   
-            this.RB =[0.01,...x
-                      0.02,...y
-                      0.01];% Z
+            this.RB =[0.001,... x
+                     -0.003,... y
+                      0.027]; % z
                   
-           this.mass =48.1;
-           this.volume =0.055;
+           this.mass = 33.95;
+           this.volume = 0.035;
            
-           this.I=[2,1,1;... Ixx Ixy Ixz
-                   1,2,1;... Iyx Iyy Iyz
-                   1,1,2]; % Izx Izy Izz
-           this.rho=998;
-           this.g=9.81;
-           this.CD=[1 1 1 1 1 1];
-           this.AF=[1 1 1];
+           this.I = [0.5358, 0.001, 0.01;... Ixx Ixy Ixz
+                     0.002, 1.47, 0.005;... Iyx Iyy Iyz
+                     0.01, 0.005, 1.68]; % Izx Izy Izz
+           this.rho = 998;
+           this.g = 9.81;
+           this.CD = [1, 1, 1, 1, 1, 1];
+           this.AF = [0.12, 0.22, 0.292];
         end
     end
 end

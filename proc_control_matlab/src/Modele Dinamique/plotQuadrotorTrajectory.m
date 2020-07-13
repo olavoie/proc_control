@@ -5,7 +5,7 @@
 
 % Plot the closed-loop response.
 time = 0:Ts:Duration;
-yreftot = AUVReferenceTrajectory(time)';
+yreftot = QuadrotorReferenceTrajectory(time)';
 
 % Plot the states.
 figure('Name','States')

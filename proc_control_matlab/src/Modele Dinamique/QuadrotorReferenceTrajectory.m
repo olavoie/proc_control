@@ -5,9 +5,9 @@ function [ xdesired ] = QuadrotorReferenceTrajectory( t )
 % Copyright 2019 The MathWorks, Inc.
 
 %#codegen
-x =6*sin(t/3);
-y = -6*sin(t/3).*cos(t/3);
-z = 6*cos(t/3);
+x = t/3; %6*sin(t/3);
+y = 0*t; %-6*sin(t/3).*cos(t/3);
+z = 0*t; %6*cos(t/3);
 phi = zeros(1,length(t));
 theta = zeros(1,length(t));
 psi = zeros(1,length(t));
