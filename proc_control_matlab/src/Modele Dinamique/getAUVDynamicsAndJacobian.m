@@ -1,6 +1,6 @@
 % Ce script défini un modèle non linéaire dans un domaine continue
-% de la dynamique du sous marin. Il génere par la suit les équoitions
-% d'états ainsi que la jacobienne qui seront utilisé par le controlleur.
+% de la dynamique du sous marin. Il génere par la suite les équations
+% d'états ainsi que la jacobienne qui seront utilisés par le controlleur.
 
 % Alexandre Lamarre, Aleandre Desgagnié
 
@@ -190,6 +190,25 @@ l8 = [0, 0,-1, (D58(2)+RG(2)+PZ(4)*dz),...
 T = [l1.', l2.', l3.', l4.', l5.' l6.', l7.', l8.'];
 % équoition input pour 6doff
 allocator = simplify(sum(T*diag(U),2)); 
+
+%% Dynamique
+% Liste de tous les états.
+etat(1) = xdott;
+etat(2) = ydott;
+etat(3) = zdott;
+etat(4) = phidott;
+etat(5) = thetadott;
+etat(6) = psidott;
+
+v = [xdott, ydott, zdott, phidott, thetadott, psidott];
+vdot = [diff(xdott(t), t), ...
+        diff(ydott(t), t), ...
+        diff(zdott(t), t), ...
+        diff(phidott(t), t), ...
+        diff(thetadott(t), t), ...
+        diff(psidott(t), t)];
+
+etat(7:12) = (M * vdot + C * v + D * v+ G)/m;
 
 %% test
 cf = ConfigAUV8();
