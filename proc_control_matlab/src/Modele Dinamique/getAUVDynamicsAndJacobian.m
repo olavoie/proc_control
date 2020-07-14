@@ -33,7 +33,7 @@ syms mass volume
 % coefficient de drag
 syms ('CD', [1, 6]);
 
-% aire surface du sub
+% aire de surface du sub
 syms ('AF', [1, 3]);
 
 % matrice d'inertie
@@ -45,13 +45,21 @@ syms ('RG',[1 3]); syms('RB',[1 3])
 % Constantes physique (densité de leau et accélération gravitationel)
 syms rho g
 
-%% Group symbolic variables
-params = [D14 D58 a14 dz PZ mass volume CD AF I(1,:) I(2,:) I(3,:) RG RB rho g];
+%% Grouper les variables symbolique 
+
+% Paramètre relier à la mécanique du sous marin
+params = [D14 D58 a14 dz PZ mass volume CD AF...
+          I(1,:) I(2,:) I(3,:) RG RB rho g];
+      
+% États en fonction du temps
 statet = {xt(t) yt(t) zt(t) phit(t) thetat(t) psit(t) xdott(t) ...
           ydott(t) zdott(t) phidott(t) thetadott(t) psidott(t)};
+      
+% États constantes
 state = {x y z phi theta psi xdot ydot zdot phidot thetadot psidot};
 
 %% Chargement des paramètres
+
 cf = ConfigAUV8();
 paramValues = [cf.d14 ...
              cf.d58 ...
@@ -251,9 +259,9 @@ B = jacobian(fonction, U);
 
 
 %% Generation des fonctions d'etats et Jacobienne
-% Create AUVStateFcn.m
+% Crée AUVStateFcn.m
 matlabFunction(transpose(fonction),'File','AUVStateFcn',...
     'Vars',{transpose([state{:}]),transpose(U)});
-% Create AUVJacobianFcn.m 
+% Crée AUVJacobianFcn.m 
 matlabFunction(A, B,'File','AUVStateJacobianFcn',...
     'Vars',{transpose([state{:}]),transpose(U)});      

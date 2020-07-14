@@ -73,82 +73,44 @@ title('Qruadrotor psi angle')
 % Plot the manipulated variables.
 figure('Name','Control Inputs')
 
-subplot(2,4,1)
+subplot(2,2,1)
 hold on
 stairs(time,uHistory(:,1))
-ylim([-26,30])
+ylim([-0.5,12.5])
 plot(time,nloptions.MVTarget(2)*ones(1,length(time)))
 grid on
 xlabel('time')
 legend('actual','reference')
 title('Input 1')
 
-subplot(2,4,2)
+subplot(2,2,2)
 hold on
 stairs(time,uHistory(:,2))
-ylim([-26,30])
+ylim([-0.5,12.5])
 plot(time,nloptions.MVTarget(2)*ones(1,length(time)))
 grid on
 xlabel('time')
 title('Input 2')
 legend('actual','reference')
 
-subplot(2,4,3)
+subplot(2,2,3)
 hold on
 stairs(time,uHistory(:,3))
-ylim([-26,30])
+ylim([-0.5,12.5])
 plot(time,nloptions.MVTarget(2)*ones(1,length(time)))
 grid on
 xlabel('time')
 title('Input 3')
 legend('actual','reference')
 
-subplot(2,4,4)
+subplot(2,2,4)
 hold on
 stairs(time,uHistory(:,4))
-ylim([-26,30])
+ylim([-0.5,12.5])
 plot(time,nloptions.MVTarget(2)*ones(1,length(time)))
 grid on
 xlabel('time')
 title('Input 4')
 legend('actual','reference')
 
-subplot(2,4,5)
-hold on
-stairs(time,uHistory(:,5))
-ylim([-26,30])
-plot(time,nloptions.MVTarget(2)*ones(1,length(time)))
-grid on
-xlabel('time')
-title('Input 5')
-legend('actual','reference')
 
-subplot(2,4,6)
-hold on
-stairs(time,uHistory(:,6))
-ylim([-26,30])
-plot(time,nloptions.MVTarget(2)*ones(1,length(time)))
-grid on
-xlabel('time')
-title('Input 6')
-legend('actual','reference')
-
-subplot(2,4,7)
-hold on
-stairs(time,uHistory(:,7))
-ylim([-26,30])
-plot(time,nloptions.MVTarget(2)*ones(1,length(time)))
-grid on
-xlabel('time')
-title('Input 7')
-legend('actual','reference')
-
-subplot(2,4,8)
-hold on
-stairs(time,uHistory(:,8))
-ylim([-26,30])
-plot(time,nloptions.MVTarget(2)*ones(1,length(time)))
-grid on
-xlabel('time')
-title('Input 8')
-legend('actual','reference')

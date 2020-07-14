@@ -33,7 +33,7 @@ syms mass volume
 % coefficient de drag
 syms ('CD', [1, 6]);
 
-% aire surface du sub
+% aire de surface du sub
 syms ('AF', [1, 3]);
 
 % matrice d'inertie
@@ -45,11 +45,38 @@ syms ('RG',[1 3]); syms('RB',[1 3])
 % Constantes physique (densité de leau et accélération gravitationel)
 syms rho g
 
-%% Group symbolic variables
-param = [D14, D58, a14, dz, PZ, mass, volume, CD, AF, I, RG' RB, rho, g];
+%% Grouper les variables symbolique 
+
+% Paramètre relier à la mécanique du sous marin
+params = [D14 D58 a14 dz PZ mass volume CD AF...
+          I(1,:) I(2,:) I(3,:) RG RB rho g];
+      
+% États en fonction du temps
 statet = {xt(t) yt(t) zt(t) phit(t) thetat(t) psit(t) xdott(t) ...
           ydott(t) zdott(t) phidott(t) thetadott(t) psidott(t)};
+      
+% États constantes
 state = {x y z phi theta psi xdot ydot zdot phidot thetadot psidot};
+
+%% Chargement des paramètres
+
+cf = ConfigAUV8();
+paramValues = [cf.d14 ...
+             cf.d58 ...
+             cf.a14 ...
+             cf.dz ...
+             cf.z ...
+             cf.mass ...
+             cf.volume ...
+             cf.CD ...
+             cf.AF ...
+             cf.I(1,:) ...
+             cf.I(2,:) ...
+             cf.I(3,:) ...
+             cf.RG ...
+             cf.RB ...
+             cf.rho ...
+             cf.g];
 
 %% Matrice de transformation 
 % Angle Euler X Y Z
@@ -80,7 +107,7 @@ J= diag([J1,J2]);
 w = mass * g;
 b = rho * g * volume;
 FG = inv(J1)*[0;0;w];
-FB = J1.'*[0;0;-b];
+FB = inv(J1)*[0;0;-b];
 gg =simplify([FB+FG;cross(RB.',FB)+cross(RG.',FG)]);
 
 X  =  (w-b)*sin(thetat);
@@ -201,12 +228,13 @@ tau = simplify(sum(Tm*diag(U),2));
 
 %% Dynamique
 % Liste de tous les états.
-etat(1) = xdott;
-etat(2) = ydott;
-etat(3) = zdott;
-etat(4) = phidott;
-etat(5) = thetadott;
-etat(6) = psidott;
+% Vitesse/Posision
+fonction(1) = xdott;
+fonction(2) = ydott;
+fonction(3) = zdott;
+fonction(4) = phidott;
+fonction(5) = thetadott;
+fonction(6) = psidott;
 
 v = [xdott; ydott; zdott; phidott; thetadott; psidott];
 vdot = [diff(xdott(t), t); ...
@@ -216,36 +244,24 @@ vdot = [diff(xdott(t), t); ...
         diff(thetadott(t), t); ...
         diff(psidott(t), t)];
 
-etat(7:12) = (M * vdot + C * v + D * v + G - tau)/mass;
-etat = simplify(etat);
+% Vitesse/Accélération
+fonction(7:12) = (tau + (M * vdot + C * v + D * v + gg))/mass;
 
-etat = subs(param, param);
-%% test
-cf = ConfigAUV8();
-paramValue = [cf.d14, ...
-         cf.d58, ...
-         cf.a14, ...
-         cf.dz, ...
-         cf.z, ...
-         cf.mass, ...
-         cf.volume, ...
-         cf.CD, ...
-         cf.AF, ...
-         cf.I, ...
-         cf.RG, ...
-         cf.RB, ...
-         cf.rho, ...
-         cf.g];
+% Substitution des paramètres et des fontions.
+fonction = subs(fonction, params, paramValues);
+fonction = subs(fonction, statet, state);
 
-massval=cf.mass;
-gg =  subs(gg,[RG RB g rho mass],[RGval RBval gval rhoval massval]);
+fonction = simplify(fonction);
 
-matlabFunction(gg,'File','ggg',...
-    'Vars',[phi, theta]);
-ggg(.7,0)
-G = subs(G,[RG RB g rho mass phit thetat psit],[RGval RBval gval rhoval massval 0 0 0]);
+%% Calcul de la linearisation (Matrice Jacobienne)
+A = jacobian(fonction, [state{:}]);
+B = jacobian(fonction, U);
 
 
-y = subs(allocator, [D14 D58 a14 RG dz PZ], [D14val D58val a14val RGval dzval PZval]);
-            
-            
+%% Generation des fonctions d'etats et Jacobienne
+% Crée AUVStateFcn.m
+matlabFunction(transpose(fonction),'File','AUVStateFcn',...
+    'Vars',{transpose([state{:}]),transpose(U)});
+% Crée AUVJacobianFcn.m 
+matlabFunction(A, B,'File','AUVStateJacobianFcn',...
+    'Vars',{transpose([state{:}]),transpose(U)});      
