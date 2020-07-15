@@ -18,14 +18,14 @@ nlobj.Ts = Ts;
 nlobj.PredictionHorizon = p;
 nlobj.ControlHorizon = m;
 
-nlobj.MV = struct('Min',{-26;-26;-26;-26;-26;-26;-26;-26},...
-                  'Max',{ 32; 32; 32; 32; 32; 32; 32; 32});
- %nlobj.MV = struct('Min',{-40;-40;-40;-40;-40;-40;-40;-40},...
-                  %'Max',{ 50; 50; 50; 50; 50; 50; 50; 50})
+%nlobj.MV = struct('Min',{-26;-26;-26;-26;-26;-26;-26;-26},...
+                %  'Max',{ 32; 32; 32; 32; 32; 32; 32; 32});
+ nlobj.MV = struct('Min',{-40;-40;-40;-40;-40;-40;-40;-40},...
+                  'Max',{ 50; 50; 50; 50; 50; 50; 50; 50})
  
-nlobj.Weights.OutputVariables = [ 20 20 15 20 20 20 0 0 0 0 0 0];
+nlobj.Weights.OutputVariables = [ 20 20 5 20 20 20 0 0 0 0 0 0];
 nlobj.Weights.ManipulatedVariables = [0.3 0.3 0.3 0.3 0.1 0.1 0.1 0.1];
-nlobj.Weights.ManipulatedVariablesRate = [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1];
+nlobj.Weights.ManipulatedVariablesRate = [0.1 0.1 0.1 0.1 0.3 0.3 0.3 0.3];
 
 % Specify the initial conditions
 x = [0;0;0;0;0;0;0;0;0;0;0;0];
