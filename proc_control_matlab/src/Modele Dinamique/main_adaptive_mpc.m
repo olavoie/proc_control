@@ -1,39 +1,44 @@
 clc; clear;
-%getSubDynamicsAndJacobian;
 
-nx = 12;
-ny = 12;
-nu = 8;
-xp= zeros(12,1);
-up=zeros(8,1);
-[a,b,c,d] = linmod('AUVStateFcn',xp,up);   
-    Plant = ss(a,b,c,d);
-plant_mdl = 'AUVStateJacobianFcn';
-op = operspec(plant_mdl);
-mpcobj =mpc("AUVStateFcn",0.001);
-%mpcobj = mpc(nx, ny, nu);
+%% Determiner les specification du système
+nx = 12;  % nombre d'états
+ny = 12;  % Nombre de sorties
+nu = 8;   % Nombre d'entré
+Ts = 0.1; % Période d'echantillionage
+p = 15;   % Horizon de prediction
+m = 2;    % Horizon de Controle
 
-nlobj.Model.StateFcn = "AUVStateFcn";
-nlobj.Jacobian.StateFcn = @AUVStateJacobianFcn;
-rng(0)
-validateFcns(nlobj,rand(nx,1),rand(nu,1));
+%Forces Minmax Thrusters initailes
+TMIN =[-26;-26;-26;-26;-26;-26;-26;-26];
+TMAX =[ 32; 32; 32; 32; 32; 32; 32; 32];
 
-Ts = 0.1;
-p = 15;
-m = 2;
-nlobj.Ts = Ts;
-nlobj.PredictionHorizon = p;
-nlobj.ControlHorizon = m;
+% Poids du controleur initiales
+OV =[ 20 20 15 20 20 20 0 0 0 0 0 0];  %OutputVariables
+MV =[0.3 0.3 0.3 0.3 0.1 0.1 0.1 0.1]; %ManipulatedVariables
+MVR=[0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]; %.ManipulatedVariablesRate
 
-nlobj.MV = struct('Min',{-26;-26;-26;-26;-26;-26;-26;-26},...
-                  'Max',{ 32; 32; 32; 32; 32; 32; 32; 32});
- %nlobj.MV = struct('Min',{-40;-40;-40;-40;-40;-40;-40;-40},...
-                  %'Max',{ 50; 50; 50; 50; 50; 50; 50; 50})
- 
-nlobj.Weights.OutputVariables = [ 20 20 15 20 20 20 0 0 0 0 0 0];
-nlobj.Weights.ManipulatedVariables = [0.3 0.3 0.3 0.3 0.1 0.1 0.1 0.1];
-nlobj.Weights.ManipulatedVariablesRate = [0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1];
+%% Initialiser le comtrolleur MPC
+% Conditions initiales
+Xi= zeros(12,1); % états initials
+Ui=zeros(8,1);   % Commande initials
 
+%liniéarisation du modèle aux conditions initales.
+[A,B,C,D] = AUVStateJacobianFcn(Xi,Ui);   
+
+% création de l'objet state space.
+AUVPlant = ss(A,B,C,D);
+
+% Création du controleur MPC.
+mpcobj =mpc(AUVPlant,Ts);
+
+%Ajout des poids et gains
+mpcobj.MV = struct('Min',TMIN,'Max',TMAX);
+mpcobj.Weights.OutputVariables = OV;
+mpcobj.Weights.ManipulatedVariables = MV;
+mpcobj.Weights.ManipulatedVariablesRate = MVR;
+
+
+%% Simualtion
 % Specify the initial conditions
 x = [0;0;0;0;0;0;0;0;0;0;0;0];
 % Nominal control that keeps the quadrotor floating
