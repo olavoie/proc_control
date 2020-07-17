@@ -253,9 +253,11 @@ fonction = subs(fonction, statet, state);
 
 fonction = simplify(fonction);
 
-%% Calcul de la linearisation (Matrice Jacobienne)
+%% Calcul de la Matrice Jacobienne
 A = jacobian(fonction, [state{:}]);
-B = jacobian(fonction, U);
+B = jacobian(fonction, U );
+C = jacobian([state{:}],[state{:}]);
+D = jacobian([state{:}], U );
 
 
 %% Generation des fonctions d'etats et Jacobienne
@@ -263,5 +265,8 @@ B = jacobian(fonction, U);
 matlabFunction(transpose(fonction),'File','AUVStateFcn',...
     'Vars',{transpose([state{:}]),transpose(U)});
 % Crée AUVJacobianFcn.m 
-matlabFunction(A, B,'File','AUVStateJacobianFcn',...
+matlabFunction(A, B, C, D,'File','AUVStateJacobianFcn',...
     'Vars',{transpose([state{:}]),transpose(U)});      
+
+
+disp("Done");
