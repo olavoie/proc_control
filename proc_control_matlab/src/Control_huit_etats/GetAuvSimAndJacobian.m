@@ -12,6 +12,9 @@ syms xt(t) yt(t) zt(t) phit(t) thetat(t) psit(t)
 % Vitesse 6 DOFF selon t 
 syms xdott(t) ydott(t) zdott(t) phidott(t) thetadott(t) psidott(t) 
 
+% Accélérations
+syms ('vdot',[6,1])
+
 % thrusters
 %syms u1 u2 u3 u4 u5 u6 u7 u8
 syms ('U',[1,8])
@@ -170,7 +173,7 @@ CRB = [Crb1, Crb23; ...
 CA = zeros(6,6);
 
 % Matrice de Coriolis
-C = CRB + CA;
+Cor = CRB + CA;
     
 %% Matrice des forces de drag
 xu = (-(1/2) * rho * CD1 * AF1) * xdott;
@@ -186,7 +189,7 @@ Dq = diag([xu yv zw kp mq nr]);
 % Matrice linear damping.
 Dl = zeros(6,6);
 
-D = Dq + Dl;
+Damp = Dq + Dl;
 
 %% Definir la matrice thrusters
 
@@ -241,19 +244,18 @@ simfonction(6) = psidott;
 
 
 v = [xdott; ydott; zdott; phidott; thetadott; psidott];
-vdot = [diff(xdott(t), t); ...
-        diff(ydott(t), t); ...
-        diff(zdott(t), t); ...
-        diff(phidott(t), t); ...
-        diff(thetadott(t), t); ...
-        diff(psidott(t), t)];
-mm=sum(M,2);
-% Vitesse/Accélération
-simfonction(7:12) = (tau + (C * v + D * v + gg))/mass;
 
-% for i=1:6
-%     simfonction(6+i)=simfonction(6+i)/mm(i);
-% end
+% Vitesse/Accélération
+%simfonction(7:12) = (tau + (C * v + D * v + gg))/mass;
+
+eqn = M * vdot + Cor * v - Damp * v + G == tau;
+S = solve(eqn, vdot);
+simfonction(7) = S.vdot1;
+simfonction(8) = S.vdot2;
+simfonction(9) = S.vdot3;
+simfonction(10) = S.vdot4;
+simfonction(11) = S.vdot5;
+simfonction(12) = S.vdot6;
 
 % Substitution des paramètres et des fontions.
 simfonction = subs(simfonction, params, paramValues);
@@ -281,3 +283,4 @@ matlabFunction(A, B, C, D,'File','AUVStateJacobianFcn',...
     'Vars',{transpose([state{:}]),transpose(U)});   
 
 disp("Done")
+
