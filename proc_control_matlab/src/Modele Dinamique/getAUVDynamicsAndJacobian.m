@@ -167,7 +167,7 @@ CRB = [Crb1, Crb23; ...
 CA = zeros(6,6);
 
 % Matrice de Coriolis
-C = CRB + CA;
+Cor = CRB + CA;
     
 %% Matrice des forces de drag
 xu = (-(1/2) * rho * CD1 * AF1) * xdott;
@@ -183,7 +183,7 @@ Dq = diag([xu yv zw kp mq nr]);
 % Matrice linear damping.
 Dl = zeros(6,6);
 
-D = Dq + Dl;
+Damp = Dq + Dl;
 
 %% Definir la matrice thrusters
 
@@ -237,15 +237,25 @@ fonction(5) = thetadott;
 fonction(6) = psidott;
 
 v = [xdott; ydott; zdott; phidott; thetadott; psidott];
-vdot = [diff(xdott(t), t); ...
-        diff(ydott(t), t); ...
-        diff(zdott(t), t); ...
-        diff(phidott(t), t); ...
-        diff(thetadott(t), t); ...
-        diff(psidott(t), t)];
+% vdot = [diff(xdott(t), t); ...
+%         diff(ydott(t), t); ...
+%         diff(zdott(t), t); ...
+%         diff(phidott(t), t); ...
+%         diff(thetadott(t), t); ...
+%         diff(psidott(t), t)];
 
 % Vitesse/Accélération
-fonction(7:12) = (tau + (M * vdot + C * v + D * v + gg))/mass;
+syms ('vdot',[6,1])
+eqn = M * vdot+ Cor * v + Damp * v + gg == Tm*U.';
+S = solve(eqn, vdot);
+fonction(7) = S.vdot1;
+fonction(8) = S.vdot2;
+fonction(9) = S.vdot3;
+fonction(10) = S.vdot4;
+fonction(11) = S.vdot5;
+fonction(12) = S.vdot6;
+
+% fonction(7:12) = (tau + (M * vdot + C * v + D * v + gg))/mass;
 
 % Substitution des paramètres et des fontions.
 fonction = subs(fonction, params, paramValues);

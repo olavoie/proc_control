@@ -52,8 +52,8 @@ title('Qruadrotor phi angle')
 
 subplot(2,3,5)
 hold on
-plot(time,yHistory(:,5))
-plot(time,yreftot(:,5))
+plot(time,yHistory(:,9))
+plot(time,yreftot(:,9))
 grid on
 xlabel('time')
 ylabel('theta')

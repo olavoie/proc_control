@@ -154,7 +154,7 @@ MA=zeros(6,6);
 
 % Calcul de la matrice des masses et inerties.
 M = MRB + MA;
-
+M=sum(M,2);
 %% Matrice des forces de Coriolis
 % Définition des matrices 3x3 pour former la matrice de
 % Coriolis (corps rigide).
@@ -176,12 +176,12 @@ CA = zeros(6,6);
 Cor = CRB + CA;
     
 %% Matrice des forces de drag
-xu = (-(1/2) * rho * CD1 * AF1) * xdott;
-yv = (-(1/2) * rho * CD2 * AF2) * ydott;
-zw = (-(1/2) * rho * CD3 * AF3) * zdott;
-kp = (-(1/2) * rho * CD4 * AF3) * phidott;
-mq = (-(1/2) * rho * CD5 * AF3) * thetadott;
-nr = (-(1/2) * rho * CD6 * AF2) * psidott;
+xu = (-(1/2) * rho * CD1 * AF1);% * xdott;
+yv = (-(1/2) * rho * CD2 * AF2);% * ydott;
+ zw = (-(1/2) * rho * CD3 * AF3);% * zdott;
+kp = (-(1/2) * rho * CD4 * AF3) ;%* phidott;
+mq = (-(1/2) * rho * CD5 * AF3) ;%* thetadott;
+nr = (-(1/2) * rho * CD6 * AF2);% * psidott;
 
 % Matrice quadratic damping.
 Dq = diag([xu yv zw kp mq nr]);
@@ -231,7 +231,7 @@ l8 = [0, 0,-1, (D58(2)+RG(2)+PZ(4)*dz),...
 Tm = [l1.', l2.', l3.', l4.', l5.' l6.', l7.', l8.'];
 % équoition input pour 6doff
 tau = simplify(sum(Tm*diag(U),2)); 
-
+tt=Tm*U.';
 %% Équation Dynamique pour simulation
 % Liste de tous les états.
 % Vitesse/Posision
@@ -246,16 +246,25 @@ simfonction(6) = psidott;
 v = [xdott; ydott; zdott; phidott; thetadott; psidott];
 
 % Vitesse/Accélération
-%simfonction(7:12) = (tau + (C * v + D * v + gg))/mass;
-
-eqn = M * vdot + Cor * v - Damp * v + G == tau;
-S = solve(eqn, vdot);
-simfonction(7) = S.vdot1;
-simfonction(8) = S.vdot2;
-simfonction(9) = S.vdot3;
-simfonction(10) = S.vdot4;
-simfonction(11) = S.vdot5;
-simfonction(12) = S.vdot6;
+%  simfonction(7:12) = (tau + (Cor * v + Damp * v + gg))/mass;
+% tt=M.'*vdot;
+% ttt=Tm*U.';
+% eqn = M * vdot == Tm*U.'-(Cor*v -Damp * v +gg);
+% S = solve(eqn, vdot);
+% simfonction(7) = S.vdot1;
+% simfonction(8) = S.vdot2;
+% simfonction(9) = S.vdot3;
+% simfonction(10) = S.vdot4;
+% simfonction(11) = S.vdot5;
+% simfonction(12) = S.vdot6;
+simfonction(7:12) = -Damp* v -Cor*v - gg +tau ;
+ 
+simfonction(7)  = (simfonction(7))/M(1);
+simfonction(8)  = (simfonction(8))/M(2);
+simfonction(9)  = (simfonction(9))/M(3);
+simfonction(10) =(simfonction(10))/M(1);
+simfonction(11) =(simfonction(11))/M(2);
+simfonction(12) =(simfonction(12))/M(3); 
 
 % Substitution des paramètres et des fontions.
 simfonction = subs(simfonction, params, paramValues);
@@ -266,13 +275,29 @@ simfonction = simplify(simfonction);
 statefonction(1:2)=simfonction(4:5);
 statefonction(3:8)=simfonction(7:12);
 
-
+Dq= subs(Dq, params, paramValues);
 
 %% Calcul de la Matrice Jacobienne
 A = jacobian(statefonction, [state{:}]);
 B = jacobian(statefonction, U );
 C = jacobian([Output{:}],[state{:}]);
 D = jacobian([Output{:}], U );
+
+%% Étude de controlabilité
+Xi=repmat(0,1,8); % états initials
+Ui=repmat(0,1,8);   % Commande initials
+
+Ad=double(subs(A, state, Xi));
+Bd=double(subs(B, U, Ui));
+Cd=double(C);
+Dd=double(D);
+
+CPlant=ss(Ad,Bd,Cd,Dd);
+
+
+co = ctrb(CPlant);
+controllability = rank(co)
+unco = length(Ad) - rank(co)
 
 %% Generation des fonctions d'etats et Jacobienne
 % Crée AUVStateFcn.m

@@ -3,7 +3,8 @@ function [plant,Nominal] = PlantUpdate(X,U,Ts)
 % Lineariser le model dynamique
 
 [Ac, Bc, Cc, Dc]=AUVStateJacobianFcn(X,U);
-
+test=ss(Ac,Bc,Cc,Dc);
+pole(test)
 % Generate discrete-time model
 
 nx = size(Ac,1);
@@ -14,9 +15,10 @@ B = M(1:nx,nx+1:nx+nu);
 C = Cc;
 D = Dc;
 plant=ss(A,B,C,D,Ts);
-% cplant=ss(Ac,Bc,Cc,Dc);
-% plant=c2d(cplant,Ts);
-% Nominal conditions for discrete-time plant
+%  cplant=ss(Ac,Bc,Cc,Dc);
+%  plant=c2d(cplant,Ts);
+ pole(plant)
+%Nominal conditions for discrete-time plant
 Nominal= struct('X',X,...
                 'U',U,...
                 'Y',Cc*X + Dc*U,...

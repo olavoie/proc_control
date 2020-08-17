@@ -50,9 +50,9 @@ classdef ConfigAUV8
                       0.027]; % z
                   
            this.mass = 33.95;
-           this.volume = 0.035;
+           this.volume = 0.027;
            
-           this.I = [0.5358, 0.001, 0.01;... Ixx Ixy Ixz
+           this.I = [0.5358, 0.001, 0.01;... Ixx Ixy Ixz 0.5358
                      0.002, 1.47, 0.005;... Iyx Iyy Iyz
                      0.01, 0.005, 1.68]; % Izx Izy Izz
            this.rho = 998;
