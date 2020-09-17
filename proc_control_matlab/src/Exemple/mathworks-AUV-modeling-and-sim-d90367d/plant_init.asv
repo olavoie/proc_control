@@ -1,0 +1,9 @@
+% Angle des moteurs.
+a=zeros(3,8);
+
+%     Z  Y  X
+a = [ 0 90 45;
+      0 90 -45  
+
+];
+
