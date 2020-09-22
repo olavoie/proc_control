@@ -1,5 +1,5 @@
 load('T200-Spec-16V.mat');
-
+%% Constantes du prototype
 % z;        %Position des truster sur le frame.
 %           %(0 = milieu, 1= position bas, -1= postion haut)(t15,t26,t37,t48)
 % dz;       % Distance entre les postions du frame.
@@ -111,6 +111,12 @@ IE = [0.001 0.001 0.001];
 % Initial body rotation rates [p,q,r]:
 IB = [0.001 0.001 0.001];
 
+%% Constante d'IMU
+IMU_POSE = [0 0 0]; % xyz
+update_rate = 1/40; % s
+
+
+%% Données des moteurs
 % Données pour lookup table.
 N = T200Spec16V{:,6};% Force en Newton
 PWM = T200Spec16V{:,1};% PWM
