@@ -120,3 +120,42 @@ update_rate = 1/40; % s
 % Données pour lookup table.
 N = T200Spec16V{:,6};% Force en Newton
 PWM = T200Spec16V{:,1};% PWM
+
+%% Données pour le contrôleur MPC
+%% Determiner les specification du système
+% nx = 12;  % nombre d'états
+% ny = 12;  % Nombre de sorties
+% nu = 8;   % Nombre d'entré
+% Ts = 0.1; % Période d'echantillionage
+% p = 15;   % Horizon de prediction
+% m = 2;    % Horizon de Controle
+% 
+% %Forces Minmax Thrusters initailes
+% TMIN =[-26;-26;-26;-26;-26;-26;-26;-26];
+% TMAX =[ 32; 32; 32; 32; 32; 32; 32; 32];
+% 
+% % Poids du controleur initiales
+% OV =[ 20 20 15 20 20 20 0 0 0 0 0 0];  % OutputVariables
+% MV =[0.3 0.3 0.3 0.3 0.1 0.1 0.1 0.1]; % ManipulatedVariables
+% MVR=[0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]; % ManipulatedVariablesRate
+% 
+% %% Initialiser le comtrolleur MPC
+% % Conditions initiales
+% Xi= zeros(12,1); % états initials
+% Ui=zeros(8,1);   % Commande initials
+% 
+% %liniéarisation du modèle aux conditions initales.
+% [A,B,C,D] = AUVStateJacobianFcn(Xi,Ui);   
+% 
+% % création de l'objet state space.
+% AUVPlant = ss(A,B,C,D);
+% 
+% % Création du controleur MPC.
+% mpcobj = mpc(AUVPlant,Ts);
+% 
+% %Ajout des poids et gains
+% mpcobj.MV = struct('Min',TMIN,'Max',TMAX);
+% mpcobj.Weights.OutputVariables = OV;
+% mpcobj.Weights.ManipulatedVariables = MV;
+% mpcobj.Weights.ManipulatedVariablesRate = MVR;
+
