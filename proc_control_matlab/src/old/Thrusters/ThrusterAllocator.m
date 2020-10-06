@@ -286,7 +286,7 @@ end
         mm=[A(end),A(1)];
         end
         
-        function EleMecRatio(this)
+        functicx 
         % transforme le % de limitation élé(A) en % limitation mec (N).
    
             %Séparer la relation newton selon watt en 2 pour pas que la
