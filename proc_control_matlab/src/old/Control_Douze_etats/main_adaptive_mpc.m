@@ -1,11 +1,11 @@
-clc; clear;
-
+%clc; clear;
+cf = ConfigAUV8();
 %% Determiner les specification du système
 nx = 12;  % nombre d'états
 ny = 12;  % Nombre de sorties
 nu = 8;   % Nombre d'entré
 Ts = 0.1; % Période d'echantillionage
-p = 10;   % Horizon de prediction
+p = 20;   % Horizon de prediction
 m =2;    % Horizon de Controle
 
 Duration = 60;
@@ -13,21 +13,24 @@ Duration = 60;
 %Forces Minmax Thrusters initailes
 TMIN ={-26;-26;-26;-26;-26;-26;-26;-26};
 TMAX ={ 32; 32; 32; 32; 32; 32; 32; 32};
-
+MvTarget={0; 0; 0 ;0 ;-17.5 ;17.5 ;-17.5; 17.5};
 %Vitesse Max
 % VMIN ={-2;-2;-2;-2;-2;-2;-2;-2;-2;-2;-2;-2};
 % VMAX ={ 2; 2; 2; 2; 2; 2; 2; 2; 2; 2; 2; 2};
 
 % Poids du controleur initiales
-OV =[ 50 50 50 25 50 50 0 0 0 0 0 0 ];  %OutputVariables
-MV =[0.001 0.001 0.001 0.001 0.001 0.001 0.001 0.001]; %ManipulatedVariables
+OV =[ 50 50 50 10 10 10 0 0 0 0 0 0 ];  %OutputVariables
+MV =[0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]; %ManipulatedVariables
 MVR=[5 5 5 5 .1 .1 .1 .1]; %.ManipulatedVariablesRate
 
+% Constante pour bloc areospace
+I=cf.I;
+mass=cf.mass;
 
 %% Initialiser le comtrolleur MPC
 % Conditions initiales
 Xi=[0;0;0;0;0;0;0;0;0;0;0;0];%repmat(0.01,nx,1); % états initials
-Ui= repmat(0.0,nu,1);   % Commande initials
+Ui= [0;0;0;0;0;0;0;0];%repmat(0.0,nu,1);   % Commande initials
 
 %liniéarisation du modèle aux conditions initales.
 [A,B,C,D] = AUVStateJacobianFcn(Xi,Ui);   
@@ -38,10 +41,11 @@ AUVPlant =PlantUpdate(Xi,Ui,Ts);
 mpcobj =mpc(AUVPlant);
 
 %Ajout des poids et gains
-mpcobj.MV = struct('Min',TMIN,'Max',TMAX);
+mpcobj.MV = struct('Min',TMIN,'Max',TMAX);%,'Target',MvTarget);
 mpcobj.Weights.OutputVariables = OV;
 mpcobj.Weights.ManipulatedVariables = MV;
 mpcobj.Weights.ManipulatedVariablesRate = MVR;
+
 % mpcobj.OutputVariables=struct('Min',VMIN,'Max',VMAX);
 mpcobj.PredictionHorizon =p;
 mpcobj.ControlHorizon=m;

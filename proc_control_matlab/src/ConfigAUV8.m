@@ -16,7 +16,12 @@ classdef ConfigAUV8
         volume
         rho
         g
-        CD       % Coefficient de drag
+        cdx
+        cdy
+        cdz
+        cdphi
+        cdtheta
+        cdpsi
         AF       % Aire de la surface
     end
     methods
@@ -50,14 +55,21 @@ classdef ConfigAUV8
                       0.027]; % z
                   
            this.mass = 33.95;
-           this.volume = 0.027;
+           this.volume = 0.035;
            
            this.I = [0.5358, 0.001, 0.01;... Ixx Ixy Ixz 0.5358
                      0.002, 1.47, 0.005;... Iyx Iyy Iyz
                      0.01, 0.005, 1.68]; % Izx Izy Izz
            this.rho = 998;
            this.g = 9.81;
-           this.CD = [1, 1, 1, 1, 1, 1];
+           this.cdx = @(vx) 0.72*vx^2+1;
+           this.cdy=  @(vy) 0.72*vy^2+2;
+           this.cdz=  @(vz) 0.72*vz^2+3;
+           this.cdphi=  @(rx) 0.72*rx^2+1;
+           this.cdtheta=  @(ry) 0.72*ry^2+1;
+           this.cdpsi=@(rz) 0.72*rz^2+1;
+           
+           
            this.AF = [0.12, 0.22, 0.292];
         end
     end

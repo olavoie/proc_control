@@ -1,4 +1,4 @@
-clc;clear;
+%clc;clear;
 load('T200-Spec-16V.mat');
 %% Constantes du Plant
 % z;        %Position des truster sur le frame.
@@ -123,20 +123,20 @@ N = T200Spec16V{:,6};% Force en Newton
 PWM = T200Spec16V{:,1};% PWM
 
 %% Données pour le contrôleur MPC
-%% Determiner les specification du système
-
- Ts = 0.1; % Période d'echantillionage
- p = 15;   % Horizon de prediction
- m = 2;    % Horizon de Controle
+% %% Determiner les specification du système
 % 
-% %Forces Minmax Thrusters initailes
- TMIN =[-26;-26;-26;-26;-26;-26;-26;-26];
- TMAX =[ 32; 32; 32; 32; 32; 32; 32; 32];
-% 
-% % Poids du controleur initiales
- OV =[ 20 20 15 20 20 20 0 0 0 0 0 0];  % OutputVariables
- MV =[0.3 0.3 0.3 0.3 0.1 0.1 0.1 0.1]; % ManipulatedVariables
- MVR=[0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]; % ManipulatedVariablesRate
+  Ts = 0.1; % Période d'echantillionage
+%  p = 15;   % Horizon de prediction
+%  m = 2;    % Horizon de Controle
+% % 
+% % %Forces Minmax Thrusters initailes
+%  TMIN =[-26;-26;-26;-26;-26;-26;-26;-26];
+%  TMAX =[ 32; 32; 32; 32; 32; 32; 32; 32];
+% % 
+% % % Poids du controleur initiales
+%  OV =[ 20 20 15 20 20 20 0 0 0 0 0 0];  % OutputVariables
+%  MV =[0.3 0.3 0.3 0.3 0.1 0.1 0.1 0.1]; % ManipulatedVariables
+%  MVR=[0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1]; % ManipulatedVariablesRate
 % 
 % %% Initialiser le comtrolleur MPC
 % % Conditions initiales
@@ -158,3 +158,32 @@ PWM = T200Spec16V{:,1};% PWM
 % mpcobj.Weights.ManipulatedVariables = MV;
 % mpcobj.Weights.ManipulatedVariablesRate = MVR;
 
+%% Génération de trajectoire
+%Trajectoire
+T=60;
+P0=0;
+Pf=1;
+am=0.1;
+Tf=9;
+Tb=(Tf/2)-((am^2*Tf^2-4*am*(Pf-P0))^.5)/(2*am);
+
+pd=zeros(1,T/Ts);
+t=linspace(Ts,T,T/Ts);
+
+for i=1:T/Ts
+   
+    if t(i)<=Tb  %Accélération
+     pd(i)= P0+(am/2)*t(i)^2;
+    elseif t(i) <= Tf-Tb %vitesse constante
+     pd(i)=((Pf+P0-am*Tb*Tf)/2)+am*Tb*t(i);
+    elseif t(i)<=Tf % Décélération
+     pd(i)= Pf-((am*Tf^2)/2)+am*Tf*t(i)-(am/2)*t(i)^2;
+    else %position finale
+       pd(i)=Pf;
+    end
+end
+Position_Data=0
+plot(t,pd);
+title('Trajectoire désirée ');
+xlabel('Temps (sec)');
+ylabel('Distance (m)');

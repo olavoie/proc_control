@@ -4,7 +4,7 @@
 
 % Alexandre Lamarre, Aleandre Desgagnié
 
-clear; clc;
+%clear; clc;
 %% Création des variables Symboliques
 % Position 6 DOFF selon t
 syms xt(t) yt(t) zt(t) phit(t) thetat(t) psit(t)
@@ -34,7 +34,7 @@ syms ('D14',[1 3]); syms('D58',[1 3]) ; syms a14 dz ; syms ('PZ',[1,4])
 syms mass volume
 
 % coefficient de drag
-syms ('CD', [1, 6]);
+syms ('CD(x)', [1, 6]);
 
 % aire de surface du sub
 syms ('AF', [1, 3]);
@@ -51,9 +51,9 @@ syms rho g
 %% Grouper les variables symbolique 
 
 % Paramètre relier à la mécanique du sous marin
-params = [D14 D58 a14 dz PZ mass volume CD AF...
+const = [D14 D58 a14 dz PZ mass volume  AF...
           I(1,:) I(2,:) I(3,:) RG RB rho g];
-      
+func = [CD] ;     
 % États en fonction du temps
 statet =  { xt(t) yt(t) zt(t) phit(t) thetat(t) psit(t)  xdott(t) ...
           ydott(t) zdott(t) phidott(t) thetadott(t) psidott(t)};
@@ -67,14 +67,14 @@ Output={x y z phi theta psi xdot ydot zdot phidot thetadot psidot};
 %% Chargement des paramètres
 
 cf = ConfigAUV8();
-paramValues = [cf.d14 ...
+
+constValues = [cf.d14 ...
              cf.d58 ...
              cf.a14 ...
              cf.dz ...
              cf.z ...
              cf.mass ...
-             cf.volume ...
-             cf.CD ...
+             cf.volume ...       
              cf.AF ...
              cf.I(1,:) ...
              cf.I(2,:) ...
@@ -83,7 +83,8 @@ paramValues = [cf.d14 ...
              cf.RB ...
              cf.rho ...
              cf.g];
-
+         
+funcValues=[cf.CD];
 %% Matrice de transformation 
 % Angle Euler X Y Z
 Rz = [ cos(psit), -sin(psit), 0;
@@ -176,12 +177,12 @@ CA = zeros(6,6);
 Cor = CRB + CA;
     
 %% Matrice des forces de drag
-xu = (-(1/2) * rho * CD1 * AF1);% * xdott;
-yv = (-(1/2) * rho * CD2 * AF2);% * ydott;
-zw = (-(1/2) * rho * CD3 * AF3);% * zdott;
-kp = (-(1/2) * rho * CD4 * AF3) ;%* phidott;
-mq = (-(1/2) * rho * CD5 * AF3) ;%* thetadott;
-nr = (-(1/2) * rho * CD6 * AF2);% * psidott;
+xu = (-(1/2) * rho * CD1(xdot) * AF1);% * xdott;
+yv = (-(1/2) * rho * CD2(ydott) * AF2);% * ydott;
+zw = (-(1/2) * rho * CD3(zdott) * AF3);% * zdott;
+kp = (-(1/2) * rho * CD4(phidott) * AF3) ;%* phidott;
+mq = (-(1/2) * rho * CD5(thetadott) * AF3) ;%* thetadott;
+nr = (-(1/2) * rho * CD6(psidott) * AF2);% * psidott;
 
 % Matrice quadratic damping.
 Dq = diag([xu yv zw kp mq nr]);
@@ -244,7 +245,7 @@ simfonction(6) = psidott;
 
 
 v = [xdott; ydott; zdott; phidott; thetadott; psidott];
-
+v2 = [xdott^2; ydott^2; zdott^2; phidott^2; thetadott^2; psidott^2];
 % Vitesse/Accélération
 % simfonction(7:12) = -Damp* v -Cor*v - G +tau ;
 %  
@@ -267,7 +268,8 @@ v = [xdott; ydott; zdott; phidott; thetadott; psidott];
 % simfonction(12) = S.vdot6;
 simfonction(7:12) = (tau + (Cor * v + Damp * v + G))/mass;
 % Substitution des paramètres et des fontions.
-simfonction = subs(simfonction, params, paramValues);
+simfonction = subs(simfonction, const, constValues);
+simfonction = subs(simfonction, func, funcValues);
 simfonction = subs(simfonction, statet, state);
 simfonction = simplify(simfonction);
 
@@ -275,7 +277,21 @@ simfonction = simplify(simfonction);
 statefonction(1:2)=simfonction(4:5);
 statefonction(3:8)=simfonction(7:12);
 
+aditionforcemoment(1:6)=(tau + (Cor * v + Damp * v + G));
+aditionforcemoment = subs(aditionforcemoment, const, constValues);
+aditionforcemoment = subs(aditionforcemoment, func, funcValues);
+aditionforcemoment = subs(aditionforcemoment, statet, state);
+aditionforcemoment = simplify(aditionforcemoment);
 
+physique(1:6)=tau;
+physique(7:12)=Cor * v;
+physique(13:18)=Damp * v;
+physique(19:24)=G;
+
+physique = subs(physique, const, constValues);
+physique = subs(physique, func, funcValues);
+physique = subs(physique, statet, state);
+physique = simplify(physique);
 
 %% Calcul de la Matrice Jacobienne
 A = jacobian(simfonction, [state{:}]);
@@ -308,5 +324,10 @@ matlabFunction(transpose(simfonction),'File','AUVStateSimFcn',...
 matlabFunction(A, B, C, D,'File','AUVStateJacobianFcn',...
     'Vars',{transpose([state{:}]),transpose(U)});   
 
+matlabFunction(transpose(aditionforcemoment),'File','AUVForceMoments',...
+   'Vars',{transpose([Output{:}]),transpose(U)});
 disp("Done")
 
+matlabFunction(transpose(physique),'File','AUVDynamics',...
+   'Vars',{transpose([Output{:}]),transpose(U)});
+disp("Done")
