@@ -160,11 +160,11 @@ PWM = T200Spec16V{:,1};% PWM
 
 %% Génération de trajectoire
 %Trajectoire
-T=60;
+T=25;
 P0=0;
-Pf=1;
+Pf=3;
 am=0.1;
-Tf=9;
+Tf=20;
 Tb=(Tf/2)-((am^2*Tf^2-4*am*(Pf-P0))^.5)/(2*am);
 
 pd=zeros(1,T/Ts);
