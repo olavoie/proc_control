@@ -1,10 +1,11 @@
 clc; clear;
 cf = ConfigAUV8();
+
 %% Determiner les specification du système
 nx = 12;  % nombre d'états
 ny = 12;  % Nombre de sorties
 nu = 8;   % Nombre d'entré
-Ts = 0.05; % Période d'echantillionage
+Ts = 0.1; % Période d'echantillionage
 p = 10;   % Horizon de prediction
 m =2;    % Horizon de Controle
 Duration = 60;
@@ -18,7 +19,7 @@ MvTarget={0; 0; 0 ;0 ;-17.5 ;17.5 ;-17.5; 17.5};
 % VMAX ={ 2; 2; 2; 2; 2; 2; 2; 2; 2; 2; 2; 2};
 
 % Poids du controleur initiales
-OV =[ 70 70 70 10 10 10 10 10 0 0 0 0 ];  %OutputVariables
+OV =[ 70 70 70 10 10 10 0 0 0 0 0 0 ];  %OutputVariables
 MV =[.5 .5 .5 .5 0.1 0.1 0.1 0.1]; %ManipulatedVariables
 MVR=[1 1 1 1 1 1 1 1]; %.ManipulatedVariablesRate
 
@@ -114,6 +115,10 @@ plot(time,pd);
 title('Trajectoire désirée ');
 xlabel('Temps (sec)');
 ylabel('Distance (m)');
+
+%% Constantes pour Gazebo.
+referenceFrame = cf.referenceFrame;
+modelName = cf.modelName;
 
 
 %% Open simulink model
