@@ -2,7 +2,7 @@
 % de la dynamique du sous marin. Il génere par la suite les équations
 % d'états ainsi que la jacobienne qui seront utilisés par le controlleur.
 
-% Alexandre Lamarre, Aleandre Desgagné
+% Alexandre Lamarre, Alexandre Desgagné
 
 %clear; clc;
 %% Création des variables Symboliques
@@ -149,6 +149,7 @@
     Mrb2 = [0, mass * RG3, -mass * RG2; ...
             -mass * RG3, 0, mass * RG1;
             mass * RG2, -mass * RG1, 0];
+        
     Mrb3 = [0, -mass * RG3, mass * RG2; ...
             mass * RG3, 0, -mass * RG1; ...
             -mass * RG2, mass * RG1, 0];
