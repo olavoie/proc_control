@@ -30,7 +30,7 @@ classdef ConfigAUV8
                       0];
                   
             this.referenceFrame = uint8('world');
-            this.modelName = uint8('ambulance');
+            this.modelName = uint8('auv8');
                   
             this.dz = 0.015;
             
