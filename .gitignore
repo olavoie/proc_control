@@ -41,8 +41,8 @@ src/proc_control/cfg/PID4AxisConfig.py
 src/proc_control/cfg/ThrusterConfig.py
 cmake-build-debug/
 
-./proc_control_matlab/src/AUVForceMoments.m
-./proc_control_matlab/src/AUVStateJacobianFcn.m
-./proc_control_matlab/src/AUVStateSimFcn.m
-./proc_control_matlab/src/GetAuvSimAndJacobian.m
+proc_control_matlab/src/AUVForceMoments.m
+proc_control_matlab/src/AUVStateJacobianFcn.m
+proc_control_matlab/src/AUVStateSimFcn.m
+
 
