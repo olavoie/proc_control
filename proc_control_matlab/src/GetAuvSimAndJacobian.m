@@ -24,7 +24,9 @@
 
 % position et vitesse 6DOFF
     syms x y z phi theta psi xdot ydot zdot phidot thetadot psidot
-
+    %sym('phi','real');
+   % sym('theta','real');
+    %sym('psi','real');
 % distance truster x y z selon centre geommétrique
 % D14 distance thruster 1 a 4.
 % D58 distance thruster 5 a 8.
@@ -110,7 +112,17 @@
 
 % Matrice de transformation vitesse liéaire du frame sub au frame world
     J1 = Rz*Ry*Rx;
+    rotm = subs(J1, statet, state);
+    rotm=formula(rotm);
+    
+    q(1)=sqrt(1+rotm(1,1)+rotm(2,2)+rotm(3,3))/2;
+    q(2)=(rotm(3,2)-rotm(2,3))/(4*q(1));
+    q(3)=(rotm(1,3)-rotm(3,1))/(4*q(1));
+    q(4)=(rotm(2,1)-rotm(1,2))/(4*q(1));
 
+    qrotm =[(1-2*q(3)^2-2*q(4)^2),2*(q(2)*q(3)+q(1)*q(4)),2*(q(2)*q(4)-q(1)*q(3));
+             2*(q(2)*q(3)-q(1)*q(4)),(1-2*q(2)^2-2*q(4)^2),2*(q(3)*q(4)+q(1)*q(2));
+             2*(q(2)*q(4)+q(1)*q(3)),2*(q(3)*q(4)-q(1)*q(2)),(1-2*q(2)^2-2*q(3)^2)];
 % Matrice de transformation vitesse angulaire du frame sub au frame world
 %J2⁻¹
     J2i=[[1;0;0],Rx.'*[0;1;0],Rx.'*Ry.'*[0;0;1]];
@@ -120,11 +132,10 @@
 
 %% Matrice de gravite
 % Definition de la matrice de gravite.
-% Alexandre Lamarre, Ale
     w = mass * g;
     b = rho * g * volume;
-    FG = inv(J1)*[0;0;w];
-    FB = inv(J1)*[0;0;-b];
+    FG = (qrotm*[0;0;-1])*w; %inv(J1)*[0;0;w];
+    FB = (qrotm*[0;0;1])*b;%inv(J1)*[0;0;-b];
     gg =simplify([FB+FG;cross(RB.',FB)+cross(RG.',FG)]);
 
     X  =  (w-b)*sin(thetat);
@@ -248,7 +259,7 @@
 
 %% Sommes des forces et des moments
 
-    aditionForceFoment(1:6) =(tau + (Cor * v + Damp * v + G));
+    aditionForceFoment(1:6) =(tau + (Cor * v + Damp * v + gg));
 
 %% Équation Dynamique pour simulation
 % Liste de tous les états.
