@@ -10,18 +10,27 @@ p = 10;   % Horizon de prediction
 m =2;    % Horizon de Controle
 Duration = 60;
 
+% Modèle du thruster
+load('T200_Identification.mat');
+load('T200-Spec-16V.mat');
+% Données pour lookup table.
+N = T200Spec16V{:,6};% Force en Newton
+PWM = T200Spec16V{:,1};% PWM
+
 %Forces Minmax Thrusters initailes
-TMIN ={-26;-26;-26;-26;-26;-26;-26;-26};
-TMAX ={ 32; 32; 32; 32; 32; 32; 32; 32};
+tmax=32;
+tmin=-26;
+TMIN ={tmin; tmin; tmin; tmin; tmin; tmin; tmin; tmin};
+TMAX ={ tmax; tmax; tmax; tmax; tmax; tmax; tmax; tmax};
 MvTarget={0; 0; 0 ;0 ;-17.5 ;17.5 ;-17.5; 17.5};
 %Vitesse Max
 % VMIN ={-2;-2;-2;-2;-2;-2;-2;-2;-2;-2;-2;-2};
 % VMAX ={ 2; 2; 2; 2; 2; 2; 2; 2; 2; 2; 2; 2};
 
 % Poids du controleur initiales
-OV =[ 70 70 70 70 10 10 0 0 0 0 0 0 ];  %OutputVariables
+OV =[ 70 70 70 70 70 0 0 0 0 0 0 0 ];  %OutputVariables
 MV =[.5 .5 .5 .5 0.1 0.1 0.1 0.1]; %ManipulatedVariables
-MVR=[1 1 1 1 1 1 1 1]; %.ManipulatedVariablesRate
+MVR=[.4 .4 .4 .5 .5 .5 .5 .5]; %.ManipulatedVariablesRate
 
 % Constante pour bloc areospace
 I=cf.I;

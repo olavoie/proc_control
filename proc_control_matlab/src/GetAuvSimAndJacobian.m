@@ -22,6 +22,7 @@
 %syms u1 u2 u3 u4 u5 u6 u7 u8
     syms ('U',[1,8])
 
+
 % position et vitesse 6DOFF
     syms x y z phi theta psi xdot ydot zdot phidot thetadot psidot
     %sym('phi','real');

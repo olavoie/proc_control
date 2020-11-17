@@ -8,9 +8,9 @@ function [ xdesired ] = QuadrotorReferenceTrajectory( t )
 xdesired=zeros(size(t,2),12);
 
 P0=0;
-Pf=20;
+Pf=10;
 am=0.3;
-Tf=40;
+Tf=30;
 Tb=(Tf/2)-((am^2*Tf^2-4*am*(Pf-P0))^.5)/(2*am);
 for i=1:size(t,2)
 %if t(i)<=8
