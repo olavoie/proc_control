@@ -273,9 +273,13 @@
     simfonction(6) = psidott;
 
 %v2 = [xdott^2; ydott^2; zdott^2; phidott^2; thetadott^2; psidott^2];
-
-    simfonction(7:12) = aditionForceFoment/mass;
-
+ %simfonction(7:12)=aditionForceFoment/mass
+    simfonction(7) = aditionForceFoment(1)/mass;
+    simfonction(8) = aditionForceFoment(2)/mass;
+    simfonction(9) = aditionForceFoment(3)/mass;
+    simfonction(10) = aditionForceFoment(4)/I1_1;
+    simfonction(11) = aditionForceFoment(5)/I2_2;
+    simfonction(12) = aditionForceFoment(6)/I3_3;
     
     
 %% Substitution des paramètres et des fonctions.
