@@ -1,5 +1,3 @@
-clc;
-clear;
 
 % wpts(:,:,1)= trvec2tform([0 0 0])*quat2tform(eul2quat(deg2rad([0 0 0])));
 % wpts(:,:,2)= trvec2tform([0 0 1.5])*quat2tform(eul2quat(deg2rad([0 0 0])));
