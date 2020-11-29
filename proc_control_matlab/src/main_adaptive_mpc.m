@@ -30,7 +30,7 @@ MvTarget={0; 0; 0 ;0 ;-17.5 ;17.5 ;-17.5; 17.5};
 % VMAX ={ 2; 2; 2; 2; 2; 2; 2; 2; 2; 2; 2; 2};
 
 % Poids du controleur initiales
-OV =[ 70 70 70 70 70 50 0 0 0 0 0 0 ];  %OutputVariables
+OV =[ 70 70 50 70 70 70 0 0 0 0 0 0 ];  %OutputVariables
 MV =[.5 .5 .5 .5 0.1 0.1 0.1 0.1]; %ManipulatedVariables
 MVR=[.4 .4 .4 .5 .5 .5 .5 .5]; %.ManipulatedVariablesRate
 
