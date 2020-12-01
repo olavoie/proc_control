@@ -32,7 +32,7 @@ classdef Thruster < matlab.mixin.Heterogeneous
            this.rpm = this.forceToRPM(this.force);
            this.power = this.forceToPower(this.force);
         end
-    end
+    end 
 %==========================================================================
 %Methodes abstraites publiques
 %==========================================================================        

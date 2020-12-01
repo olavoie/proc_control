@@ -16,6 +16,7 @@ classdef Trajectoire
     methods
         %% Ctor
         function this = Trajectoire(wpts)
+            
             %Trajectoire
             %   Initialise les paramètres de la trajectoire.
             this.wpts = wpts;           

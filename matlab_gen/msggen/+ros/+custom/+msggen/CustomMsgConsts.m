@@ -36,7 +36,19 @@ classdef CustomMsgConsts
         proc_control_SetPositionTargetResponse = 'proc_control/SetPositionTargetResponse'
         proc_control_TargetReached = 'proc_control/TargetReached'
         proc_control_ThrustLogging = 'proc_control/ThrustLogging'
+        proc_control_matlab_AddPose = 'proc_control_matlab/AddPose'
+        proc_control_matlab_AddPoseRequest = 'proc_control_matlab/AddPoseRequest'
+        proc_control_matlab_AddPoseResponse = 'proc_control_matlab/AddPoseResponse'
+        proc_control_matlab_ClearWaypoints = 'proc_control_matlab/ClearWaypoints'
+        proc_control_matlab_ClearWaypointsRequest = 'proc_control_matlab/ClearWaypointsRequest'
+        proc_control_matlab_ClearWaypointsResponse = 'proc_control_matlab/ClearWaypointsResponse'
+        proc_control_matlab_ComputeTrajectory = 'proc_control_matlab/ComputeTrajectory'
+        proc_control_matlab_ComputeTrajectoryRequest = 'proc_control_matlab/ComputeTrajectoryRequest'
+        proc_control_matlab_ComputeTrajectoryResponse = 'proc_control_matlab/ComputeTrajectoryResponse'
         proc_control_matlab_SetForces = 'proc_control_matlab/SetForces'
+        proc_control_matlab_SetMode = 'proc_control_matlab/SetMode'
+        proc_control_matlab_SetModeRequest = 'proc_control_matlab/SetModeRequest'
+        proc_control_matlab_SetModeResponse = 'proc_control_matlab/SetModeResponse'
     end
     
     methods (Static, Hidden)
@@ -46,7 +58,7 @@ classdef CustomMsgConsts
             
             persistent msgList
             if isempty(msgList)
-                msgList = cell(22, 1);
+                msgList = cell(30, 1);
                 msgList{1} = 'proc_control/ClearWaypointRequest';
                 msgList{2} = 'proc_control/ClearWaypointResponse';
                 msgList{3} = 'proc_control/EnableControlRequest';
@@ -68,7 +80,15 @@ classdef CustomMsgConsts
                 msgList{19} = 'proc_control/SetPositionTargetResponse';
                 msgList{20} = 'proc_control/TargetReached';
                 msgList{21} = 'proc_control/ThrustLogging';
-                msgList{22} = 'proc_control_matlab/SetForces';
+                msgList{22} = 'proc_control_matlab/AddPoseRequest';
+                msgList{23} = 'proc_control_matlab/AddPoseResponse';
+                msgList{24} = 'proc_control_matlab/ClearWaypointsRequest';
+                msgList{25} = 'proc_control_matlab/ClearWaypointsResponse';
+                msgList{26} = 'proc_control_matlab/ComputeTrajectoryRequest';
+                msgList{27} = 'proc_control_matlab/ComputeTrajectoryResponse';
+                msgList{28} = 'proc_control_matlab/SetForces';
+                msgList{29} = 'proc_control_matlab/SetModeRequest';
+                msgList{30} = 'proc_control_matlab/SetModeResponse';
             end
             
             messageList = msgList;
@@ -80,7 +100,7 @@ classdef CustomMsgConsts
             
             persistent svcList
             if isempty(svcList)
-                svcList = cell(9, 1);
+                svcList = cell(13, 1);
                 svcList{1} = 'proc_control/ClearWaypoint';
                 svcList{2} = 'proc_control/EnableControl';
                 svcList{3} = 'proc_control/EnableThrusters';
@@ -90,6 +110,10 @@ classdef CustomMsgConsts
                 svcList{7} = 'proc_control/SetControlMode';
                 svcList{8} = 'proc_control/SetDecoupledTarget';
                 svcList{9} = 'proc_control/SetPositionTarget';
+                svcList{10} = 'proc_control_matlab/AddPose';
+                svcList{11} = 'proc_control_matlab/ClearWaypoints';
+                svcList{12} = 'proc_control_matlab/ComputeTrajectory';
+                svcList{13} = 'proc_control_matlab/SetMode';
             end
             
             % The message list was already sorted, so don't need to sort
