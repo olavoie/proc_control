@@ -49,6 +49,7 @@ classdef CustomMsgConsts
         proc_control_matlab_SetMode = 'proc_control_matlab/SetMode'
         proc_control_matlab_SetModeRequest = 'proc_control_matlab/SetModeRequest'
         proc_control_matlab_SetModeResponse = 'proc_control_matlab/SetModeResponse'
+        proc_control_matlab_Waypoint = 'proc_control_matlab/Waypoint'
     end
     
     methods (Static, Hidden)
@@ -58,7 +59,7 @@ classdef CustomMsgConsts
             
             persistent msgList
             if isempty(msgList)
-                msgList = cell(30, 1);
+                msgList = cell(31, 1);
                 msgList{1} = 'proc_control/ClearWaypointRequest';
                 msgList{2} = 'proc_control/ClearWaypointResponse';
                 msgList{3} = 'proc_control/EnableControlRequest';
@@ -89,6 +90,7 @@ classdef CustomMsgConsts
                 msgList{28} = 'proc_control_matlab/SetForces';
                 msgList{29} = 'proc_control_matlab/SetModeRequest';
                 msgList{30} = 'proc_control_matlab/SetModeResponse';
+                msgList{31} = 'proc_control_matlab/Waypoint';
             end
             
             messageList = msgList;
