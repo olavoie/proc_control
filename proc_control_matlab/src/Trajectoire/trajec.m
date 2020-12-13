@@ -1,16 +1,3 @@
-
-% wpts(:,:,1)= trvec2tform([0 0 0])*quat2tform(eul2quat(deg2rad([0 0 0])));
-% wpts(:,:,2)= trvec2tform([0 0 1.5])*quat2tform(eul2quat(deg2rad([0 0 0])));
-% wpts(:,:,3)= trvec2tform([.5 0 2])*quat2tform(eul2quat(deg2rad([0 0 0])));
-% wpts(:,:,4)= trvec2tform([8.072 0 2])*quat2tform(eul2quat(deg2rad([0 0 0])));
-% wpts(:,:,5)= trvec2tform([11.921 -1.364 1.696])*quat2tform(eul2quat(deg2rad([(39.23) 0 0])));
-% wpts(:,:,6)= trvec2tform([14.721 0 1.186 ])*quat2tform(eul2quat(deg2rad([-(90+39.23) 0 0])));
-% wpts(:,:,7)= trvec2tform([11.921 1.364 1.696 ])*quat2tform(eul2quat(deg2rad([-(129.23) 0 0])));
-% wpts(:,:,8)= trvec2tform([8.072 0 2 ])*quat2tform(eul2quat(deg2rad([ (39.23) 0 0])));
-% wpts(:,:,9)= trvec2tform([.5 0 2])*quat2tform(eul2quat(deg2rad([0 0 0])));
-% wpts(:,:,10)= trvec2tform([0 0 2])*quat2tform(eul2quat(deg2rad([0 0 0])));
-
-
 wpts(1,:)= [0 0 0 0 0 0];
 wpts(2,:)= [0 0 1.5 0 0 0];
 wpts(3,:)= [.5 0 2 0 0 0];
@@ -39,7 +26,7 @@ end
 
 
 vpc =[0,0,.3,.4,.26,.18,.12,0,-.12,-.21,-.26,-.4,-.1,0;...
-      0,.0,0,0,-0.15,0,.12,.2,.1 2,0,-0.15,0,0,0;...
+      0,0,0,0,-0.15,0,.12,.2,.12,0,-0.15,0,0,0;...
       0,.15,.0,0.-0.02,-.02,-.03,-.01,0,-.0,0.03,0.03,0,0,0] ;
          
 tpts = [0,15,20,40,50,55,63,70,78,85,90,100,120,140];

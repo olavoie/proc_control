@@ -55,7 +55,7 @@ classdef ConfigAUV8
                       0.027]; % z
                   
            this.mass = 33.95;
-           this.volume = 0.027;
+           this.volume = 0.037;
            
            this.I = [0.5358, 0.001, 0.01;... Ixx Ixy Ixz 0.5358
                      0.002, 1.47, 0.005;... Iyx Iyy Iyz

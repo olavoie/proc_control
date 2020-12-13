@@ -11,7 +11,7 @@ Ts = 0.1; % Période d'echantillionage
 p = 10;   % Horizon de prediction
 m =2;    % Horizon de Controle
 Duration = 60;
-
+gazeboStep=1/60;
 % Modèle du thruster
 load('T200_Identification.mat');
 load('T200-Spec-16V.mat');
@@ -22,17 +22,17 @@ PWM = T200Spec16V{:,1};% PWM
 %Forces Minmax Thrusters initailes
 tmax=32;
 tmin=-26;
-TMIN ={tmin; tmin; tmin; tmin; tmin; tmin; tmin; tmin};
-TMAX ={ tmax; tmax; tmax; tmax; tmax; tmax; tmax; tmax};
+TMIN =[tmin; tmin; tmin; tmin; tmin; tmin; tmin; tmin];
+TMAX =[tmax; tmax; tmax; tmax; tmax; tmax; tmax; tmax];
 MvTarget={0; 0; 0 ;0 ;-17.5 ;17.5 ;-17.5; 17.5};
 %Vitesse Max
 % VMIN ={-2;-2;-2;-2;-2;-2;-2;-2;-2;-2;-2;-2};
 % VMAX ={ 2; 2; 2; 2; 2; 2; 2; 2; 2; 2; 2; 2};
 
 % Poids du controleur initiales
-OV =[ 70 70 50 70 70 70 0 0 0 0 0 0 ];  %OutputVariables
+OV =[ 90 50 50 70 70 90 0 0 0 0 0 0 ];  %OutputVariables
 MV =[.5 .5 .5 .5 0.1 0.1 0.1 0.1]; %ManipulatedVariables
-MVR=[.4 .4 .4 .5 .5 .5 .5 .5]; %.ManipulatedVariablesRate
+MVR=[.4,.4 .4 .4 .5 .5 .5 .5]; %.ManipulatedVariablesRate
 
 % Constante pour bloc areospace
 I=cf.I;
@@ -67,21 +67,21 @@ results = review(mpcobj);
 options = mpcmoveopt;
 options.MVTarget = [0 0 0 0 -4 4 -4 4]; 
 %% Initialiser le comtrolleur non linéaire MPC
-nlobj = nlmpc(nx, ny, nu);
-
-nlobj.Model.StateFcn = "AUVStateSimFcn";
-nlobj.Jacobian.StateFcn = @AUVStateJacobianFcn;
-rng(0)
-validateFcns(nlobj,rand(nx,1),rand(nu,1));
-
-nlobj.Ts = Ts;
-nlobj.PredictionHorizon = p;
-nlobj.ControlHorizon = m;
-
-nlobj.MV = struct('Min',TMIN,'Max',TMAX);%,'Target',MvTarget);
-nlobj.Weights.OutputVariables = OV;
-nlobj.Weights.ManipulatedVariables = MV;
-nlobj.Weights.ManipulatedVariablesRate = MVR;
+% nlobj = nlmpc(nx, ny, nu);
+% 
+% nlobj.Model.StateFcn = "AUVStateSimFcn";
+% nlobj.Jacobian.StateFcn = @AUVStateJacobianFcn;
+% rng(0)
+% validateFcns(nlobj,rand(nx,1),rand(nu,1));
+% 
+% nlobj.Ts = Ts;
+% nlobj.PredictionHorizon = p;
+% nlobj.ControlHorizon = m;
+% 
+% nlobj.MV = struct('Min',TMIN,'Max',TMAX);%,'Target',MvTarget);
+% nlobj.Weights.OutputVariables = OV;
+% nlobj.Weights.ManipulatedVariables = MV;
+% nlobj.Weights.ManipulatedVariablesRate = MVR;
 %% Trajectoire
 
 
