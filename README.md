@@ -21,7 +21,18 @@ You can now send messages to the control using a rostopic command.
 ### Clear waypoints
 `rosservice call /proc_control_matlab/clear_waypoints`
 
-### 
+
+You can also receive messages from the RosNode.
+
+# Example
+### Waypoint
+`rostopic echo /proc_control_matlab/waypoint`
+
+### Thrusters rpms
+
+### Thrusters forces
+
+### Thrusters currents
 
 
 # How to generate custom messages
