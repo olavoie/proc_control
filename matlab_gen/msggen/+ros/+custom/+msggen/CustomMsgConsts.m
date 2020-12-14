@@ -45,11 +45,11 @@ classdef CustomMsgConsts
         proc_control_matlab_ComputeTrajectory = 'proc_control_matlab/ComputeTrajectory'
         proc_control_matlab_ComputeTrajectoryRequest = 'proc_control_matlab/ComputeTrajectoryRequest'
         proc_control_matlab_ComputeTrajectoryResponse = 'proc_control_matlab/ComputeTrajectoryResponse'
+        proc_control_matlab_Pose = 'proc_control_matlab/Pose'
         proc_control_matlab_SetForces = 'proc_control_matlab/SetForces'
         proc_control_matlab_SetMode = 'proc_control_matlab/SetMode'
         proc_control_matlab_SetModeRequest = 'proc_control_matlab/SetModeRequest'
         proc_control_matlab_SetModeResponse = 'proc_control_matlab/SetModeResponse'
-        proc_control_matlab_Waypoint = 'proc_control_matlab/Waypoint'
     end
     
     methods (Static, Hidden)
@@ -87,10 +87,10 @@ classdef CustomMsgConsts
                 msgList{25} = 'proc_control_matlab/ClearWaypointsResponse';
                 msgList{26} = 'proc_control_matlab/ComputeTrajectoryRequest';
                 msgList{27} = 'proc_control_matlab/ComputeTrajectoryResponse';
-                msgList{28} = 'proc_control_matlab/SetForces';
-                msgList{29} = 'proc_control_matlab/SetModeRequest';
-                msgList{30} = 'proc_control_matlab/SetModeResponse';
-                msgList{31} = 'proc_control_matlab/Waypoint';
+                msgList{28} = 'proc_control_matlab/Pose';
+                msgList{29} = 'proc_control_matlab/SetForces';
+                msgList{30} = 'proc_control_matlab/SetModeRequest';
+                msgList{31} = 'proc_control_matlab/SetModeResponse';
             end
             
             messageList = msgList;

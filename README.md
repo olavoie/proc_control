@@ -25,8 +25,8 @@ You can now send messages to the control using a rostopic command.
 You can also receive messages from the RosNode.
 
 # Example
-### Waypoint
-`rostopic echo /proc_control_matlab/waypoint`
+### Pose
+`rostopic echo /proc_control_matlab/pose`
 
 ### Thrusters rpms
 

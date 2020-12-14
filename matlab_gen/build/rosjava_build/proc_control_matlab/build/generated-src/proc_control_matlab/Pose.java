@@ -1,8 +1,8 @@
 package proc_control_matlab;
 
-public interface Waypoint extends org.ros.internal.message.Message {
-  static final java.lang.String _TYPE = "proc_control_matlab/Waypoint";
-  static final java.lang.String _DEFINITION = "float64 X\nfloat64 Y\nfloat64 Z\nfloat64 Roll\nfloat64 Pitch\nfloat64 Yaw\nint64 Frame\nint64 ZoneData";
+public interface Pose extends org.ros.internal.message.Message {
+  static final java.lang.String _TYPE = "proc_control_matlab/Pose";
+  static final java.lang.String _DEFINITION = "float64 X\nfloat64 Y\nfloat64 Z\nfloat64 Roll\nfloat64 Pitch\nfloat64 Yaw";
   static final boolean _IS_SERVICE = false;
   static final boolean _IS_ACTION = false;
   double getX();
@@ -17,8 +17,4 @@ public interface Waypoint extends org.ros.internal.message.Message {
   void setPitch(double value);
   double getYaw();
   void setYaw(double value);
-  long getFrame();
-  void setFrame(long value);
-  long getZoneData();
-  void setZoneData(long value);
 }
