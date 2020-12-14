@@ -172,7 +172,8 @@ end
      methods(Access = protected)
           function setupImpl(this)
             % Perform one-time calculations, such as computing constants
-        end
+          end
+         
         function resetImpl(this)
             % Initialize / reset discrete-state properties
         end

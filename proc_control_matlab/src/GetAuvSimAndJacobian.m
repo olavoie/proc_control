@@ -277,9 +277,9 @@
     simfonction(7) = aditionForceFoment(1)/mass;
     simfonction(8) = aditionForceFoment(2)/mass;
     simfonction(9) = aditionForceFoment(3)/mass;
-    simfonction(10) = aditionForceFoment(4)/I1_1;
-    simfonction(11) = aditionForceFoment(5)/I2_2;
-    simfonction(12) = aditionForceFoment(6)/I3_3;
+    simfonction(10) = aditionForceFoment(4)/mass;
+    simfonction(11) = aditionForceFoment(5)/mass;
+    simfonction(12) = aditionForceFoment(6)/mass;
     
     
 %% Substitution des paramètres et des fonctions.
@@ -292,6 +292,16 @@
     aditionForceFoment = subs(aditionForceFoment, func, funcValues);
     aditionForceFoment = subs(aditionForceFoment, statet, state);
     aditionForceFoment = simplify(aditionForceFoment);
+    
+    ThrusterMatrix = subs(Tm, const, constValues);
+    ThrusterMatrix = subs(ThrusterMatrix, func, funcValues);
+    ThrusterMatrix = subs(ThrusterMatrix, statet, state);
+    ThrusterMatrix = simplify(ThrusterMatrix);
+    
+    Gravity = subs(gg, const, constValues);
+    Gravity = subs(Gravity, func, funcValues);
+    Gravity = subs(Gravity, statet, state);
+    Gravity = simplify(Gravity);
 
 %% Calcul de la Matrice Jacobienne
     A = jacobian(simfonction, [state{:}]);
@@ -326,11 +336,19 @@ if unco == 0 %si le système est controllable
    
 % Crée AUVJacobianFcn.m 
     matlabFunction(A, B, C, D,'File','AUVStateJacobianFcn',...
-        'Vars',{transpose([state{:}]),transpose(U)});   
-%Cré AUVForceMoment
-
+        'Vars',{transpose([state{:}]),transpose(U)});  
+    
+%Crée AUVForceMoment
     matlabFunction(transpose(aditionForceFoment),'File',...
         'AUVForceMoments','Vars',{transpose([Output{:}]),transpose(U)});
+    
+    %Exporter la matrice thruster
+    matlabFunction(transpose(ThrusterMatrix),'File',...
+        'ThrusterMatrix');
+    
+    %Exporter la  AUVForceMoment
+    matlabFunction(transpose(Gravity),'File',...
+        'Gravity','Vars',{transpose([Output{:}])});
     
    disp("Done")
 else

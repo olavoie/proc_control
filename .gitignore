@@ -45,4 +45,4 @@ proc_control_matlab/src/AUVForceMoments.m
 proc_control_matlab/src/AUVStateJacobianFcn.m
 proc_control_matlab/src/AUVStateSimFcn.m
 
-
+proc_control_matlab/src/slprj/*
