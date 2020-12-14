@@ -12,6 +12,7 @@ p = 10;   % Horizon de prediction
 m =2;    % Horizon de Controle
 Duration = 60;
 gazeboStep=1/60;
+telemetryStep=1/30;
 % Modèle du thruster
 load('T200_Identification.mat');
 load('T200-Spec-16V.mat');
