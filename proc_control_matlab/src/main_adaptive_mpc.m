@@ -31,7 +31,7 @@ MvTarget={0; 0; 0 ;0 ;-17.5 ;17.5 ;-17.5; 17.5};
 % VMAX ={ 2; 2; 2; 2; 2; 2; 2; 2; 2; 2; 2; 2};
 
 % Poids du controleur initiales
-OV =[ 90 50 50 70 70 90 0 0 0 0 0 0 ];  %OutputVariables
+OV =[ 30 30 30 50 50 70 90 70 50 0 0 0 ];  %OutputVariables
 MV =[.5 .5 .5 .5 0.1 0.1 0.1 0.1]; %ManipulatedVariables
 MVR=[.4,.4 .4 .4 .5 .5 .5 .5]; %.ManipulatedVariablesRate
 
@@ -64,7 +64,7 @@ mpcobj.PredictionHorizon =p;
 mpcobj.ControlHorizon=m;
 x=mpcstate(mpcobj);
 results = review(mpcobj);
-
+mpcobj.Optimizer.ActiveSetOptions.ConstraintTolerance=0.01;
 options = mpcmoveopt;
 options.MVTarget = [0 0 0 0 -4 4 -4 4]; 
 %% Initialiser le comtrolleur non linéaire MPC
