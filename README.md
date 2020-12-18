@@ -1,6 +1,9 @@
 # proc_control
 Ros node to drive SONIA's control system
 
+# Installation
+ROS Toolbox interface for ROS Custom Messages
+
 # Use the control
 - Open Matlab;
 - In a terminal, start a roscore;
@@ -29,11 +32,13 @@ You can also receive messages from the RosNode.
 `rostopic echo /proc_control_matlab/pose`
 
 ### Thrusters rpms
+`rostopic echo /proc_control_matlab/thruster_rpms`
 
 ### Thrusters forces
+`rostopic echo /proc_control_matlab/thruster_forces`
 
 ### Thrusters currents
-
+`rostopic echo /proc_control_matlab/thruster_currents`
 
 # How to generate custom messages
 - Follow this procedure to generate a new .srv or .msg file for ROS: https://wiki.ros.org/ROS/Tutorials/CreatingMsgAndSrv
