@@ -1,7 +1,7 @@
-clc; clear;
+%clc; clear;
 cf = ConfigAUV8();
 
-run('trajec.m');
+%run('trajec.m');
 
 %% Determiner les specification du système
 nx = 12;  % nombre d'états
@@ -10,9 +10,11 @@ nu = 8;   % Nombre d'entré
 Ts = 0.1; % Période d'echantillionage
 p = 10;   % Horizon de prediction
 m =2;    % Horizon de Controle
-Duration = 60;
+
+Duration = 229;
 gazeboStep=1/60;
 telemetryStep=1/30;
+
 % Modèle du thruster
 load('T200_Identification.mat');
 load('T200-Spec-16V.mat');
@@ -31,9 +33,9 @@ MvTarget={0; 0; 0 ;0 ;-17.5 ;17.5 ;-17.5; 17.5};
 % VMAX ={ 2; 2; 2; 2; 2; 2; 2; 2; 2; 2; 2; 2};
 
 % Poids du controleur initiales
-OV =[ 30 30 30 50 50 70 90 70 50 0 0 0 ];  %OutputVariables
-MV =[.5 .5 .5 .5 0.1 0.1 0.1 0.1]; %ManipulatedVariables
-MVR=[.4,.4 .4 .4 .5 .5 .5 .5]; %.ManipulatedVariablesRate
+OV =[ 70 50 50 50 50 70 0 0 0 0 0 0 ];  %OutputVariables
+MV =[.1 .1 .1 .1 0.1 0.1 0.1 0.1]; %ManipulatedVariables
+MVR=[.1,.1 .1 .1 .4 .4 .4 .4]; %.ManipulatedVariablesRate
 
 % Constante pour bloc areospace
 I=cf.I;
@@ -88,12 +90,12 @@ options.MVTarget = [0 0 0 0 -4 4 -4 4];
 
 
 %Trajectoire avec prédiction Beta!!!
-trajectoire = repmat(zeros(p,ny),[1 1 Duration]);
-for k = 1:(Duration/Ts)
-    t = linspace(k*Ts, (k+p-1)*Ts,p);
-    trajectoire(:,:,k)= QuadrotorReferenceTrajectory(t);
+trajectoire = repmat(zeros(p,ny),[1 1 (Duration/Ts)+1]);
+for k = 1:(Duration/Ts)+1
+    %t = linspace(k*Ts, (k+p-1)*Ts,p);
+    trajectoire(:,:,k)= subpose(:,k:k+p-1).';
 end
-tt = linspace(0, (Duration-1)*Ts,Duration/Ts);
+tt =0:0.1:Duration;% linspace(0, (Duration-1)*Ts,Duration/Ts);
 data.time=tt.';
 data.signals.values=trajectoire;
 data.signals.dimensions=[p ny];
