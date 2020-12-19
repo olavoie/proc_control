@@ -89,16 +89,16 @@ options.MVTarget = [0 0 0 0 -4 4 -4 4];
 
 
 
-%Trajectoire avec prédiction Beta!!!
-trajectoire = repmat(zeros(p,ny),[1 1 (Duration/Ts)+1]);
-for k = 1:(Duration/Ts)+1
-    %t = linspace(k*Ts, (k+p-1)*Ts,p);
-    trajectoire(:,:,k)= subpose(:,k:k+p-1).';
-end
-tt =0:0.1:Duration;% linspace(0, (Duration-1)*Ts,Duration/Ts);
-data.time=tt.';
-data.signals.values=trajectoire;
-data.signals.dimensions=[p ny];
+% %Trajectoire avec prédiction Beta!!!
+% trajectoire = repmat(zeros(p,ny),[1 1 (Duration/Ts)+1]);
+% for k = 1:(Duration/Ts)+1
+%     %t = linspace(k*Ts, (k+p-1)*Ts,p);
+%     trajectoire(:,:,k)= subpose(:,k:k+p-1).';
+% end
+% tt =0:0.1:Duration;% linspace(0, (Duration-1)*Ts,Duration/Ts);
+% data.time=tt.';
+% data.signals.values=trajectoire;
+% data.signals.dimensions=[p ny];
 
 
 
