@@ -1,3 +1,4 @@
+
 wpts(1,:)= [0 0 0 0 0 0];
 wpts(2,:)= [0 0 1.5 0 0 0];
 wpts(3,:)= [.5 0 2 0 0 0];
@@ -10,9 +11,9 @@ wpts(9,:)= [14.217 1.237 1.278 deg2rad(135) 0 0];
 wpts(10,:)= [13 1.75 1.5 deg2rad(180) 0 0];
 wpts(11,:)= [11.921 1.364 1.696  deg2rad(180+39.23) 0 0];%180+39.23
 wpts(12,:)= [8.072 0 2 deg2rad(180) 0 0];
-wpts(13,:)= [.5 .5 2 deg2rad(180) 0 0];
-wpts(14,:)=[0 .5 2 deg2rad(180) 0 0];
-wpts(15,:)=[0 .5 2 deg2rad(180) 0 0];
+wpts(13,:)= [.5 0 2 deg2rad(180) 0 0];
+wpts(14,:)=[0 0 2 deg2rad(180) 0 0];
+wpts(15,:)=[0 0 2 deg2rad(180) 0 0];
 
 
 linwpts= zeros(3,size(wpts,1));
@@ -46,7 +47,7 @@ pose= zeros(12,length(tvec));
  
 [pose(4:6,:), pose(10:12,:), qdd, pp] = cubicpolytraj(eulwpts, tpts, tvec,'VelocityBoundaryCondition',vpcr);
 
-plot(tvec, pose(4:6,:))
+plot(tvec, pose(1:3,:))
 
 
 

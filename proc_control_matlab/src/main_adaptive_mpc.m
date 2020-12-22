@@ -33,9 +33,9 @@ MvTarget={0; 0; 0 ;0 ;-17.5 ;17.5 ;-17.5; 17.5};
 % VMAX ={ 2; 2; 2; 2; 2; 2; 2; 2; 2; 2; 2; 2};
 
 % Poids du controleur initiales
-OV =[ 70 50 50 50 50 70 0 0 0 0 0 0 ];  %OutputVariables
+OV =[ 70 50 60 50 50 70 0 0 0 0 0 0 ];  %OutputVariables
 MV =[.1 .1 .1 .1 0.1 0.1 0.1 0.1]; %ManipulatedVariables
-MVR=[.1,.1 .1 .1 .4 .4 .4 .4]; %.ManipulatedVariablesRate
+MVR=[.1,.1 .1 .1 .3 .3 .3 .3]; %.ManipulatedVariablesRate
 
 % Constante pour bloc areospace
 I=cf.I;
