@@ -47,7 +47,7 @@ pose= zeros(12,length(tvec));
  
 [pose(4:6,:), pose(10:12,:), qdd, pp] = cubicpolytraj(eulwpts, tpts, tvec,'VelocityBoundaryCondition',vpcr);
 
-plot(tvec, pose(1:3,:))
+plot(tvec, pose(4:6,:))
 
 
 
