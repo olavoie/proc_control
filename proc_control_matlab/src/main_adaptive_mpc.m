@@ -4,43 +4,71 @@ cf = ConfigAUV8();
 %run('trajec.m');
 
 %% Determiner les specification du système
-nx = 12;  % nombre d'états
-ny = 12;  % Nombre de sorties
-nu = 8;   % Nombre d'entré
-Ts = 0.1; % Période d'echantillionage
-p = 10;   % Horizon de prediction
-m =2;    % Horizon de Controle
-
-Duration = 229;
-gazeboStep=1/60;
-telemetryStep=1/30;
+    nx = 12;  % nombre d'états
+    ny = 12;  % Nombre de sorties
+    nu = 8;   % Nombre d'entré
+    Ts = 0.1; % Période d'echantillionage
+    p = 10;   % Horizon de prediction
+    m =2;    % Horizon de Controle
 
 % Modèle du thruster
-load('T200_Identification.mat');
-load('T200-Spec-16V.mat');
+    load('T200_Identification.mat');
+    load('T200-Spec-16V.mat');
 % Données pour lookup table.
-N = T200Spec16V{:,6};% Force en Newton
-PWM = T200Spec16V{:,1};% PWM
+    N = T200Spec16V{:,6};% Force en Newton
+    PWM = T200Spec16V{:,1};% PWM
 
 %Forces Minmax Thrusters initailes
-tmax=32;
-tmin=-26;
-TMIN =[tmin; tmin; tmin; tmin; tmin; tmin; tmin; tmin];
-TMAX =[tmax; tmax; tmax; tmax; tmax; tmax; tmax; tmax];
-MvTarget={0; 0; 0 ;0 ;-17.5 ;17.5 ;-17.5; 17.5};
+    tmax=32;
+    tmin=-26;
+    TMIN =[tmin; tmin; tmin; tmin; tmin; tmin; tmin; tmin];
+    TMAX =[tmax; tmax; tmax; tmax; tmax; tmax; tmax; tmax];
+    MvTarget={0; 0; 0 ;0 ;-17.5 ;17.5 ;-17.5; 17.5};
 %Vitesse Max
-% VMIN ={-2;-2;-2;-2;-2;-2;-2;-2;-2;-2;-2;-2};
-% VMAX ={ 2; 2; 2; 2; 2; 2; 2; 2; 2; 2; 2; 2};
+    VMIN ={-2;-2;-2;-2;-2;-2;-2;-2;-2;-2;-2;-2};
+    VMAX ={ 2; 2; 2; 2; 2; 2; 2; 2; 2; 2; 2; 2};
 
 % Poids du controleur initiales
-OV =[ 70 50 60 50 50 70 0 0 0 0 0 0 ];  %OutputVariables
-MV =[.1 .1 .1 .1 0.1 0.1 0.1 0.1]; %ManipulatedVariables
-MVR=[.1,.1 .1 .1 .3 .3 .3 .3]; %.ManipulatedVariablesRate
+    OV =[ 70 50 60 50 50 70 0 0 0 0 0 0 ];  %OutputVariables
+    MV =[.1 .1 .1 .1 0.1 0.1 0.1 0.1]; %ManipulatedVariables
+    MVR=[.1,.1 .1 .1 .3 .3 .3 .3]; %.ManipulatedVariablesRate
 
 % Constante pour bloc areospace
-I=cf.I;
-mass=cf.mass;
+    I=cf.I;
+    mass=cf.mass;
 
+% Perturbations des vages
+    %Vages X
+    waX=2;          % Amplitude
+    wfX=pi/2;         % Frequence
+    wpX=0;          % Phase
+    %Vages Y
+    waY=3;          % Amplitude
+    wfY=pi/2;         % Frequence
+    wpY=pi/2;       % Phase
+    %Vages Z
+    waZ= 4;         % Amplitude
+    wfZ=pi/2;         % Frequence
+    wpZ=pi;         % Phase
+    %Vages RX (Roll)
+    waPhi= .5;      % Amplitude
+    wfPhi= pi/2;      % Frequence
+    wpPhi=0;        % Phase
+    %Vages Ry (Pitch)
+    waTheta=.25;    % Amplitude
+    wfTheta=pi/2;     % Frequence
+    wpTheta=pi/2;   % Phase
+    %Vages Rz (Yaw)
+    waPsi=.5;       % Amplitude
+    wfPsi=pi/2;       % Frequence
+    wpPsi=pi;       % Phase
+
+% Parametres Messages ROS
+    Duration = 229;
+    gazeboStep=1/50;
+    telemetryStep=1/30;
+    referenceFrame = cf.referenceFrame;
+    modelName = cf.modelName;
 %% Initialiser le comtrolleur MPC
 % Conditions initiales
 Xi=[0;0;0;0;0;0;0;0;0;0;0;0];%repmat(0.01,nx,1); % états initials
@@ -69,6 +97,9 @@ results = review(mpcobj);
 mpcobj.Optimizer.ActiveSetOptions.ConstraintTolerance=0.01;
 options = mpcmoveopt;
 options.MVTarget = [0 0 0 0 -4 4 -4 4]; 
+%% Constantes pour Gazebo.
+
+
 %% Initialiser le comtrolleur non linéaire MPC
 % nlobj = nlmpc(nx, ny, nu);
 % 
@@ -103,36 +134,33 @@ options.MVTarget = [0 0 0 0 -4 4 -4 4];
 
 
 % Trajectoire sans prédiction
-T=Duration;
-P0=0;
-Pf=10;
-am=0.3;
-Tf=30;
-Tb=(Tf/2)-((am^2*Tf^2-4*am*(Pf-P0))^.5)/(2*am);
+% T=Duration;
+% P0=0;
+% Pf=10;
+% am=0.3;
+% Tf=30;
+% Tb=(Tf/2)-((am^2*Tf^2-4*am*(Pf-P0))^.5)/(2*am);
+% 
+% pd=zeros(1,Duration/Ts);
+% time=linspace(Ts,T,Duration/Ts);
+% for i=1:Duration/Ts
+%    
+%     if time(i)<=Tb  %Accélération
+%      pd(i)= P0+(am/2)*time(i)^2;
+%     elseif time(i) <= Tf-Tb %vitesse constante
+%      pd(i)=((Pf+P0-am*Tb*Tf)/2)+am*Tb*time(i);
+%     elseif time(i)<=Tf % Décélération
+%      pd(i)= Pf-((am*Tf^2)/2)+am*Tf*time(i)-(am/2)*time(i)^2;
+%     else %position finale
+%        pd(i)=Pf;
+%     end
+% end
+% %Afficher la courbe
+% plot(time,pd);
+% title('Trajectoire désirée ');
+% xlabel('Temps (sec)');
+% ylabel('Distance (m)');
 
-pd=zeros(1,Duration/Ts);
-time=linspace(Ts,T,Duration/Ts);
-for i=1:Duration/Ts
-   
-    if time(i)<=Tb  %Accélération
-     pd(i)= P0+(am/2)*time(i)^2;
-    elseif time(i) <= Tf-Tb %vitesse constante
-     pd(i)=((Pf+P0-am*Tb*Tf)/2)+am*Tb*time(i);
-    elseif time(i)<=Tf % Décélération
-     pd(i)= Pf-((am*Tf^2)/2)+am*Tf*time(i)-(am/2)*time(i)^2;
-    else %position finale
-       pd(i)=Pf;
-    end
-end
-%Afficher la courbe
-plot(time,pd);
-title('Trajectoire désirée ');
-xlabel('Temps (sec)');
-ylabel('Distance (m)');
-
-%% Constantes pour Gazebo.
-referenceFrame = cf.referenceFrame;
-modelName = cf.modelName;
 
 
 %% Open simulink model
