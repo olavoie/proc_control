@@ -16,27 +16,55 @@
 % % r=fmincon(fun,x0,[],[],Ae,Be,[],[],[],op)
 % % x0=r;
 % % toc;
+% % % clc;
+% % % subpose= zeros(12,length(tvec));
+% % % for k=2:size(pose,2)
+% % %     d = pose(1:3,k)-pose(1:3,k-1);
+% % %     q = eul2quat(pose(4:6,k-1).',"XYZ");
+% % %     p = quatrotate(q,d.');
+% % %     
+% % %     subpose(1:3,k)=subpose(1:3,k-1)+p.';
+% % %     subpose(4:6,k)=pose(4:6,k);
+% % % end
+% % % plot(tvec(), subpose(1:3,:))
+
+
+% % %  d=[-1;0;0];
+% % %     q = eul2quat([0,0,deg2rad(90)],"XYZ");
+% % %     qrotm=quat2rotm(q);
+% % %     b=quatrotate(q,d.')
+% % %     H=[qrotm,d;0,0,0,1];       
+% % %     hp=inv(H)
+% % %     
+% % %     hpp=[inv(qrotm),quatrotate(q,d.').';0,0,0,1]
+% % %     
+% % %     a=inv(H)*[1;0;0;1];
+% % % %inv(t)*[0;0;1;1]
 clc;
-subpose= zeros(12,length(tvec));
-for k=2:size(pose,2)
-    d = pose(1:3,k)-pose(1:3,k-1);
-    q = eul2quat(pose(4:6,k-1).',"XYZ");
-    p = quatrotate(q,d.');
+qq=zeros(1,4);
+ 
+ roll=pi/4;
+ pitch=pi/4;
+ yaw=0;
+ 
+ qq(1) = cos(roll/2) * cos(pitch/2) * cos(yaw/2) + sin(roll/2) * sin(pitch/2) * sin(yaw/2);
+ qq(2) = sin(roll/2) * cos(pitch/2) * cos(yaw/2) - cos(roll/2) * sin(pitch/2) * sin(yaw/2);
+ qq(3) = cos(roll/2) * sin(pitch/2) * cos(yaw/2) + sin(roll/2) * cos(pitch/2) * sin(yaw/2);
+ qq(4) = cos(roll/2) * cos(pitch/2) * sin(yaw/2) - sin(roll/2) * sin(pitch/2) * cos(yaw/2);
+ 
     
-    subpose(1:3,k)=subpose(1:3,k-1)+p.';
-    subpose(4:6,k)=pose(4:6,k);
-end
-plot(tvec(), subpose(1:3,:))
-
-
- d=[-1;0;0];
-    q = eul2quat([0,0,deg2rad(90)],"XYZ");
-    qrotm=quat2rotm(q);
-    b=quatrotate(q,d.')
-    H=[qrotm,d;0,0,0,1];       
-    hp=inv(H)
-    
-    hpp=[inv(qrotm),quatrotate(q,d.').';0,0,0,1]
-    
-    a=inv(H)*[1;0;0;1];
-%inv(t)*[0;0;1;1]
+ q = eul2quat([yaw,pitch,roll],"ZYX");  
+ disp(qq);
+ disp(q);
+ 
+ 
+ s=qq(1);
+ u=-qq(2:4);
+ v=[0,0,-20];
+ 
+ qp=2*dot(u,v)*u +(s^2-dot(u,u))*v + 2*s*cross(u,v);
+disp(qp);
+ %test= q*qUnit*qCong
+ quatrotate(q,v)
+ 
+ 

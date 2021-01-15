@@ -9,6 +9,11 @@
 % Nombre de d'états et de commandes
    nX=12; % nombre de state du système
    nU= 8; % nombre d'entrée
+   
+% Quaternions
+  syms('q',[1 4]);
+  syms qs qu % Partie scalaire et vecteur unitaire
+   
 % Position 6 DOFF selon t
     syms xt(t) yt(t) zt(t) phit(t) thetat(t) psit(t)
 
@@ -19,15 +24,12 @@
     syms ('vdot',[6,1])
 
 % thrusters
-%syms u1 u2 u3 u4 u5 u6 u7 u8
     syms ('U',[1,8])
 
 
 % position et vitesse 6DOFF
     syms x y z phi theta psi xdot ydot zdot phidot thetadot psidot
-    %sym('phi','real');
-   % sym('theta','real');
-    %sym('psi','real');
+    
 % distance truster x y z selon centre geommétrique
 % D14 distance thruster 1 a 4.
 % D58 distance thruster 5 a 8.
@@ -50,7 +52,7 @@
 
 % centre de gravité RG et centre de flotataison RB
     syms ('RG',[1 3]); syms('RB',[1 3])
-
+    
 % Constantes physique (densité de leau et accélération gravitationel)
     syms rho g
 
@@ -96,63 +98,45 @@
                  cf.g];
 
     funcValues=[cf.CD];
-
-%% Matrice de transformation 
-% Angle Euler X Y Z
-    Rz = [ cos(psit), -sin(psit), 0;
-           sin(psit),  cos(psit), 0;
-           0        ,  0        , 1];
-
-    Ry = [ cos(thetat), 0,  sin(thetat);
-           0          , 1,  0;
-          -sin(thetat), 0,  cos(thetat)];
-
-    Rx = [1, 0        , 0;
-          0, cos(phit), -sin(phit);
-          0, sin(phit), cos(phit)];
-
-% Matrice de transformation vitesse liéaire du frame sub au frame world
-    J1 = Rz*Ry*Rx;
-    rotm = subs(J1, statet, state);
-    rotm=formula(rotm);
     
-    q(1)=sqrt(1+rotm(1,1)+rotm(2,2)+rotm(3,3))/2;
-    q(2)=(rotm(3,2)-rotm(2,3))/(4*q(1));
-    q(3)=(rotm(1,3)-rotm(3,1))/(4*q(1));
-    q(4)=(rotm(2,1)-rotm(1,2))/(4*q(1));
+%% Quaternions
+% Determiner le quaternion en fonction des angles d'euler.
+% Orde de rotation : ZYX.
 
-    qrotm =[(1-2*q(3)^2-2*q(4)^2),2*(q(2)*q(3)+q(1)*q(4)),2*(q(2)*q(4)-q(1)*q(3));
-             2*(q(2)*q(3)-q(1)*q(4)),(1-2*q(2)^2-2*q(4)^2),2*(q(3)*q(4)+q(1)*q(2));
-             2*(q(2)*q(4)+q(1)*q(3)),2*(q(3)*q(4)-q(1)*q(2)),(1-2*q(2)^2-2*q(3)^2)];
-% Matrice de transformation vitesse angulaire du frame sub au frame world
-%J2⁻¹
-    J2i=[[1;0;0],Rx.'*[0;1;0],Rx.'*Ry.'*[0;0;1]];
-    J2=simplify(inv(J2i));
-
-    J= diag([J1,J2]);
+% Reel
+ q(1) = cos(phi/2) * cos(theta/2) * cos(psi/2)...
+      + sin(phi/2) * sin(theta/2) * sin(psi/2);
+  
+% imaginaire i
+ q(2) = sin(phi/2) * cos(theta/2) * cos(psi/2)...
+      - cos(phi/2) * sin(theta/2) * sin(psi/2);
+  
+% imaginaire j
+ q(3) = cos(phi/2) * sin(theta/2) * cos(psi/2)...
+      + sin(phi/2) * cos(theta/2) * sin(psi/2);
+  
+% imaginaire k
+ q(4) = cos(phi/2) * cos(theta/2) * sin(psi/2)...
+      - sin(phi/2) * sin(theta/2) * cos(psi/2);
+ 
+qs=q(1);    % Partie scalaire
+qu=-q(2:4); % Partie vectoriel unitaire
 
 %% Matrice de gravite
 % Definition de la matrice de gravite.
-    w = mass * g;
-    b = rho * g * volume;
-    FG = (qrotm*[0;0;-1])*w; %inv(J1)*[0;0;w];
-    FB = (qrotm*[0;0;1])*b;%inv(J1)*[0;0;-b];
-    gg =simplify([FB+FG;cross(RB.',FB)+cross(RG.',FG)]);
 
-    X  =  (w-b)*sin(thetat);
-    Y  =  -(w-b)*cos(thetat)*sin(phit);
-    Z  =  -(w-b)*cos(thetat)*cos(phit);
+    w = [0,0,(mass * g)]; % vecteur Gravite
+    b = [0,0,-(rho * g * volume)]; % Vecteur poussee d'archimede
+    
+    % Vecteur Gravité tourne selon le quaternion du sous-marin
+    FG=2*dot(qu,w)*qu +(qs^2-dot(qu,qu))*w + 2*qs*cross(qu,w); 
+    
+    % Vecteur d'archimede tourne selon le quaternion du sous-marin
+    FB=2*dot(qu,b)*qu +(qs^2-dot(qu,qu))*b + 2*qs*cross(qu,b);
+    
+    % Equoitions 6DOF de la gravite
+    G =simplify([FB.'+FG.';cross(RB.',FB.')+cross(RG.',FG.')]);
 
-    Rx = -(RG2*w-RB2*b)*cos(thetat)*cos(phit)+...
-          (RG3*w-RB3*b)*cos(thetat)*sin(phit);
-
-    Ry =  (RG3*w-RB3*b)*sin(thetat)+...
-          (RG1*w-RB1*b)*cos(thetat)*cos(phit);
-
-    Rz =  -(RG1*w-RB1*b)*cos(thetat)*sin(phit)-...
-          (RG2*w-RB2*b)*sin(thetat);
-
-    G  = [X;Y;Z;Rx;Ry;Rz];
 
 %% Matrice de masse et d'inertie
 % Definition des quatres matrices 3x3 pour former la matrice
@@ -260,7 +244,7 @@
 
 %% Sommes des forces et des moments
 
-    aditionForceFoment(1:6) =(tau + (Cor * v + Damp * v + gg));
+    aditionForceFoment(1:6) =(tau + (Cor * v + Damp * v + G));
 
 %% Équation Dynamique pour simulation
 % Liste de tous les états.
@@ -298,7 +282,7 @@
     ThrusterMatrix = subs(ThrusterMatrix, statet, state);
     ThrusterMatrix = simplify(ThrusterMatrix);
     
-    Gravity = subs(gg, const, constValues);
+    Gravity = subs(G, const, constValues);
     Gravity = subs(Gravity, func, funcValues);
     Gravity = subs(Gravity, statet, state);
     Gravity = simplify(Gravity);
