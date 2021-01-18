@@ -178,7 +178,10 @@ qu=-q(2:4); % Partie vectoriel unitaire
            Crb23, Crb4];
 
 % Matrice de Coriolis (masse ajoutée)
-    CA = zeros(6,6);
+    CA = zeros(6,6); % Public, tunable properties
+    properties
+
+    end
 
 % Matrice de Coriolis
     Cor = CRB + CA;

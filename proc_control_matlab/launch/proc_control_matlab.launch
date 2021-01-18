@@ -1,6 +1,0 @@
-<launch>
-	<node name="proc_control_matlab"
-	    pkg="proc_control_matlab"
-	    type="start_proc_control_matlab.sh"
-	    output="screen" />
-</launch>

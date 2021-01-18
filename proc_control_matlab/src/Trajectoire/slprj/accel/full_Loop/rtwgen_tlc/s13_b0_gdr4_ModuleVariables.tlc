@@ -1,0 +1,6 @@
+%implements s13_b0_gdr4_ModuleVariables "C"
+
+%function ModuleVariables(block) Output
+
+static real_T A[9] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+%endfunction
