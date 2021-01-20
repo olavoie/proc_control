@@ -4,7 +4,7 @@
 
 % Alexandre Lamarre, Alexandre Desgagné
 
-%clear; clc;
+clear; clc;
 %% Création des variables Symboliques
 % Nombre de d'états et de commandes
    nX=12; % nombre de state du système
@@ -38,8 +38,8 @@
 % PZ position des truster sur le frame.
     syms('D14',[1 3]); syms('D58',[1 3]) ; syms a14 dz ; syms ('PZ',[1,4]);
 
-% masse et volume du prototype
-    syms mass volume
+% masse, volume du prototype et hauteur sub
+    syms mass volume height
 
 % coefficient de drag
     syms ('CD(x)', [1, 6]);
@@ -59,7 +59,7 @@
 %% Grouper les variables symbolique 
 
 % Paramètre relier à la mécanique du sous marin
-    const = [D14 D58 a14 dz PZ mass volume  AF...
+    const = [D14 D58 a14 dz PZ mass volume height AF...
              I(1,:) I(2,:) I(3,:) RG RB rho g];
     
 % États en fonction du temps
@@ -87,7 +87,8 @@
                  cf.dz ...
                  cf.z ...
                  cf.mass ...
-                 cf.volume ...       
+                 cf.volume ...
+                 cf.height...
                  cf.AF ...
                  cf.I(1,:) ...
                  cf.I(2,:) ...
@@ -125,8 +126,21 @@ qu=-q(2:4); % Partie vectoriel unitaire
 %% Matrice de gravite
 % Definition de la matrice de gravite.
 
+% Equoition du volume submerger selon la profondeur z.    / ͞ ͞
+% Equation a double  asymptote horizontal. voir erf()  __/
+
+    % Calculs des constantes
+    aa= volume/2; % Calculer l'amplitude.
+    kk=aa;     % Monter la courbe pour avoi min 0 et max volume.
+    bb=4/height;  % Calculer la pente transitoire.
+    hh=height/2;  % Décaler la courbe pour avoir x(0)=0. 
+    
+    % Equation
+    vz=aa*erf(bb*(z-hh))+kk;
+    
+% Calculer les vecteurs forces
     w = [0,0,(mass * g)]; % vecteur Gravite
-    b = [0,0,-(rho * g * volume)]; % Vecteur poussee d'archimede
+    b = [0,0,-(rho * g * vz)]; % Vecteur poussee d'archimede
     
     % Vecteur Gravité tourne selon le quaternion du sous-marin
     FG=2*dot(qu,w)*qu +(qs^2-dot(qu,qu))*w + 2*qs*cross(qu,w); 
@@ -179,9 +193,7 @@ qu=-q(2:4); % Partie vectoriel unitaire
 
 % Matrice de Coriolis (masse ajoutée)
     CA = zeros(6,6); % Public, tunable properties
-    properties
 
-    end
 
 % Matrice de Coriolis
     Cor = CRB + CA;
@@ -322,20 +334,20 @@ if unco == 0 %si le système est controllable
        'Vars',{transpose([Output{:}]),transpose(U)});
    
 % Crée AUVJacobianFcn.m 
-    matlabFunction(A, B, C, D,'File','AUVStateJacobianFcn',...
+    matlabFunction(A, B, C, D,'File','simulink/controller/script/AUVStateJacobianFcn',...
         'Vars',{transpose([state{:}]),transpose(U)});  
     
 %Crée AUVForceMoment
     matlabFunction(transpose(aditionForceFoment),'File',...
-        'AUVForceMoments','Vars',{transpose([Output{:}]),transpose(U)});
+        'simulink/auv_plant/script/AUVForceMoments','Vars',{transpose([Output{:}]),transpose(U)});
     
     %Exporter la matrice thruster
     matlabFunction(transpose(ThrusterMatrix),'File',...
-        'ThrusterMatrix');
+        'simulink/controller/script/ThrusterMatrix');
     
     %Exporter la  AUVForceMoment
     matlabFunction(transpose(Gravity),'File',...
-        'Gravity','Vars',{transpose([Output{:}])});
+        'simulink/controller/script/Gravity','Vars',{transpose([Output{:}])});
     
    disp("Done")
 else

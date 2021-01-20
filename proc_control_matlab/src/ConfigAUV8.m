@@ -3,6 +3,7 @@ classdef ConfigAUV8
     properties
         z               %Position des truster sur le frame.
                         %(0 = milieu, 1= position bas, -1= postion haut)(t15,t26,t37,t48)
+                        
         dz              % Distance entre les postions du frame.
         d14             % Distance x y z / angles des trusters 1 - 4. 
         a14      
@@ -11,12 +12,14 @@ classdef ConfigAUV8
         nbt             % nombre de thrusters
         RG              % Centre de masse
         RB              % Centre de flotaison
+        dvlCenterDist   % Distance entre le dvl et le centre geometrique(z)
         I               % Inertie
-        mass
-        volume
-        rho
-        g
+        mass            % Masse du sous marin
+        volume          % Volume du sous marin
+        rho             % Densite de l'eau
+        g               % Masse du sous marin
         CD
+        height          % hauteur sous marin
         AF              % Aire de la surface
         referenceFrame  % Constante du frame pour Gazebo 
         modelName       % Nom du model Gazebo.
@@ -70,6 +73,7 @@ classdef ConfigAUV8
                     @(ry) 0.72*ry^2+1,...
                     @(rz) 0.72*rz^2+1};
            
+           this.height=.3;
            
            this.AF = [0.12, 0.22, 0.292];
         end

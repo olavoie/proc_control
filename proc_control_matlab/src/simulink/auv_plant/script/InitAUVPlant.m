@@ -31,3 +31,17 @@ cf = ConfigAUV8();
     waPsi=.5;       % Amplitude
     wfPsi=pi/2;       % Frequence
     wpPsi=pi;       % Phase
+    
+% Perturbation Drift
+
+    dts=5; % Temp d'échantillionage des perturbation
+    
+    % Perturbation x
+    dMinX=-1; % Valeur minimum x
+    dMaxX=1;  % Valeur maximum x
+    dSeedX=round(rand*10);
+    
+    % Perturbation y
+    dMinY=-3; % Valeur minimum  y
+    dMaxY=3;  % Valeur maximumx y
+    dSeedY=round(rand*10);

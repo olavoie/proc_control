@@ -40,31 +40,48 @@
 % % %     
 % % %     a=inv(H)*[1;0;0;1];
 % % % %inv(t)*[0;0;1;1]
+% % % % clc;
+% % % % qq=zeros(1,4);
+% % % %  
+% % % %  roll=pi/4;
+% % % %  pitch=pi/4;
+% % % %  yaw=0;
+% % % %  
+% % % %  qq(1) = cos(roll/2) * cos(pitch/2) * cos(yaw/2) + sin(roll/2) * sin(pitch/2) * sin(yaw/2);
+% % % %  qq(2) = sin(roll/2) * cos(pitch/2) * cos(yaw/2) - cos(roll/2) * sin(pitch/2) * sin(yaw/2);
+% % % %  qq(3) = cos(roll/2) * sin(pitch/2) * cos(yaw/2) + sin(roll/2) * cos(pitch/2) * sin(yaw/2);
+% % % %  qq(4) = cos(roll/2) * cos(pitch/2) * sin(yaw/2) - sin(roll/2) * sin(pitch/2) * cos(yaw/2);
+% % % %  
+% % % %     
+% % % %  q = eul2quat([yaw,pitch,roll],"ZYX");  
+% % % %  disp(qq);
+% % % %  disp(q);
+% % % %  
+% % % %  
+% % % %  s=qq(1);
+% % % %  u=-qq(2:4);
+% % % %  v=[0,0,-20];
+% % % %  
+% % % %  qp=2*dot(u,v)*u +(s^2-dot(u,u))*v + 2*s*cross(u,v);
+% % % % disp(qp);
+% % % %  %test= q*qUnit*qCong
+% % % %  quatrotate(q,v)
+% % % %  
+ 
+% % % % % syms x;
+% % % % % v=0.027;
+% % % % % dz=0.3;
+% % % % % 
+% % % % % a= v/2;
+% % % % % k=a;
+% % % % % b=4/dz;
+% % % % % h=dz/2;
+% % % % % ezplot(a*erf(b*(x-h))+k, [-.5, .5]);
+% % % % % 
+% % % % % 
+% % % % % test=@(x)a*erf(b*(x-h))+k;
+% % % % % test(.2)
 clc;
-qq=zeros(1,4);
- 
- roll=pi/4;
- pitch=pi/4;
- yaw=0;
- 
- qq(1) = cos(roll/2) * cos(pitch/2) * cos(yaw/2) + sin(roll/2) * sin(pitch/2) * sin(yaw/2);
- qq(2) = sin(roll/2) * cos(pitch/2) * cos(yaw/2) - cos(roll/2) * sin(pitch/2) * sin(yaw/2);
- qq(3) = cos(roll/2) * sin(pitch/2) * cos(yaw/2) + sin(roll/2) * cos(pitch/2) * sin(yaw/2);
- qq(4) = cos(roll/2) * cos(pitch/2) * sin(yaw/2) - sin(roll/2) * sin(pitch/2) * cos(yaw/2);
- 
-    
- q = eul2quat([yaw,pitch,roll],"ZYX");  
- disp(qq);
- disp(q);
- 
- 
- s=qq(1);
- u=-qq(2:4);
- v=[0,0,-20];
- 
- qp=2*dot(u,v)*u +(s^2-dot(u,u))*v + 2*s*cross(u,v);
-disp(qp);
- %test= q*qUnit*qCong
- quatrotate(q,v)
- 
- 
+2*(0.5-rand)
+
+round(rand*10)
