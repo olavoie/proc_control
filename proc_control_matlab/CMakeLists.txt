@@ -45,6 +45,9 @@ add_message_files(
   FILES
   SetForces.msg
   Pose.msg
+  AddPose.msg
+  ComputeTrajectory.msg
+  ClearWaypoints.msg
   ThrusterCurrents.msg
   ThrusterForces.msg
   ThrusterRpms.msg
@@ -54,9 +57,6 @@ add_message_files(
 add_service_files(DIRECTORY srv
   FILES
   SetMode.srv
-  AddPose.srv
-  ComputeTrajectory.srv
-  ClearWaypoints.srv
 )
 
 ## Generate actions in the 'action' folder

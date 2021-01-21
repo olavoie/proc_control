@@ -19,12 +19,12 @@ classdef TrajectoryGenerator < matlab.System
     end
 
     methods(Access = protected)
-        function setupImpl(this,wpts)
+        function setupImpl(this,wpts, count)
             % Perform one-time calculations, such as computing constants
             this.i=0;
         end
 
-        function [pose, new] = stepImpl(this,wpts)
+        function [pose, new] = stepImpl(this,wpts, count)
             % Implement algorithm. Calculate y as a function of input u and
             % discrete states.
 %              wpts=zeros(15,6);
@@ -44,12 +44,13 @@ classdef TrajectoryGenerator < matlab.System
 %             wpts(14,:)=[0 0 2 deg2rad(180) 0 0];
 %             wpts(15,:)=[0 0 2 deg2rad(180) 0 0];
 tic;
+            wpts = wpts.';
+    
+            linwpts= zeros(3,count);
+            eulwpts= zeros(3,count);
+            quatwpts= zeros(4,count);
 
-            linwpts= zeros(3,size(wpts,1));
-            eulwpts= zeros(3,size(wpts,1));
-            quatwpts= zeros(4,size(wpts,1));
-
-            for k = 1:size(wpts,1)
+            for k = 1:count
                 linwpts(1:3,k)=wpts(k,1:3).';
                 eulwpts(1,k)=wpts(k,6);
                 eulwpts(2,k)=wpts(k,5);

@@ -16,13 +16,13 @@ You can now send messages to the control using a rostopic command.
 `rosservice call /proc_control_matlab/set_mode "Mode: 2"`
 
 ### Add pose
-`rosservice call /proc_control_matlab/add_pose '{X: 0, Y: 0, Z: 0, Roll: 0, Pitch: 0, Yaw: 0, Frame: 0, ZoneData: 0}'`
+`rostopic pub /proc_control_matlab/add_pose proc_control_matlab/AddPose "{X: 1.0, Y: 0.0, Z: 0.0, Roll: 0.0, Pitch: 0.0, Yaw: 0.0}"`
 
 ### Compute trajectory
-`rosservice call /proc_control_matlab/compute_trajectory`
+`rostopic pub /proc_control_matlab/compute_trajectory proc_control_matlab/ComputeTrajectory '{compute: true}'`
 
 ### Clear waypoints
-`rosservice call /proc_control_matlab/clear_waypoints`
+`rostopic pub /proc_control_matlab/clear_waypoints proc_control_matlab/ClearTrajectory '{clear: true}'`
 
 
 You can also receive messages from the RosNode.
