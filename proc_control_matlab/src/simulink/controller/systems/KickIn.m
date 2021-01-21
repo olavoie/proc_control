@@ -67,7 +67,7 @@ classdef KickIn < matlab.System
             uMin=this.uMin;
             uMax=this.uMax;
             
-           % toc;
+           %toc;
         end
 
         function resetImpl(this)

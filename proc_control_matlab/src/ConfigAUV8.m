@@ -72,7 +72,8 @@ classdef ConfigAUV8
                     @(rx) 0.72*rx^2+1,...
                     @(ry) 0.72*ry^2+1,...
                     @(rz) 0.72*rz^2+1};
-           
+                
+           this.dvlCenterDist =0.1435;
            this.height=.3;
            
            this.AF = [0.12, 0.22, 0.292];

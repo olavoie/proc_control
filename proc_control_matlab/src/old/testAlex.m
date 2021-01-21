@@ -68,20 +68,16 @@
 % % % %  quatrotate(q,v)
 % % % %  
  
-% % % % % syms x;
-% % % % % v=0.027;
-% % % % % dz=0.3;
-% % % % % 
-% % % % % a= v/2;
-% % % % % k=a;
-% % % % % b=4/dz;
-% % % % % h=dz/2;
-% % % % % ezplot(a*erf(b*(x-h))+k, [-.5, .5]);
-% % % % % 
-% % % % % 
-% % % % % test=@(x)a*erf(b*(x-h))+k;
-% % % % % test(.2)
-clc;
-2*(0.5-rand)
+syms x;
+v=0.027;
+dz=0.3;
 
-round(rand*10)
+a= v/2;
+k=a;
+b=4/dz;
+h=dz/2;
+ezplot(a*erf(b*(x-h))+k, [-.5, .5]);
+
+
+test=@(x)a*erf(b*(x-h))+k;
+test(.2)

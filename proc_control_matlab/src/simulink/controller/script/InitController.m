@@ -12,6 +12,7 @@
 % Données pour lookup table.
     N = T200Spec16V{:,6};% Force en Newton
     PWM = T200Spec16V{:,1};% PWM
+    RPM = T200Spec16V{:,2}; % RPM
 
 %Forces Minmax Thrusters initailes
     tmax=32;
