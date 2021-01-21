@@ -1,6 +1,0 @@
-%implements s31_b0_6x8l_ModuleVariables "C"
-
-%function ModuleVariables(block) Output
-
-static real_T A[9] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
-%endfunction
