@@ -18,7 +18,10 @@ classdef ConfigAUV8
         volume          % Volume du sous marin
         rho             % Densite de l'eau
         g               % Masse du sous marin
-        CD
+        
+        CDL             % Coefficient de drag linéaire
+        CDQ             % Coefficient de drag Quadratique
+        
         height          % hauteur sous marin
         AF              % Aire de la surface
         referenceFrame  % Constante du frame pour Gazebo 
@@ -55,23 +58,20 @@ classdef ConfigAUV8
                   
             this.RB =[0.00,... x
                       0.00,... y
-                      0.00]; % z
+                      0.1]; % z
                   
            this.mass = 33.95;
            this.volume = 0.037;
            
-           this.I = [1.5358, 0.001, 0.01;... Ixx Ixy Ixz 0.5358
-                     0.002, 1.47, 0.005;... Iyx Iyy Iyz
-                     0.01, 0.005, 1.68]; % Izx Izy Izz
+           this.I = [3.5, 0.001, 0.01;... Ixx Ixy Ixz 0.5358
+                     0.002, 3.8, 0.005;... Iyx Iyy Iyz 1.47
+                     0.01, 0.005,4.45]; % Izx Izy Izz1.68
            this.rho = 998;
            this.g = 9.81;
            
-           this.CD={@(vx) 0.72*vx^2+2,...
-                    @(vy) 0.72*vy^2+3,...
-                    @(vz) 0.72*vz^2+3,...
-                    @(rx) 0.72*rx^2+1,...
-                    @(ry) 0.72*ry^2+2,...
-                    @(rz) 0.72*rz^2+2};
+           this.CDL=[45, 60, 70, 10, 7, 15];
+           
+           this.CDQ=[1.17, 0.82, 0.756, 0.167, 0.1, 0.102];
                 
            this.dvlCenterDist =0.1435;
            this.height=.3;
