@@ -58,7 +58,7 @@ classdef ConfigAUV8
                   
             this.RB =[0.00,... x
                       0.00,... y
-                      0.1]; % z
+                      -0.1]; % z
                   
            this.mass = 33.95;
            this.volume = 0.037;
