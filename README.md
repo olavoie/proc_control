@@ -45,3 +45,6 @@ You can also receive messages from the RosNode.
 - Don't forget to compile after adding a new custom message.
 - Follow this procedure to generate custom message for Matlab: https://www.mathworks.com/help/ros/ug/ros-custom-message-support.html
 - Use `rosgenmsg` function: https://www.mathworks.com/help/ros/ref/rosgenmsg.html
+
+# Problem with geometry_msg and IMU messages.
+https://www.mathworks.com/matlabcentral/answers/553828-having-trouble-building-custom-ros-msgs-in-matlab-2020a
