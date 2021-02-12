@@ -1,6 +1,0 @@
-<launch>
-	<node name="AuvSimulation"
-	    pkg="proc_control"
-	    type="AuvSimulation.py"
-	    output="screen" />
-</launch>

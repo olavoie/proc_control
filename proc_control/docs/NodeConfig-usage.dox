@@ -1,7 +1,0 @@
-\subsubsection usage Usage
-\verbatim
-<node name="proc_control" pkg="proc_control" type="proc_control">
-  <param name="Algorithm" type="int" value="0" />
-</node>
-\endverbatim
-

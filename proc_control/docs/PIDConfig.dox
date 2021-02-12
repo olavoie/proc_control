@@ -1,8 +1,0 @@
-\subsubsection parameters ROS parameters
-
-Reads and maintains the following parameters on the ROS server
-
-- \b "~P" : \b [double] The proportional coefficient min: -100.0, default: 0.0, max: 100.0
-- \b "~I" : \b [double] The integral coefficient min: -100.0, default: 0.0, max: 100.0
-- \b "~D" : \b [double] The derivative coefficient min: -100.0, default: 0.0, max: 100.0
-

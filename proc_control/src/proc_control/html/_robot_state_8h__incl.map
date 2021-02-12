@@ -1,8 +1,0 @@
-<map id="RobotData/RobotState.h" name="RobotData/RobotState.h">
-<area shape="rect" id="node10" href="$_msg_converteur_8h_source.html" title="MsgConverteur.h" alt="" coords="477,87,600,114"/>
-<area shape="rect" id="node11" href="$_control_input_8h.html" title="proc_control/ControlInput\l/ControlInput.h" alt="" coords="965,80,1133,121"/>
-<area shape="rect" id="node22" href="$_bbox_parameters_8h_source.html" title="proc_control/ParametersManager\l/BboxParameters.h" alt="" coords="2497,80,2711,121"/>
-<area shape="rect" id="node14" href="$property_8h.html" title="proc_control/property.h" alt="" coords="1603,266,1757,293"/>
-<area shape="rect" id="node23" href="$_param_manager_i_f_8h_source.html" title="proc_control/ParametersManager\l/ParamManagerIF.h" alt="" coords="1687,169,1902,211"/>
-<area shape="rect" id="node24" href="$_config_manager_8h.html" title="proc_control/Config\l/ConfigManager.h" alt="" coords="1443,259,1578,300"/>
-</map>

@@ -1,5 +1,0 @@
-<map id="proc_control::ControllerIF" name="proc_control::ControllerIF">
-<area shape="rect" id="node2" href="$classproc__control_1_1_b_controller.html" title="proc_control::BController" alt="" coords="5,80,172,107"/>
-<area shape="rect" id="node3" href="$classproc__control_1_1_p_i_d_controller.html" title="proc_control::PIDController" alt="" coords="196,80,376,107"/>
-<area shape="rect" id="node4" href="$classproc__control_1_1_p_p_i_controller.html" title="proc_control::PPIController" alt="" coords="401,80,579,107"/>
-</map>

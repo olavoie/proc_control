@@ -1,6 +1,0 @@
-<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classproc__control_1_1_controller_i_f.html" title="proc_control::ControllerIF" alt="" coords="5,56,175,83"/>
-<area shape="rect" id="node2" href="$classproc__control_1_1_b_controller.html" title="proc_control::BController" alt="" coords="229,5,396,32"/>
-<area shape="rect" id="node3" href="$classproc__control_1_1_p_i_d_controller.html" title="proc_control::PIDController" alt="" coords="223,56,403,83"/>
-<area shape="rect" id="node4" href="$classproc__control_1_1_p_p_i_controller.html" title="proc_control::PPIController" alt="" coords="223,107,402,133"/>
-</map>
