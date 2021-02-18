@@ -24,8 +24,8 @@ classdef KickIn < matlab.System
     methods(Access = protected)
         function setupImpl(this,states,Tmin,Tmax)
             % Initialiser les matrices
-            this.Aeq=ThrusterMatrix().';
-            this.Beq=Gravity(states).';
+            [this.Beq,this.Aeq]=AUVKickInMatrix(states);
+            
             
             % condition initial 
             this.u0= [0,0,0,0,-7.1,6.94,-7.49,7.65];
@@ -45,7 +45,7 @@ classdef KickIn < matlab.System
             fun = @(x)sum(abs(-this.u0-x));
 
             % Retrouver la matrice gravité
-            this.Beq=Gravity(states).';
+            this.Beq=AUVKickInMatrix(states);
             
             % Parametre du solveur fmincon
             op =optimoptions('fmincon','Algorithm','sqp',...

@@ -11,27 +11,27 @@ cf = ConfigAUV8();
 
 % Perturbations des vages
     %Vages X
-    waX=2;          % Amplitude
+    waX=1;          % Amplitude
     wfX=pi/2;         % Frequence
     wpX=0;          % Phase
     %Vages Y
-    waY=3;          % Amplitude
+    waY=2;          % Amplitude
     wfY=pi/2;         % Frequence
     wpY=pi/2;       % Phase
     %Vages Z
-    waZ= 4;         % Amplitude
+    waZ= 3 ;         % Amplitude
     wfZ=pi/2;         % Frequence
     wpZ=pi;         % Phase
     %Vages RX (Roll)
-    waPhi= 3;      % Amplitude
+    waPhi= 1;      % Amplitude
     wfPhi= pi/2;      % Frequence
     wpPhi=0;        % Phase
     %Vages Ry (Pitch)
-    waTheta=3;    % Amplitude
+    waTheta=1;    % Amplitude
     wfTheta=pi/2;     % Frequence
     wpTheta=pi/2;   % Phase
     %Vages Rz (Yaw)
-    waPsi=3;       % Amplitude
+    waPsi=1;       % Amplitude
     wfPsi=pi/2;       % Frequence
     wpPsi=pi;       % Phase
     

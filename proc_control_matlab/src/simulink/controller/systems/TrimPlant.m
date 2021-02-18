@@ -16,13 +16,13 @@ classdef TrimPlant < matlab.System
     methods(Access = protected)
         function setupImpl(this,u,Ts,y)
             % Perform one-time calculations, such as computing constants
-            [this.Ac, this.Bc, this.Cc, this.Dc]=AUVStateJacobianFcn(y,u);
+            [this.Ac, this.Bc, this.Cc, this.Dc]=AUVJacobianMatrix(y);
         end
 
         function [A,B,C,D,U,Y,X,DX] = stepImpl(this,u,Ts,y)
-            
+             
             % Lineariser le model dynamique
-            [this.Ac, this.Bc, this.Cc, this.Dc]=AUVStateJacobianFcn(y,u);
+            [this.Ac, this.Bc, this.Cc, this.Dc]=AUVJacobianMatrix(y);
             
              %Convertir le modèle dans le domaine echantillione (z)
              nx = size(this.Ac,1);
@@ -33,11 +33,15 @@ classdef TrimPlant < matlab.System
              C = this.Cc;
              D = this.Dc;
              
+%              yr =zeros(12,1);
+%              yr(1:3) = y(1:3);
+%              yr(4:12)= y(5:13);
+             yr=y;
              % Calculer les Conditions Nominal
              U=u.';
-             Y=(this.Cc*y + this.Dc*u).';
-             X=y.';
-             DX=(A*y+B*u-y).';
+             Y=(this.Cc*yr + this.Dc*u).';
+             X=yr.';
+             DX=(A*yr+B*u-yr).';
              
         end
 
