@@ -24,6 +24,8 @@ classdef TrimPlant < matlab.System
             % Lineariser le model dynamique
             [this.Ac, this.Bc, this.Cc, this.Dc]=AUVJacobianMatrix(y);
             
+            
+             this.Ac(7:12,1:6)*y(1:6)
              %Convertir le modèle dans le domaine echantillione (z)
              nx = size(this.Ac,1);
              nu = size(this.Bc,2);
