@@ -1,19 +1,19 @@
 
 wpts(1,:)= [0 0 0 0 0 0];
 wpts(2,:)= [0 0 1.5 0 0 0];
-wpts(3,:)= [.5 0 2 0 0 0];
-wpts(4,:)= [8.072 0 2 0 0 0];
+wpts(3,:)= [.5 0 2-.2270 0 0 0];
+wpts(4,:)= [8.072 0 2-.2270 0 0 0];
 wpts(5,:)= [11.921 -1.364 1.696 -deg2rad(39.23) 0 0];%39.23
 wpts(6,:)= [13 -1.75 1.5 deg2rad(0) 0 0];
 wpts(7,:)= [14.217 -1.237 1.278 deg2rad(45) 0 0];%45
 wpts(8,:)= [14.721 0 1.186 deg2rad(90) 0 0];%90
 wpts(9,:)= [14.217 1.237 1.278 deg2rad(135) 0 0];%135
-wpts(10,:)= [13 1.75 1.5 deg2rad(160) 0 0];
-wpts(11,:)= [11.921 1.364 1.696  deg2rad(160) 0 0];%180+39.23
-wpts(12,:)= [8.072 0 2 deg2rad(160) 0 0];
-wpts(13,:)= [.5 0 2 deg2rad(160) 0 0];
-wpts(14,:)=[0 0 2 deg2rad(160) 0 0];
-wpts(15,:)=[0 0 2 deg2rad(160) 0 0];
+wpts(10,:)= [13 1.75 1.5 deg2rad(180) 0 0];
+wpts(11,:)= [11.921 1.364 1.696  deg2rad(180+39.23) 0 0];%180+39.23
+wpts(12,:)= [8.072 0 2-.2270 deg2rad(180) 0 0];
+wpts(13,:)= [.5 0 2-.2270 deg2rad(180) 0 0];
+wpts(14,:)=[0 0 2-.2270 deg2rad(180) 0 0];
+wpts(15,:)=[0 0 2-.2270 deg2rad(180) 0 0];
 
 
 linwpts= zeros(3,size(wpts,1));
@@ -46,6 +46,26 @@ pose= zeros(12,length(tvec));
 [pose(1:3,:), pose(7:9,:), qdd, pp] = cubicpolytraj(linwpts, tpts, tvec,'VelocityBoundaryCondition',vpc);
  
 [pose(4:6,:), pose(10:12,:), qdd, pp] = cubicpolytraj(eulwpts, tpts, tvec,'VelocityBoundaryCondition',vpcr);
+
+qpose=zeros(13,length(tvec));
+qpose(1:3,:)=pose(1:3,:);
+qpose(8:13,:)=pose(7:12,:);
+for k = 1:size(qpose,2)
+   qpose(4:7,k) = eul2quat(pose(4:6,k).',"XYZ").';
+end
+
+p=4;
+%Trajectoire avec prédiction Beta!!!
+trajectoire = repmat(zeros(p,13),[1 1 size(qpose,2)-p-1]);
+for k = 1:size(trajectoire,3)
+    %t = linspace(k*Ts, (k+p-1)*Ts,p);
+    trajectoire(:,:,k)= qpose(:,k:k+p-1).';
+end
+tt =0:0.1:((size(trajectoire,3)-1)/10);% linspace(0, (Duration-1)*Ts,Duration/Ts);
+data.time=tt.';
+data.signals.values=trajectoire;
+data.signals.dimensions=[p 13];
+
 
 % plot(tvec, pose(4:6,:))
 % 

@@ -2,7 +2,7 @@
     nx = 12;  % nombre d'états
     ny = 12;  % Nombre de sorties
     nu = 8;   % Nombre d'entré
-    Ts = 0.1; % Période d'echantillionage
+    Ts = 0.25; % Période d'echantillionage
     p = 10;   % Horizon de prediction
     m =5;    % Horizon de Controle
 
@@ -31,7 +31,7 @@
 
 %% Initialiser le comtrolleur MPC
 % Conditions initiales
-Xi=[0;0;.31;0;0;pi;0;0;0;0;0;0];%repmat(0.01,nx,1); % états initials
+Xi=[0;0;.31;0;0;0;0;0;0;0;0;0];%repmat(0.01,nx,1); % états initials
 Ui= [0;0;0;0;0;0;0;0];%repmat(0.0,nu,1);   % Commande initials
 
 %liniéarisation du modèle aux conditions initales.
@@ -66,3 +66,40 @@ results = review(mpcobj);
 mpcobj.Optimizer.ActiveSetOptions.ConstraintTolerance=0.01;
 options = mpcmoveopt;
 %options.MVTarget = [0 0 0 0 -4 4 -4 4]; 
+
+
+%% Initialiser le comtrolleur MPC non lineaire
+
+OVnl =[ 70 60 70 50 50 50 50 0 0 0 0 0 0 ];  %OutputVariables
+Xinl=[0;0;-.2270;1;0;0;0;0;0;0;0;0;0];
+nlobj = nlmpc(13, 13, nu);
+
+nlobj.Model.StateFcn = "AUVQuatSimFcn";
+nlobj.Jacobian.OutputFcn="AUVQuatSimFcn";
+nlobj.Jacobian.StateFcn = @AUVQuatJacobianMatrix;
+
+
+
+nlobj.Ts = Ts;
+nlobj.PredictionHorizon = 4;
+nlobj.ControlHorizon = 2;
+
+nlobj.MV = struct('Min',TMIN,'Max',TMAX);%,'Target',MvTarget);
+nlobj.Weights.OutputVariables = OVnl;
+nlobj.Weights.ManipulatedVariables = MV;
+nlobj.Weights.ManipulatedVariablesRate = MVR;
+
+% Parametre du solver
+nlobj.Optimization.SolverOptions.ConstraintTolerance = 0.02;
+nlobj.Optimization.SolverOptions.OptimalityTolerance = 0.02;
+nlobj.Optimization.SolverOptions.FunctionTolerance = 0.02;
+nlobj.Optimization.SolverOptions.StepTolerance=0.1;
+nlobj.Optimization.SolverOptions.UseParallel=true();
+nlobj.Optimization.SolverOptions.Algorithm='sqp';
+nlobj.Optimization.RunAsLinearMPC='adaptive';%'timevarying';
+%nlobj.Optimization.SolverOptions.HessianApproximation='finite-difference';
+%nlobj.Optimization.UseSuboptimalSolution=true();
+%nlobj.Optimization.SolverOptions.SubproblemAlgorithm='direct';
+%nlobj.Optimization.SolverOptions.MaxIterations=2;
+
+validateFcns(nlobj,Xinl,Ui);
