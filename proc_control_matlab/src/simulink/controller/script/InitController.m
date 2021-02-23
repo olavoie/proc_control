@@ -97,6 +97,7 @@ nlobj.Optimization.SolverOptions.StepTolerance=0.1;
 nlobj.Optimization.SolverOptions.UseParallel=true();
 nlobj.Optimization.SolverOptions.Algorithm='sqp';
 nlobj.Optimization.RunAsLinearMPC='adaptive';%'timevarying';
+nlobj.Optimization.MVInterpolationOrder=1;
 %nlobj.Optimization.SolverOptions.HessianApproximation='finite-difference';
 %nlobj.Optimization.UseSuboptimalSolution=true();
 %nlobj.Optimization.SolverOptions.SubproblemAlgorithm='direct';
