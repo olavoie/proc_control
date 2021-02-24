@@ -1,13 +1,12 @@
 function main
     addpath("Thrusters");
-    addpath("modes");
     addpath("../../matlab_gen/msggen");
 
     rosshutdown;
     rosinit();
     rate = rosrate(1);
 
-    node = ProcControlNode();
+    node = RosNode();
 
     while(true)
        node.spinOnce();
