@@ -19,14 +19,11 @@ wpts(11,:)= [11.921 1.364 1.696 0 0 (180+39.23)];%180+39.23
 wpts(12,:)= [8.072 0 2 0 0 (180)];
 wpts(13,:)= [.5 0 2 0 0 (180)];
 wpts(14,:)=[0 0 2 0 0 (180)];
-wpts(15,:)=[0 0 2 0 0 (180)];
 
 % Initialiser les tableaux
 linwpts= zeros(3,size(wpts,1)).';
 eulwpts= zeros(3,size(wpts,1)).';
 quatwpts= zeros(4,size(wpts,1)).';
-
-tvec = 0:0.1:300;
 
 linwpts=wpts(:,1:3);
 % Convertire les angle d'euler en quaternions
@@ -38,30 +35,29 @@ quatwpts=quaternion(eulwpts,'eulerd','XYZ','frame');
 % Génération d'un vecteur de temps
 tpts = zeros(1,size(wpts,1));
 
-for i = 2: size(tpts, 2) - 1 
-    dist = norm(wpts(i,1:3) - wpts(i-1,1:3));
-    temp = dist / avancePrecision;
+for i = 2: size(tpts, 2)  
+    dist = norm(wpts(i,1:3) - wpts(i-1,1:3))
+    temp = dist / avancePrecision + 2 * (avancePrecision / accRapide);
     tpts(i) = temp + tpts(i-1);
 end
-
+tvec = 0:0.25:tpts(end);
 %tpts = [0,20,40,60,80,95,120,130,150,175,200,230,250,275,300];
 
 disp(tpts);
 tic;
-trajectory = waypointTrajectory(linwpts,tpts,'SampleRate',10,'Orientation',quatwpts);
+trajectory = waypointTrajectory(linwpts,tpts,'SampleRate',4,'Orientation',quatwpts);
 tInfo = waypointInfo(trajectory);
 
-pose =zeros(7,size(tvec,2));
+pose = zeros(7,size(tvec,2));
+quat = zeros([1, size(tvec,2), 1], 'quaternion');
 count=1;
 while ~isDone(trajectory)
-    tic;
    [pose(1:3,count), quat(count)] = trajectory();
-   toc;
-
-   count = count+1;
+    count = count+1;
 end
+pose(4:7,:) = compact(quat).';
 toc;
 
-plot(tvec,pose);
-
+plot(tvec,pose(4:7,:));
+plot(tvec, compact(quat));
 t=1;
