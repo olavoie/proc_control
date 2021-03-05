@@ -24,8 +24,7 @@ class TrajectoryTest():
                             [11.921, 1.364, 1.696, 3.82629, 0, 0], \
                             [8.072, 0, 2, 3.14159, 0, 0], \
                             [0.5, 0, 2, 3.14159, 0, 0], \
-                            [0, 0, 2, 3.14159, 0, 0], \
-                            [0, 0, 2, 3.14159, 0, 0] ]
+                            [0, 0, 2, 3.14159, 0, 0]]
         time.sleep(1)
         
 
@@ -37,12 +36,12 @@ class TrajectoryTest():
         print("Waypoints published")
 
         print("Compute trajectory")
-        self.compute_trajectory_pub.publish(True)
-        time.sleep(delay_value)
+        # self.compute_trajectory_pub.publish(True)
+        #time.sleep(delay_value)
         
         print("Clear waypoints")
-        #self.clear_trajectory_pub.publish(True)
+        self.clear_trajectory_pub.publish(True)
 
 if __name__ == '__main__':
     traj = TrajectoryTest()
-    traj.send(0.1)
+    traj.send(0.2)

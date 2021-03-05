@@ -43,9 +43,9 @@ tpts = [0,15,20,40,50,55,63,70,78,85,90,100,120,140,230];
 tvec = 0:0.1:230;
 pose= zeros(12,length(tvec));
 
-[pose(1:3,:), pose(7:9,:), qdd, pp] = cubicpolytraj(linwpts, tpts, tvec,'VelocityBoundaryCondition',vpc);
+[pose(1:3,:), pose(7:9,:), qdd, pp] = cubicpolytraj(linwpts, tpts, tvec);
  
-[pose(4:6,:), pose(10:12,:), qdd, pp] = cubicpolytraj(eulwpts, tpts, tvec,'VelocityBoundaryCondition',vpcr);
+[pose(4:6,:), pose(10:12,:), qdd, pp] = cubicpolytraj(eulwpts, tpts, tvec);
 
 qpose=zeros(13,length(tvec));
 qpose(1:3,:)=pose(1:3,:);
@@ -67,7 +67,7 @@ data.signals.values=trajectoire;
 data.signals.dimensions=[p 13];
 
 
-% plot(tvec, pose(4:6,:))
+plot(tvec, pose(1:3,:))
 % 
 % 
 % 

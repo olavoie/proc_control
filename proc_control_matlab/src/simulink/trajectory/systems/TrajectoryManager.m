@@ -8,14 +8,12 @@ classdef TrajectoryManager < matlab.System
     properties(Nontunable)
      bufferSize=6001; % Taille statique 
     end
-
-    properties
-     p = 4; % Prédiction 
-    end
     
     properties(DiscreteState)
     poseBuffer;
     i;
+    bufferCount;
+    pMax;
     end
 
     % Pre-computed constants
@@ -25,47 +23,60 @@ classdef TrajectoryManager < matlab.System
     end
 
     methods(Access = protected)
-        function  setupImpl(this, pose, Newpose, InitCond)
+        function  setupImpl(this, pose, isNew, InitCond)
             % Perform one-time calculations, such as computing constants
            this.i=0;
            this.dummy=999;% Chiffre NULL
-           this.emptyArray= repmat(this.dummy,12,1); % Vecteur pose NULL
+           this.emptyArray= repmat(this.dummy, 1, 13); % Vecteur pose NULL
            
            % Buffer trajectoire
-           this.poseBuffer=repmat(this.dummy,12,this.bufferSize);
+           this.poseBuffer=repmat(this.dummy, this.bufferSize, 13);
+           this.bufferCount = 1;
            
            % Conditions Initiales
-           this.poseBuffer(:,1)=InitCond;
-           
-%             traj=this.GenerateTrajectory();
-%             this.poseBuffer(:,1:size(traj,2))=traj;
+           this.poseBuffer(1,:)=InitCond;
         end
 
-        function [ref] = stepImpl(this, pose, newPose,InitCond)
+        function [ref] = stepImpl(this, pose, isNew, InitCond)
             % Implement algorithm. Calculate y as a function of input u and
-                
-            if newPose>this.i
-                this.poseBuffer(:,1:size(pose,2))=pose;
-                this.i=this.i+1;
-            end
+            new = isNew(1);
+            count = isNew(2);
             
-            for i = 2:this.p
-                if not(this.poseBuffer(:,i)== this.emptyArray)
-                     this.poseBuffer=[this.poseBuffer(:,i:end),this.emptyArray];
+            in_pose = zeros(this.bufferSize, 13);
+            in_pose = pose;
+            
+            % Insertion des nouveaux points.
+            if new > this.i
+                if count + this.bufferCount < this.bufferSize
+                   this.poseBuffer(this.bufferCount:count + this.bufferCount,:) = in_pose(1:count,:);
+                   this.bufferCount = count + this.bufferCount;
+                   this.i=this.i+1; 
+                else
+                    disp("Problem");
+                end    
+            end
+
+            % Vérification des prédictions.
+            index = 2;
+            for i = 2 : 10
+                if this.poseBuffer(i,:) == this.emptyArray
+                     index = i;
+                     break;
                 end
             end
-                
-                % Retourne les p prochains points.
-                position=this.poseBuffer(1:3,1:this.p).';
-                atitude=this.poseBuffer(4:6,1:this.p).';
-                velocity=this.poseBuffer(7:9,1:this.p).';
-                angularRate=this.poseBuffer(10:12,1:this.p).';
-                
-                ref = [position, atitude, velocity, angularRate];
+            
+            ref = zeros(10, 13);
+            
+            ref(1:index-1,:) = this.poseBuffer(1:index-1,:);
+            
+            for i = index: 10
+                ref(i,:) = ref(index - 1,:);
+            end   
                 
             % Ne pas supprimer le point si c'est le dernier.
-            if not(this.poseBuffer(:,2)== this.emptyArray)
-               this.poseBuffer=[this.poseBuffer(:,2:end),this.emptyArray];
+            if not(this.poseBuffer(2,:) == this.emptyArray)
+               this.poseBuffer=[this.poseBuffer(2:end,:); this.emptyArray];
+               this.bufferCount = this.bufferCount - 1;
             end 
         end
 

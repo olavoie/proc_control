@@ -24,11 +24,17 @@ wpts(14,:)=[0 0 2 0 0 (180)];
 linwpts= zeros(3,size(wpts,1)).';
 eulwpts= zeros(3,size(wpts,1)).';
 quatwpts= zeros(4,size(wpts,1)).';
+pwpts = zeros(1,7);
 
-linwpts=wpts(:,1:3);
-% Convertire les angle d'euler en quaternions
-eulwpts=wpts(:,4:6);
-quatwpts=quaternion(eulwpts,'eulerd','XYZ','frame');
+for i=1: 14
+    pwpts(i,:) = processWpt(wpts(i,:).')
+end
+
+linwpts=pwpts(:,1:3);
+% % Convertire les angle d'euler en quaternions
+% eulwpts=wpts(:,4:6);
+quatwpts = quaternion(eulwpts,'eulerd','XYZ','frame');
+% quatwpts=pwpts(:, 1:4);
 
 %tpts = [0,15,20,40,50,55,63,70,78,85,90,100,120,140,230];
 
@@ -40,6 +46,7 @@ for i = 2: size(tpts, 2)
     temp = dist / avancePrecision + 2 * (avancePrecision / accRapide);
     tpts(i) = temp + tpts(i-1);
 end
+
 tvec = 0:0.25:tpts(end);
 %tpts = [0,20,40,60,80,95,120,130,150,175,200,230,250,275,300];
 
@@ -49,15 +56,44 @@ trajectory = waypointTrajectory(linwpts,tpts,'SampleRate',4,'Orientation',quatwp
 tInfo = waypointInfo(trajectory);
 
 pose = zeros(7,size(tvec,2));
-quat = zeros([1, size(tvec,2), 1], 'quaternion');
+
+ones(1, size(tvec,2), 1, 'quaternion');
 count=1;
 while ~isDone(trajectory)
-   [pose(1:3,count), quat(count)] = trajectory();
     count = count+1;
+    [bufferPose, bufferQuat] = trajectory();
+    pose(1:3,count) = bufferPose;
+    pose(4:7,:) = compact(bufferQuat).';
 end
-pose(4:7,:) = compact(quat).';
 toc;
 
-plot(tvec,pose(4:7,:));
-plot(tvec, compact(quat));
+
+figure(1);
+plot(tvec, pose(4:7,:));
+figure(2);
+plot(tvec, pose(1:3,:));
 t=1;
+
+function pwpt = processWpt( wpt)
+            % Determiner le quaternion en fonction des angles d'euler.
+            % Orde de rotation : ZYX.
+            % Reel
+            q = zeros(4, 1);
+            wpt(3:6) = deg2rad(wpt(3:6));
+             q(1) = cos(wpt(6)/2) * cos(wpt(5)/2) * cos(wpt(4)/2)...
+                  + sin(wpt(6)/2) * sin(wpt(5)/2) * sin(wpt(4)/2);
+
+            % imaginaire i
+             q(2) = sin(wpt(6)/2) * cos(wpt(5)/2) * cos(wpt(4)/2)...
+                  - cos(wpt(6)/2) * sin(wpt(5)/2) * sin(wpt(4)/2);
+
+            % imaginaire j
+             q(3) = cos(wpt(6)/2) * sin(wpt(5)/2) * cos(wpt(4)/2)...
+                  + sin(wpt(6)/2) * cos(wpt(5)/2) * sin(wpt(4)/2);
+
+            % imaginaire k
+             q(4) = cos(wpt(6)/2) * cos(wpt(5)/2) * sin(wpt(4)/2)...
+                  - sin(wpt(6)/2) * sin(wpt(5)/2) * cos(wpt(4)/2);
+              
+             pwpt = [wpt(1:3); q];
+        end
