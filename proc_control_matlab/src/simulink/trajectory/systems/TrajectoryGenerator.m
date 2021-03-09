@@ -110,7 +110,8 @@ classdef TrajectoryGenerator < matlab.System
             new = [this.i, count];
             
         end
-
+        
+      
         function resetImpl(obj)
             % Initialize / reset discrete-state properties
         end

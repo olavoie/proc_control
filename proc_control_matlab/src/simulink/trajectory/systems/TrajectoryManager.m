@@ -33,6 +33,7 @@ classdef TrajectoryManager < matlab.System
 
     methods(Access = protected)
         function  setupImpl(this, pose, isNew, InitCond)
+            
             % Perform one-time calculations, such as computing constants
            this.i=0;
            this.dummy=999;% Chiffre NULL
@@ -40,10 +41,12 @@ classdef TrajectoryManager < matlab.System
            
            % Buffer trajectoire
            this.poseBuffer=repmat(this.dummy, this.bufferSize, 13);
-           this.bufferCount = 1;
+           this.bufferCount =1;
            
            % Conditions Initiales
-           this.poseBuffer(1,:)=InitCond;
+           this.poseBuffer(1,:)=[0,0,0,1,0,0,0,0,0,0,0,0,0];%InitCond;
+           
+           
         end
 
         function [ref] = stepImpl(this, pose, isNew, InitCond)
@@ -64,7 +67,7 @@ classdef TrajectoryManager < matlab.System
                     disp("Problem");
                 end    
             end
-
+            
             % Vérification des prédictions.
             index = 2;
             for i = 2 : 10

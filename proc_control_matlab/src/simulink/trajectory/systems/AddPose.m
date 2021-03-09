@@ -20,35 +20,50 @@ classdef AddPose < matlab.System
     end
 
     methods(Access = protected)
-        
-        function setupImpl(this, clearBuffer, isNew, waypoint,initCond)
+%% Fonction appeler a l'initialisation
+        function setupImpl(this, compute, clearBuffer, isNew, waypoint,initCond)
             % Perform one-time calculations, such as computing constants   
            
             this.poseList = repmat(999, this.buffSize, 7);
-            this.poseList(1,:)=initCond(1:7);
-            this.i = 1;
+            this.poseList(1,:)=[0,0,0,1,0,0,0];%initCond(1,1:7);
+            this.i = 2;
         end
-
-        function [waypoints, count] = stepImpl(this, clearBuffer, isNew, waypoint,initCond)
+%% Main appeller à chaque exécution
+        function [waypoints, count] = stepImpl(this, compute, clearBuffer, isNew, waypoint,initCond)
             % Suppression du buffer.
-            if clearBuffer == 1
-                
-                this.poseList(1,:)= this.poseList(this.i,:);
-                this.poseList(2:end,:) = repmat(999, this.buffSize-1, 7);
-                this.i = 1;
-            end
-            % Ajout d'un waypoint provenant de ROS.
-            if isNew == 1
-                if this.i < this.buffSize
-                    this.poseList(this.i,:) = this.processWpt(waypoint.').';
-                    this.i = this.i + 1;
-                end
-            end   
+            this.CheckEvent(compute, clearBuffer, isNew,waypoint);
             
             count = this.i;
             waypoints = this.poseList;
         end
+%% Fonction qui interprete les message ROS
         
+        function CheckEvent(this,compute, clearBuffer, isNew,waypoint )
+        
+        if   compute == 1
+            this.poseList(1,:)= this.poseList(this.i-1,:);
+            this.poseList(2:end,:) = repmat(999, this.buffSize-1, 7);
+            this.i = 1;
+        end
+            
+        if clearBuffer == 1
+
+                this.poseList(2:end,:) = repmat(999, this.buffSize-1, 7);
+                this.i = 1;
+                
+        end
+            % Ajout d'un waypoint provenant de ROS.
+        if isNew == 1
+           if this.i < this.buffSize
+                    
+                    this.poseList(this.i,:) = this.processWpt(waypoint.').';
+                    this.i = this.i + 1;
+           end
+        end   
+            
+           
+        end
+%% Fonction qui interprete les waypoints reçu par ROS
         function pwpt = processWpt(this, wpt)
             % Determiner le quaternion en fonction des angles d'euler.
             % Orde de rotation : ZYX.
@@ -72,7 +87,11 @@ classdef AddPose < matlab.System
               
              pwpt = [wpt(1:3) q];
         end
+      
         
+       
+        
+        %%
         function resetImpl(this)
             % Initialize / reset discrete-state properties
         end
