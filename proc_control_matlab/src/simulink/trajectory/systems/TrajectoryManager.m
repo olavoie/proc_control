@@ -6,12 +6,21 @@ classdef TrajectoryManager < matlab.System
 
     % Public, tunable properties
     properties(Nontunable)
+     SampleTime=.25;
+     OffsetTime = 0; % Offset Time
+ 
      bufferSize=6001; % Taille statique 
+     SampleTimeTypeProp (1, 1) {mustBeMember(SampleTimeTypeProp, ...
+            ["Discrete","FixedInMinorStep","Controllable",...
+            "Inherited","InheritedNotControllable",...
+            "InheritedErrorConstant"])} = "Discrete"
     end
     
     properties(DiscreteState)
+  
     poseBuffer;
     i;
+    Ts
     bufferCount;
     pMax;
     end
@@ -48,7 +57,7 @@ classdef TrajectoryManager < matlab.System
             % Insertion des nouveaux points.
             if new > this.i
                 if count + this.bufferCount < this.bufferSize
-                   this.poseBuffer(this.bufferCount:count + this.bufferCount,:) = in_pose(1:count,:);
+                   this.poseBuffer(this.bufferCount:count + this.bufferCount,:) = in_pose(1:count+1,:);
                    this.bufferCount = count + this.bufferCount;
                    this.i=this.i+1; 
                 else
@@ -83,5 +92,25 @@ classdef TrajectoryManager < matlab.System
         function resetImpl(this)
             % Initialize / reset discrete-state properties
         end
+        function sts = getSampleTimeImpl(obj)
+            switch char(obj.SampleTimeTypeProp)
+                case 'Inherited'
+                    sts = createSampleTime(obj,'Type','Inherited');
+                case 'InheritedNotControllable'
+                    sts = createSampleTime(obj,'Type','Inherited',...
+                        'AlternatePropagation','Controllable');
+                case 'InheritedErrorConstant'
+                    sts = createSampleTime(obj,'Type','Inherited',...
+                        'ErrorOnPropagation','Constant');
+                case 'FixedInMinorStep'
+                    sts = createSampleTime(obj,'Type','Fixed In Minor Step');
+                case 'Discrete'
+                    sts = createSampleTime(obj,'Type','Discrete',...
+                      'SampleTime',obj.SampleTime, ...
+                      'OffsetTime',obj.OffsetTime);
+              
+            end
+        end
     end
+    
 end

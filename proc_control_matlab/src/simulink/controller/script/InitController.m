@@ -68,4 +68,10 @@ nlobj.Optimization.RunAsLinearMPC='adaptive';%'timevarying';
 %nlobj.Optimization.SolverOptions.SubproblemAlgorithm='direct';
 %nlobj.Optimization.SolverOptions.MaxIterations=2;
 
+
+
+
 validateFcns(nlobj,Xi,Ui);
+
+
+

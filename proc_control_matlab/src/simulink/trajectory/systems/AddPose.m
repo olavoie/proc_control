@@ -21,16 +21,20 @@ classdef AddPose < matlab.System
 
     methods(Access = protected)
         
-        function setupImpl(this, clearBuffer, isNew, waypoint)
+        function setupImpl(this, clearBuffer, isNew, waypoint,initCond)
             % Perform one-time calculations, such as computing constants   
-            this.i = 1;
+           
             this.poseList = repmat(999, this.buffSize, 7);
+            this.poseList(1,:)=initCond(1:7);
+            this.i = 1;
         end
 
-        function [waypoints, count] = stepImpl(this, clearBuffer, isNew, waypoint)
+        function [waypoints, count] = stepImpl(this, clearBuffer, isNew, waypoint,initCond)
             % Suppression du buffer.
             if clearBuffer == 1
-                this.poseList = repmat(999, this.buffSize, 7);
+                
+                this.poseList(1,:)= this.poseList(this.i,:);
+                this.poseList(2:end,:) = repmat(999, this.buffSize-1, 7);
                 this.i = 1;
             end
             % Ajout d'un waypoint provenant de ROS.

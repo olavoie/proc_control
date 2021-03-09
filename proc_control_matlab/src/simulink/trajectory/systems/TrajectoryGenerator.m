@@ -38,29 +38,22 @@ classdef TrajectoryGenerator < matlab.System
         function [pose, new] = stepImpl(this, wpts, wpt_count)
             % Implement algorithm. Calculate y as a function of input u and
             % discrete states.
-%             wpts=zeros(14,7);
-%             wpts(1,:)= [0 0 0 1 0 0 0];
-%             wpts(2,:)= [0 0 1.5 1 0 0 0];
-%             wpts(3,:)= [.5 0 2 1 0 0 0];
-%             wpts(4,:)= [8.072 0 2 1 0 0 0];
-%             wpts(5,:)= [11.921 -1.364 1.696 1 0 0 0];%39.23
-%             wpts(6,:)= [13 -1.75 1.5 1 0 0 0];
-%             wpts(7,:)= [14.217 -1.237 1.278 1 0 0 0];
-%             wpts(8,:)= [14.721 0 1.186 1 0 0 0];
-%             wpts(9,:)= [14.217 1.237 1.278 1 0 0 0];
-%             wpts(10,:)= [13 1.75 1.5 1 0 0 0];
-%             wpts(11,:)= [11.921 1.364 1.696  1 0 0 0];%180+39.23
-%             wpts(12,:)= [8.072 0 2 1 0 0 0];
-%             wpts(13,:)= [.5 0 2 1 0 0 0];
-%             wpts(14,:)=[0 0 2 1 0 0 0];
-            
+        
             % Initialiser les tableau
-            linwpts = zeros(wpt_count, 3);
+            linwpts = wpts(:,1:3);% wpts(1:wpt_count-1,1:3);
+            
+            
             qwpts = zeros(size(wpts, 1), 4);
-            %for k = 1:wpt_count
-            for k = 1:wpt_count
-                linwpts(k, 1:3) = wpts(k,1:3);
+            
+           
+            for k = 1:size(wpts, 1)
+                %linwpts(k, 1:3) = wpts(k,1:3);
                 qwpts(k, 1:4) = wpts(k,4:7);
+            end
+            
+            for i=wpt_count-1:size(wpts, 1)
+                linwpts(i,:) = linwpts(wpt_count-1,:);
+                qwpts(i,:) = qwpts(wpt_count-1,:);
             end
             quatwpts = quaternion(qwpts);
             
@@ -70,33 +63,52 @@ classdef TrajectoryGenerator < matlab.System
             
             
             % Génération d'un vecteur de temps
-            tpts = zeros(14,1);
+            tpts = zeros(size(wpts, 1),1);
             
-            for i = 2: size(tpts, 1)  
+            for i = 2: wpt_count-1
                 dist = norm(wpts(i,1:3) - wpts(i-1,1:3))
                 temp = dist / this.avancePrecision + 2 * (this.avancePrecision / this.accRapide);
                 tpts(i) = temp + tpts(i-1);
             end
+            
+            for i=wpt_count : size(tpts,1)
+                tpts(i)=tpts(i-1)+1;
+            end
+                
+                
             %tpts = [0,20,40,60,80,95,120,130,150,175,200,230,250,275,300];
             tic;
-            trajectory = waypointTrajectory(linwpts, tpts,'SampleRate', 4, 'Orientation', quatwpts(1:wpt_count,:));
+          
+            linwpts
+            tpts
+            quatwpts
+            
+            final=tpts(wpt_count-1)
+            
+            nbPoint=ceil(final/this.Ts)
+            
+            trajectory = waypointTrajectory(linwpts, tpts,'SampleRate', 1/this.Ts,'SamplesPerFrame',1, 'Orientation', quatwpts);
             pose=repmat(999,this.bufferSize, 13);
-%             bufferPose = zeros(1, 3);
-%             bufferQuat = quaternion([0,0,0,0]);
-%             bufferVelocity = zeros(1, 3);
-%             bufferAcc = zeros(1, 3);
-%             bufferAngRate = zeros(1, 3);
-            count=1;
-            while ~isDone(trajectory)
-                    count = count+1;
-                   [bufferPose, bufferQuat, bufferVelocity, bufferAcc, bufferAngRate] = trajectory();
+            
+%              bufferPose = zeros(1, 3);
+%              bufferQuat = quaternion([0,0,0,0]);
+%              bufferVelocity = zeros(1, 3);
+%              bufferAcc = zeros(1, 3);
+%              bufferAngRate = zeros(1, 3);
+            
+           % while ~isDone(trajectory)
+           for count=1 : nbPoint
+                    
+                   [bufferPose, bufferQuat, bufferVelocity , acc ,bufferAngRate] = trajectory();%, bufferVelocity, bufferAcc, bufferAngRate
                     pose(count, 1:3) = bufferPose;
                     pose(count, 4:7) = compact(bufferQuat);
                     pose(count, 8:10) = bufferVelocity;
                     pose(count, 11:13) = bufferAngRate;
+                    
             end
             this.i = this.i + 1;
             new = [this.i, count];
+            
         end
 
         function resetImpl(obj)
