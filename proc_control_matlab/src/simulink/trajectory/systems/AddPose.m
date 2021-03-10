@@ -43,7 +43,7 @@ classdef AddPose < matlab.System
         if   compute == 1
             this.poseList(1,:)= this.poseList(this.i-1,:);
             this.poseList(2:end,:) = repmat(999, this.buffSize-1, 7);
-            this.i = 1;
+            this.i = 2;
         end
             
         if clearBuffer == 1

@@ -39,7 +39,7 @@ quatwpts = quaternion(eulwpts,'eulerd','XYZ','frame');
 %tpts = [0,15,20,40,50,55,63,70,78,85,90,100,120,140,230];
 
 % Génération d'un vecteur de temps
-tpts = zeros(1,size(wpts,1));
+tpts = ones(1,size(wpts,1))*0.1;
 
 for i = 2: size(tpts, 2)  
     dist = norm(wpts(i,1:3) - wpts(i-1,1:3))
@@ -63,13 +63,11 @@ while ~isDone(trajectory)
     count = count+1;
     [bufferPose, bufferQuat] = trajectory();
     pose(1:3,count) = bufferPose;
-    pose(4:7,:) = compact(bufferQuat).';
+    pose(4:7,count) = compact(bufferQuat).';
 end
 toc;
 
 
-figure(1);
-plot(tvec, pose(4:7,:));
 figure(2);
 plot(tvec, pose(1:3,:));
 t=1;
@@ -79,7 +77,7 @@ function pwpt = processWpt( wpt)
             % Orde de rotation : ZYX.
             % Reel
             q = zeros(4, 1);
-            wpt(3:6) = deg2rad(wpt(3:6));
+            wpt(4:6) = deg2rad(wpt(4:6));
              q(1) = cos(wpt(6)/2) * cos(wpt(5)/2) * cos(wpt(4)/2)...
                   + sin(wpt(6)/2) * sin(wpt(5)/2) * sin(wpt(4)/2);
 

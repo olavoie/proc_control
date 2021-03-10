@@ -63,9 +63,9 @@ classdef ConfigAUV8
            this.mass = 33.95;
            this.volume = 0.037;
            
-           this.I = [3.5, 0.001, 0.01;... Ixx Ixy Ixz 0.5358
-                     0.002, 3.8, 0.005;... Iyx Iyy Iyz 1.47
-                     0.01, 0.005,4.45]; % Izx Izy Izz1.68
+           this.I = [1.5, 0.001, 0.01;... Ixx Ixy Ixz 0.5358
+                     0.002, 1.8, 0.005;... Iyx Iyy Iyz 1.47
+                     0.01, 0.005,1.45]; % Izx Izy Izz1.68
            this.rho = 998;
            this.g = 9.81;
            

@@ -59,6 +59,7 @@ classdef TrajectoryManager < matlab.System
             
             % Insertion des nouveaux points.
             if new > this.i
+                count + this.bufferCount
                 if count + this.bufferCount < this.bufferSize
                    this.poseBuffer(this.bufferCount:count + this.bufferCount,:) = in_pose(1:count+1,:);
                    this.bufferCount = count + this.bufferCount;
@@ -70,26 +71,31 @@ classdef TrajectoryManager < matlab.System
             
             % Vérification des prédictions.
             index = 2;
-            for i = 2 : 10
+            isempty =false;
+            for i = 2 : 4
+                index = i;
                 if this.poseBuffer(i,:) == this.emptyArray
-                     index = i;
+                    isempty =true;
                      break;
                 end
             end
             
-            ref = zeros(10, 13);
+            ref = zeros(4, 13);
             
-            ref(1:index-1,:) = this.poseBuffer(1:index-1,:);
+            ref(1:index,:) = this.poseBuffer(1:index,:);
             
-            for i = index: 10
-                ref(i,:) = ref(index - 1,:);
-            end   
+            if isempty
+                for i = index: 4
+                    ref(i,:) = ref(index - 1,:);
+                end  
+            end
                 
             % Ne pas supprimer le point si c'est le dernier.
             if not(this.poseBuffer(2,:) == this.emptyArray)
                this.poseBuffer=[this.poseBuffer(2:end,:); this.emptyArray];
                this.bufferCount = this.bufferCount - 1;
             end 
+           
         end
 
         function resetImpl(this)

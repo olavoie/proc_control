@@ -21,7 +21,7 @@ classdef TrajectoryGenerator < matlab.System
     end
 
     properties(DiscreteState)
-        i;
+        computeCount;
     end
 
     % Pre-computed constants
@@ -32,7 +32,7 @@ classdef TrajectoryGenerator < matlab.System
     methods(Access = protected)
         function setupImpl(this,wpts)
             % Perform one-time calculations, such as computing constants
-            this.i=0;
+            this.computeCount=0;
         end
 
         function [pose, new] = stepImpl(this, wpts, wpt_count)
@@ -57,7 +57,7 @@ classdef TrajectoryGenerator < matlab.System
             end
             quatwpts = quaternion(qwpts);
             
-            %tpts = [0,15,20,40,50,55,63,70,78,85,90,100,120,140,230];
+           
 
             % Gestion des vitesses et des accélérations.
             
@@ -72,7 +72,7 @@ classdef TrajectoryGenerator < matlab.System
             end
             
             for i=wpt_count : size(tpts,1)
-                tpts(i)=tpts(i-1)+1;
+                tpts(i)=tpts(i-1)+.01 ;
             end
                 
                 
@@ -85,7 +85,7 @@ classdef TrajectoryGenerator < matlab.System
             
             final=tpts(wpt_count-1)
             
-            nbPoint=ceil(final/this.Ts)
+            nbPoint=floor(final/this.Ts)
             
             trajectory = waypointTrajectory(linwpts, tpts,'SampleRate', 1/this.Ts,'SamplesPerFrame',1, 'Orientation', quatwpts);
             pose=repmat(999,this.bufferSize, 13);
@@ -97,18 +97,20 @@ classdef TrajectoryGenerator < matlab.System
 %              bufferAngRate = zeros(1, 3);
             
            % while ~isDone(trajectory)
-           for count=1 : nbPoint
+           nbpts=1;
+           for i=1 : nbPoint
                     
                    [bufferPose, bufferQuat, bufferVelocity , acc ,bufferAngRate] = trajectory();%, bufferVelocity, bufferAcc, bufferAngRate
-                    pose(count, 1:3) = bufferPose;
-                    pose(count, 4:7) = compact(bufferQuat);
-                    pose(count, 8:10) = bufferVelocity;
-                    pose(count, 11:13) = bufferAngRate;
-                    
+                    pose(i, 1:3) = bufferPose;
+                    pose(i, 4:7) = compact(bufferQuat);
+                    pose(i, 8:10) = bufferVelocity;
+                    pose(i, 11:13) = bufferAngRate;
+                    nbpts=i;
+                  
             end
-            this.i = this.i + 1;
-            new = [this.i, count];
-            
+            this.computeCount = this.computeCount + 1;
+            new = [this.computeCount,  nbpts];
+           
         end
         
       
