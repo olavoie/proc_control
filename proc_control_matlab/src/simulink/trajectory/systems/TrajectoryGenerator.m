@@ -6,11 +6,11 @@ classdef TrajectoryGenerator < matlab.System
 
     % Public, tunable properties
     properties
-        avanceRapide = 1; % Vitesse Rapide
-        avancePrecision = 0.5; % Vtesse Precision
+        avanceRapide =  [1 1 .3 .1 .1 .1 .1]; % Vitesse Rapide
+        avancePrecision = [.3 .3 .1 .05 .05 .05 .05]; % Vtesse Precision
 
-        accRapide = 0.3; % acceleration Rapide
-        accPrecision = 0.1; % acceleration Precision
+        accRapide = [0.2 0.2 0.1 .02 .02 .02 .02]; % acceleration Rapide
+        accPrecision = [0.1 0.1 0.05 .01 .01 .01 .01]; % acceleration Precision
         
         Ts=.25;
     end
@@ -40,62 +40,57 @@ classdef TrajectoryGenerator < matlab.System
             % discrete states.
         
             % Initialiser les tableau
-            linwpts = wpts(:,1:3);% wpts(1:wpt_count-1,1:3);
+            List = [ wpts(1,:); wpts(:,:)];
             
             
-            qwpts = zeros(size(wpts, 1), 4);
             
-           
-            for k = 1:size(wpts, 1)
-                %linwpts(k, 1:3) = wpts(k,1:3);
-                qwpts(k, 1:4) = wpts(k,4:7);
+            % Remplire les tablau avec le dernier waypoint
+            for i=wpt_count:size(List,1)
+                List(i,:) = List(wpt_count,:);
             end
             
-            for i=wpt_count-1:size(wpts, 1)
-                linwpts(i,:) = linwpts(wpt_count-1,:);
-                qwpts(i,:) = qwpts(wpt_count-1,:);
-            end
+            linwpts =List(:,1:3);% wpts(1:wpt_count-1,1:3);
+            qwpts = List(:,4:7);
             quatwpts = quaternion(qwpts);
             
-           
 
             % Gestion des vitesses et des accélérations.
-            
-            
+ 
             % Génération d'un vecteur de temps
-            tpts = zeros(size(wpts, 1),1);
+            tpts = zeros(size(linwpts, 1),1);
             
-            for i = 2: wpt_count-1
-                dist = norm(wpts(i,1:3) - wpts(i-1,1:3));
-                temp = dist / this.avancePrecision + 2 * (this.avancePrecision / this.accRapide);
-                tpts(i) = temp + tpts(i-1);
+            for i = 2: wpt_count
+                maxTime= this.Ts;
+                for j =1 :size(List,2)
+                    dist = abs(List(i,j) - List(i-1,j));
+                    if dist >0
+                        temp = dist / this.avanceRapide(j) + 2 * (this.avanceRapide(j) / this.accRapide(j));
+                    else
+                        temp=0;
+                    end
+                    if temp>maxTime
+                        maxTime=temp;
+                    end
+                end
+                
+                tpts(i) = maxTime + tpts(i-1);
             end
             
-            for i=wpt_count : size(tpts,1)
-                tpts(i)=tpts(i-1)+.01 ;
+            for i=wpt_count+1 : size(tpts,1)
+                tpts(i)=tpts(i-1)+this.Ts ;
             end
-                
-                
-            %tpts = [0,20,40,60,80,95,120,130,150,175,200,230,250,275,300];
-         
-          
-%             linwpts
-%             tpts
-%             quatwpts
+
+             linwpts
+             tpts
+             quatwpts
             
-            final=tpts(wpt_count-1);
+            final=tpts(wpt_count);
             
             nbPoint=floor(final/this.Ts);
             
             trajectory = waypointTrajectory(linwpts, tpts,'SampleRate', 1/this.Ts,'SamplesPerFrame',1, 'Orientation', quatwpts);
             pose=repmat(999,this.bufferSize, 13);
-            
-%              bufferPose = zeros(1, 3);
-%              bufferQuat = quaternion([0,0,0,0]);
-%              bufferVelocity = zeros(1, 3);
-%              bufferAcc = zeros(1, 3);
-%              bufferAngRate = zeros(1, 3);
-            
+                        
            % while ~isDone(trajectory)
            nbpts=1;
            for i=1 : nbPoint
@@ -107,7 +102,8 @@ classdef TrajectoryGenerator < matlab.System
                     pose(i, 11:13) = bufferAngRate;
                     nbpts=i;
                   
-            end
+           end
+           
             this.computeCount = this.computeCount + 1;
             new = [this.computeCount,  nbpts];
            
