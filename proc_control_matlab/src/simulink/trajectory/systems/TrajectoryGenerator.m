@@ -12,12 +12,12 @@ classdef TrajectoryGenerator < matlab.System
         accRapide = 0.3; % acceleration Rapide
         accPrecision = 0.1; % acceleration Precision
         
-        Ts;
+        Ts=.25;
     end
     
     % Public, tunable properties
     properties(Nontunable)
-     bufferSize=6001; % Taille statique 
+     bufferSize=1000; % Taille statique 
     end
 
     properties(DiscreteState)
@@ -66,7 +66,7 @@ classdef TrajectoryGenerator < matlab.System
             tpts = zeros(size(wpts, 1),1);
             
             for i = 2: wpt_count-1
-                dist = norm(wpts(i,1:3) - wpts(i-1,1:3))
+                dist = norm(wpts(i,1:3) - wpts(i-1,1:3));
                 temp = dist / this.avancePrecision + 2 * (this.avancePrecision / this.accRapide);
                 tpts(i) = temp + tpts(i-1);
             end
@@ -77,15 +77,15 @@ classdef TrajectoryGenerator < matlab.System
                 
                 
             %tpts = [0,20,40,60,80,95,120,130,150,175,200,230,250,275,300];
-            tic;
+         
           
-            linwpts
-            tpts
-            quatwpts
+%             linwpts
+%             tpts
+%             quatwpts
             
-            final=tpts(wpt_count-1)
+            final=tpts(wpt_count-1);
             
-            nbPoint=floor(final/this.Ts)
+            nbPoint=floor(final/this.Ts);
             
             trajectory = waypointTrajectory(linwpts, tpts,'SampleRate', 1/this.Ts,'SamplesPerFrame',1, 'Orientation', quatwpts);
             pose=repmat(999,this.bufferSize, 13);
