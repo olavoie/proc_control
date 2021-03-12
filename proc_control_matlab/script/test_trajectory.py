@@ -13,26 +13,26 @@ class TrajectoryTest():
         self.clear_trajectory_pub = rospy.Publisher("/proc_control_matlab/clear_waypoints", Bool, queue_size=10)
         self.compute_trajectory_pub = rospy.Publisher("/proc_control_matlab/compute_trajectory", Bool, queue_size=10)
         self.add_pose_pub = rospy.Publisher("/proc_control_matlab/add_pose", AddPose, queue_size=10)
-        self.waypoints = [{'position': Point(0, 0, 1.5), 'orientation': Vector3(0, 0, 0), 'frame': 1, 'speed': 1, 'fine': 0},
-                          {'position': Point(0.5, 0, 2), 'orientation': Vector3(0, 0, 0), 'frame': 1, 'speed': 1, 'fine': 0},
-                          {'position': Point(8.072, 0, 2), 'orientation': Vector3(0, 0, 0), 'frame': 1, 'speed': 1, 'fine': 0},
-                          {'position': Point(11.921, -1.364, 1.696), 'orientation': Vector3(0, 0, -39.23), 'frame': 1, 'speed': 1, 'fine': 0},
-                          {'position': Point(13, -1.75, 1.5), 'orientation': Vector3(0, 0, 0), 'frame': 1, 'speed': 1, 'fine': 0},
-                          {'position': Point(14.217, -1.237, 1.278), 'orientation': Vector3(0, 0, 45), 'frame': 1, 'speed': 1, 'fine': 0},
-                          {'position': Point(14.721, 0, 1.186), 'orientation': Vector3(0, 0, 90), 'frame': 1, 'speed': 1, 'fine': 0},
-                          {'position': Point(14.217, 1.237, 1.278), 'orientation': Vector3(0, 0, 135), 'frame': 1, 'speed': 1, 'fine': 0},
-                          {'position': Point(13, 1.75, 1.5), 'orientation': Vector3(0, 0, 180), 'frame': 1, 'speed': 1, 'fine': 0},
-                          {'position': Point(11.921, 1.364, 1.696), 'orientation': Vector3(0, 0, (180+39.23)), 'frame': 1, 'speed': 1, 'fine': 0},
-                          {'position': Point(8.072, 0, 2), 'orientation': Vector3(0, 0, 180), 'frame': 1, 'speed': 1, 'fine': 0},
-                          {'position': Point(0.5, 0, 2), 'orientation': Vector3(0, 0, 180), 'frame': 1, 'speed': 1, 'fine': 0},
-                          {'position': Point(0, 0, 2), 'orientation': Vector3(0, 0, 180), 'frame': 1, 'speed': 1, 'fine': 0} ]
+        self.waypoints = [ [Point(0, 0, 1.5), Vector3(0, 0, 0), 1, 1, 0],
+                           [Point(0.5, 0, 2), Vector3(0, 0, 0), 1, 1, 0],
+                           [Point(8.072, 0, 2), Vector3(0, 0, 0), 1, 1, 0],
+                           [Point(11.921, -1.364, 1.696), Vector3(0, 0, -39.23), 1, 1, 0],
+                           [Point(13, -1.75, 1.5), Vector3(0, 0, 0), 1, 1, 0],
+                           [Point(14.217, -1.237, 1.278), Vector3(0, 0, 45), 1, 1, 0],
+                           [Point(14.721, 0, 1.186), Vector3(0, 0, 90), 1, 1, 0],
+                           [Point(14.217, 1.237, 1.278), Vector3(0, 0, 135), 1, 1, 0],
+                           [Point(13, 1.75, 1.5), Vector3(0, 0, 180), 1, 1, 0],
+                           [Point(11.921, 1.364, 1.696), Vector3(0, 0, (180+39.23)), 1, 1, 0],
+                           [Point(8.072, 0, 2), Vector3(0, 0, 180), 1, 1, 0],
+                           [Point(0.5, 0, 2), Vector3(0, 0, 180), 1, 1, 0],
+                           [Point(0, 0, 2), Vector3(0, 0, 180), 1, 1, 0]]
         time.sleep(1)
         
 
     def send(self, delay_value):
         for wpt in self.waypoints:
             print(wpt)
-            #self.add_pose_pub.publish(wpt['position'], wpt['orientation'], wpt['frame'], wpt['speed'], wpt['fine'])
+            self.add_pose_pub.publish(position=wpt[0], orientation=wpt[1], frame=wpt[2], speed=wpt[3], fine=wpt[4])
             time.sleep(delay_value)
         print("Waypoints published")
 
