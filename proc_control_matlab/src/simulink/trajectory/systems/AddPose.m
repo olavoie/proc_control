@@ -7,6 +7,7 @@ classdef AddPose < matlab.System
     % Public, tunable properties
     properties (Nontunable)
         buffSize = 21;
+        elementSize=8;
     end
 
     properties(DiscreteState)
@@ -24,8 +25,8 @@ classdef AddPose < matlab.System
         function setupImpl(this, compute, clearBuffer, isNew, waypoint,initCond)
             % Perform one-time calculations, such as computing constants   
            
-            this.poseList = repmat(999, this.buffSize, 7);
-            this.poseList(1,:)=[0,0,0,1,0,0,0];%initCond(1,1:7);
+            this.poseList = repmat(999, this.buffSize, this.elementSize);
+            this.poseList(1,:)=[0,0,0,1,0,0,0,0];%initCond(1,1:7);
             this.i = 2;
         end
 %% Main appeller à chaque exécution
@@ -42,13 +43,13 @@ classdef AddPose < matlab.System
         
         if   compute == 1
             this.poseList(1,:)= this.poseList(this.i-1,:);
-            this.poseList(2:end,:) = repmat(999, this.buffSize-1, 7);
+            this.poseList(2:end,:) = repmat(999, this.buffSize-1, this.elementSize);
             this.i = 2;
         end
             
         if clearBuffer == 1
 
-                this.poseList(2:end,:) = repmat(999, this.buffSize-1, 7);
+                this.poseList(2:end,:) = repmat(999, this.buffSize-1, this.elementSize);
                 this.i = 1;
                 
         end
@@ -69,23 +70,24 @@ classdef AddPose < matlab.System
             % Orde de rotation : ZYX.
             % Reel
             q = zeros(1, 4);
-            wpt(4:6) = deg2rad(wpt(4:6));
-             q(1) = cos(wpt(6)/2) * cos(wpt(5)/2) * cos(wpt(4)/2)...
-                  + sin(wpt(6)/2) * sin(wpt(5)/2) * sin(wpt(4)/2);
-
-            % imaginaire i
-             q(2) = sin(wpt(6)/2) * cos(wpt(5)/2) * cos(wpt(4)/2)...
-                  - cos(wpt(6)/2) * sin(wpt(5)/2) * sin(wpt(4)/2);
-
-            % imaginaire j
-             q(3) = cos(wpt(6)/2) * sin(wpt(5)/2) * cos(wpt(4)/2)...
-                  + sin(wpt(6)/2) * cos(wpt(5)/2) * sin(wpt(4)/2);
-
-            % imaginaire k
-             q(4) = cos(wpt(6)/2) * cos(wpt(5)/2) * sin(wpt(4)/2)...
-                  - sin(wpt(6)/2) * sin(wpt(5)/2) * cos(wpt(4)/2);
-              
-             pwpt = [wpt(1:3) q];
+            q = eul2quat(deg2rad(wpt(4:6)),'ZYX');
+%             wpt(4:6) = deg2rad(wpt(4:6));
+%              q(1) = cos(wpt(6)/2) * cos(wpt(5)/2) * cos(wpt(4)/2)...
+%                   + sin(wpt(6)/2) * sin(wpt(5)/2) * sin(wpt(4)/2);
+% 
+%             % imaginaire i
+%              q(2) = sin(wpt(6)/2) * cos(wpt(5)/2) * cos(wpt(4)/2)...
+%                   - cos(wpt(6)/2) * sin(wpt(5)/2) * sin(wpt(4)/2);
+% 
+%             % imaginaire j
+%              q(3) = cos(wpt(6)/2) * sin(wpt(5)/2) * cos(wpt(4)/2)...
+%                   + sin(wpt(6)/2) * cos(wpt(5)/2) * sin(wpt(4)/2);
+% 
+%             % imaginaire k
+%              q(4) = cos(wpt(6)/2) * cos(wpt(5)/2) * sin(wpt(4)/2)...
+%                   - sin(wpt(6)/2) * sin(wpt(5)/2) * cos(wpt(4)/2);
+%               
+             pwpt = [wpt(1:3) q,wpt(8)];
         end
       
         

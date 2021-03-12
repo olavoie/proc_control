@@ -43,11 +43,8 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate messages in the 'msg' folder
 add_message_files(
   FILES
-  SetForces.msg
   Pose.msg
   AddPose.msg
-  ComputeTrajectory.msg
-  ClearWaypoints.msg
   ThrusterCurrents.msg
   ThrusterForces.msg
   ThrusterRpms.msg
@@ -70,6 +67,7 @@ add_service_files(DIRECTORY srv
 generate_messages(
   DEPENDENCIES
   std_msgs
+  geometry_msgs
   actionlib_msgs
 )
 

@@ -68,16 +68,22 @@
 % % % %  quatrotate(q,v)
 % % % %  
  
-syms x;
-v=0.027;
-dz=0.3;
+% % syms x;
+% % v=0.027;
+% % dz=0.3;
+% % 
+% % a= v/2;
+% % k=a;
+% % b=4/dz;
+% % h=dz/2;
+% % ezplot(a*erf(b*(x-h))+k, [-.5, .5]);
+% % 
+% % 
+% % test=@(x)a*erf(b*(x-h))+k;
+% % test(.2)
+x=compact(quaternion([0,0,0],'eulerd','ZYX','frame'));
+y=compact(quaternion([180,0,0],'eulerd','ZYX','frame'));
 
-a= v/2;
-k=a;
-b=4/dz;
-h=dz/2;
-ezplot(a*erf(b*(x-h))+k, [-.5, .5]);
 
-
-test=@(x)a*erf(b*(x-h))+k;
-test(.2)
+ z = quatmultiply(quatconj(x),y)
+ angle = 2 * atan2(norm(z(2:4)),z(1))

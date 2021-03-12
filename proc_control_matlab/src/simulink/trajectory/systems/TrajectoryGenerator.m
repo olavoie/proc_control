@@ -61,7 +61,7 @@ classdef TrajectoryGenerator < matlab.System
             
             for i = 2: wpt_count
                 maxTime= this.Ts;
-                for j =1 :size(List,2)
+                for j =1 : 7
                     dist = abs(List(i,j) - List(i-1,j));
                     if dist >0
                         temp = dist / this.avanceRapide(j) + 2 * (this.avanceRapide(j) / this.accRapide(j));
