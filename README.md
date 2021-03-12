@@ -48,3 +48,6 @@ You can also receive messages from the RosNode.
 
 # Problem with geometry_msg and IMU messages.
 https://www.mathworks.com/matlabcentral/answers/553828-having-trouble-building-custom-ros-msgs-in-matlab-2020a
+
+# Warning at compilation phase
+set_param('TrajectoryGeneratorASYNC', 'ModelReferenceSymbolNameMessage', 'none')
