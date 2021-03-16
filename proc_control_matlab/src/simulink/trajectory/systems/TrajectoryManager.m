@@ -63,7 +63,7 @@ classdef TrajectoryManager < matlab.System
             new = isNew(1);
             count = isNew(2);
             mp =zeros(1,7);
-            mp=mesuredPose
+            mp=mesuredPose;
             this.processNewPoses(poses,count,new);
             
             currentPose=this.SendCurrentPoses();
