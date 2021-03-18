@@ -80,7 +80,39 @@ classdef AddPose < matlab.System
         end
       
         
-       
+ %% Definire outputs       
+      function [waypoints, count] = getOutputSizeImpl(this)
+      waypoints = [this.buffSize this.elementSize];
+      count = [1 1];
+      end 
+      
+      function [waypoints, count] = isOutputFixedSizeImpl(this)
+          waypoints = true;
+          count = true;
+      end
+      function [waypoints, count] = getOutputDataTypeImpl(this)
+          waypoints = "double";
+          count = "double";
+      end
+      
+     function [waypoints, count] = isOutputComplexImpl(this)
+         waypoints = false;
+         count = false;
+     end
+     
+     function [sz,dt,cp] = getDiscreteStateSpecificationImpl(this,name)
+         if strcmp(name,'i')
+              sz = [1 1];
+              dt = "double";
+              cp = false;
+         
+         elseif strcmp(name,'poseList')
+             sz = [this.buffSize this.elementSize];
+             dt = "double";
+             cp = false;
+         end
+     end 
+      
         
         %%
         function resetImpl(this)
