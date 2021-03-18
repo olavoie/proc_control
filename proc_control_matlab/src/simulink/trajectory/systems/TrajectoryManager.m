@@ -40,7 +40,7 @@ classdef TrajectoryManager < matlab.System
     end
 
     methods(Access = protected)
-        function  setupImpl(this, pose, isNew, InitCond)
+        function  setupImpl(this, pose, isNew, reset)
             
             % Perform one-time calculations, such as computing constants
            this.generationNumber=0;
@@ -58,12 +58,14 @@ classdef TrajectoryManager < matlab.System
            
         end
 %% Main execute a chaque iteration.
-        function [currentPose, isReached] = stepImpl(this,mesuredPose, poses, isNew, InitCond)
+        function [currentPose, isReached] = stepImpl(this,mesuredPose, poses, isNew, reset)
             % Implement algorithm. Calculate y as a function of input u and
             new = isNew(1);
             count = isNew(2);
             mp =zeros(1,7);
             mp=mesuredPose;
+            
+            this.BufferReset(reset,mp);
             this.processNewPoses(poses,count,new);
             
             currentPose=this.SendCurrentPoses();
@@ -125,7 +127,7 @@ classdef TrajectoryManager < matlab.System
                 this.done=true;
             end 
     end
-%% Fonction qui verifi le target reached
+%% Fonction qui verifie le target reached
 
 function isReached= targetReached(this, mesuredPose)
     
@@ -175,6 +177,17 @@ end
                       'OffsetTime',obj.OffsetTime);
               
             end
-        end
+      end
+        
+%% Fonction Qui reset le buffer
+      function BufferReset(this,reset,mesuredPose)
+         
+          if reset == 1
+              this.poseBuffer=repmat(this.dummy, this.bufferSize, 13);
+              this.poseBuffer(1,:)= [mesuredPose,0,0,0,0,0,0];
+          end
+          
+      end
+      
     end    
 end

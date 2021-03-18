@@ -15,8 +15,8 @@
     RPM = T200Spec16V{:,2}; % RPM
 
 %Forces Minmax Thrusters initailes
-    tmax=50;
-    tmin=-40;
+    tmax=29;
+    tmin=-24;
     TMIN ={tmin; tmin; tmin; tmin; tmin; tmin; tmin; tmin};
     TMAX ={tmax; tmax; tmax; tmax; tmax; tmax; tmax; tmax};
     MvTarget={0; 0; 0 ;0 ;-17.5 ;17.5 ;-17.5; 17.5};

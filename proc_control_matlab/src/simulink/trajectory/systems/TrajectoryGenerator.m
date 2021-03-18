@@ -108,10 +108,23 @@ classdef TrajectoryGenerator < matlab.System
             new = [this.computeCount,  nbpts];
            
         end
-        
-      
-        function resetImpl(obj)
-            % Initialize / reset discrete-state properties
-        end
+ %% Definire outputs       
+%       function [pose, new] = getOutputSizeImpl(this)
+%       pose = [1000 13];
+%       new = [1 2];
+%       end 
+%       
+%       function [pose, new] = isOutputFixedSizeImpl(this)
+%       pose = true;
+%       new=true;
+%       end
+%       function [pose, new] = getOutputDataTypeImpl(this)
+%           pose = "double";
+%           new = "double";
+%       end
+%    
+%         function resetImpl(this)
+%             % Initialize / reset discrete-state properties
+%         end
     end
 end
