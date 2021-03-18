@@ -28,7 +28,7 @@ classdef TrajectoryManager < matlab.System
     poseBuffer;
     generationNumber;
     bufferCount;
-    pMax;
+    %pMax;
     done;
     targetReachedCount;
     end
