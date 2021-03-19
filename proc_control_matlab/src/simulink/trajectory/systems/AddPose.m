@@ -50,7 +50,7 @@ classdef AddPose < matlab.System
             if clearBuffer == 1
 
                     this.poseList(2:end,:) = repmat(999, this.buffSize-1, this.elementSize);
-                    this.i = 1;
+                    this.i = 2;
 
             end
             % Ajout d'un waypoint provenant de ROS.
@@ -65,7 +65,7 @@ classdef AddPose < matlab.System
             if reset == 1
                 this.poseList(2:end,:) = repmat(999, this.buffSize-1, this.elementSize);
                 this.poseList(1,:) = [initCond,0];
-                this.i = 1;
+                this.i = 2;
             end
         end
 %% Fonction qui interprete les waypoints reçu par ROS

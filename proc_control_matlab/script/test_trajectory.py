@@ -45,4 +45,4 @@ class TrajectoryTest():
 
 if __name__ == '__main__':
     traj = TrajectoryTest()
-    traj.send(0.2)
+    traj.send(2)

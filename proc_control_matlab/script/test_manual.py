@@ -12,7 +12,7 @@ class TrajectoryTest():
         self.clear_trajectory_pub = rospy.Publisher("/proc_control_matlab/clear_waypoints", Bool, queue_size=10)
         self.compute_trajectory_pub = rospy.Publisher("/proc_control_matlab/compute_trajectory", Bool, queue_size=10)
         self.add_pose_pub = rospy.Publisher("/proc_control_matlab/add_pose", AddPose, queue_size=10)
-        self.waypoints = [{'position': Point(75, 0, 0), 'orientation': Vector3(0, 0, 0), 'frame': 1, 'speed': 1, 'fine': 0}]
+        self.waypoints = [{'position': Point(2, 0, 0), 'orientation': Vector3(0, 0, 0), 'frame': 1, 'speed': 1, 'fine': 0}]
                             
         time.sleep(1)
         
@@ -30,8 +30,8 @@ class TrajectoryTest():
         time.sleep(delay_value)
         
         #print("Clear waypoints")
-        #self.clear_trajectory_pub.publish(True)
+        # self.clear_trajectory_pub.publish(True)
 
 if __name__ == '__main__':
     traj = TrajectoryTest()
-    traj.send(.1)
+    traj.send(2)
