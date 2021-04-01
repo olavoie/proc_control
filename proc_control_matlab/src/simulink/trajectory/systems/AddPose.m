@@ -73,10 +73,50 @@ classdef AddPose < matlab.System
             % Determiner le quaternion en fonction des angles d'euler.
             % Orde de rotation : ZYX.
             % Reel
-            q = zeros(1, 4);
-            q = eul2quat(deg2rad(wpt(4:6)),'ZYX');    
+            twpt = zeros(1, this.elementSize);
+            twpt(8)=wpt(8);
             
-            pwpt = [wpt(1:3) q,wpt(8)];
+            % Pre calculs
+            q = eul2quat(deg2rad(wpt(4:6)),'ZYX');
+            
+            lp = this.poseList(this.i-1,1:3);
+            lq = this.poseList(this.i-1,4:7);
+            
+            
+            rp = quatrotate(quatinv(lq),wpt(1:3)) + lp
+            
+            if dot(lq,q)<1
+                rq= quatmultiply(lq,quatinv(quatconj(q)));
+            else
+                rq = quatmultiply(lq,quatinv(q));
+            end
+            
+            % transformer le point en fonction du frame
+            switch cast(wpt(7),'uint8')
+                
+                case 0 % position et angle absolue
+                    twpt(1:3)= wpt(1:3);
+                    twpt(4:7)=q;
+                    
+                case 1 % position et angle relatif
+                    twpt(1:3)= rp;
+                    twpt(4:7)= rq;
+                    
+                case 2 % position relatif et angle absolue
+                    twpt(1:3)= rp;
+                    twpt(4:7)=q;
+                    
+                case 3 % position absolue et angle relatif
+                    twpt(1:3)= wpt(1:3);
+                    twpt(4:7)= rq;
+                    
+                otherwise % retourne le point précédent
+                    twpt(1:3)= lp;
+                    twpt(4:7)= lq;
+            end
+     
+           
+            pwpt =twpt;
         end
       
         
